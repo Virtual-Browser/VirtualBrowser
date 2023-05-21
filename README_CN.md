@@ -66,7 +66,7 @@ VirtualBrowser 还不完善。如果您对 VirtualBrowser 感兴趣，可以通�
 
 
 # 联系我们
-- email:  [virtualbrowser@gmail.com](emailto://virtualbrowser@gmail.com)
+- email:  [virtual.browser.2020@gmail.com](mailto:virtual.browser.2020@gmail.com)
 - 官网:  [virtualbrowser](http://virtualbrowser.cc)
 
 # 致谢

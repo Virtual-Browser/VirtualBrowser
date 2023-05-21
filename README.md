@@ -61,7 +61,7 @@ VirtualBrowser is not perfect yet. If you are interested in VirtualBrowser, you 
 3. Provide experience, functional suggestions to help improve VirtualBrowser.
 
 # Contact Us
-- Email: [virtualbrowser@gmail.com](mailto://virtualbrowser@gmail.com)
+- Email: [virtual.browser.2020@gmail.com](mailto:virtual.browser.2020@gmail.com)
 - Official website: [http://virtualbrowser.cc](http://virtualbrowser.cc)
 
 # Acknowledgments
