@@ -1,0 +1,1005 @@
+<template>
+  <div class="app-container">
+    <div class="filter-container">
+      <div>
+        <el-button
+          class="filter-item"
+          type="primary"
+          icon="el-icon-circle-plus"
+          @click="handleCreate"
+        >
+          {{ $t('browser.add') }}
+        </el-button>
+      </div>
+      <!-- <div>
+        <el-input
+          v-model="listQuery.title"
+          :placeholder="$t('browser.name')"
+          style="width: 200px"
+          class="filter-item"
+          @keyup.enter.native="handleFilter"
+        />
+        <el-button v-waves class="filter-item" icon="el-icon-search" @click="handleFilter">
+          {{ $t('browser.search') }}
+        </el-button>
+      </div> -->
+    </div>
+
+    <el-table
+      :key="tableKey"
+      v-loading="listLoading"
+      :data="list"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%"
+    >
+      <el-table-column :label="$t('browser.id')" prop="id" sortable align="center" width="80">
+        <template slot-scope="{ row }">
+          <span>{{ row.id }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('browser.name')" min-width="150px">
+        <template slot-scope="{ row }">
+          <span>{{ row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('browser.date')"
+        sortable
+        prop="timestamp"
+        width="150px"
+        align="center"
+      >
+        <template slot-scope="{ row }">
+          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column :label="$t('browser.launch')" class-name="status-col" width="100">
+        <template slot-scope="{ row }">
+          <el-button
+            type="primary"
+            icon="el-icon-video-play"
+            :loading="row.runLoading"
+            :disabled="row.isRunning"
+            @click="handleLaunch(row)"
+          >
+            {{
+              $t(
+                row.runLoading
+                  ? 'browser.launching'
+                  : row.isRunning
+                  ? 'browser.launched'
+                  : 'browser.launch'
+              )
+            }}
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('browser.actions')"
+        align="center"
+        width="230"
+        class-name="small-padding fixed-width"
+      >
+        <template slot-scope="{ row, $index }">
+          <el-button type="primary" @click="handleUpdate(row)">
+            {{ $t('browser.edit') }}
+          </el-button>
+          <el-button
+            v-if="row.status != 'deleted'"
+            type="danger"
+            @click="handleDelete(row, $index)"
+          >
+            {{ $t('browser.delete') }}
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-dialog
+      :title="$t(dialogStatus == 'create' ? 'browser.add' : 'browser.edit')"
+      :visible.sync="dialogFormVisible"
+      :close-on-click-modal="false"
+      class="formDlg"
+    >
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="form"
+        label-position="left"
+        label-width="100px"
+      >
+        <el-timeline>
+          <el-timeline-item>
+            <h3>{{ $t('browser.basic') }}</h3>
+            <div>
+              <el-form-item :label="$t('browser.name')" prop="name">
+                <el-input v-model="form.name" />
+              </el-form-item>
+              <el-form-item :label="$t('browser.platform')">
+                <el-radio-group v-model="form.os">
+                  <el-radio-button v-for="item in platforms" :key="item" :label="item" />
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item :label="$t('browser.version')">
+                <el-select v-model="form.chrome_version" :placeholder="$t('browser.select')">
+                  <el-option v-for="item in Versions" :key="item" :value="item" />
+                </el-select>
+              </el-form-item>
+              <el-form-item :label="$t('browser.proxy.setting')">
+                <el-radio-group v-model="form.proxy.mode">
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.no_proxy') }}</el-radio-button>
+                  <el-radio-button :label="2">{{ $t('browser.custom') }}</el-radio-button>
+                </el-radio-group>
+                <el-form-item
+                  v-if="form.proxy.mode == 2"
+                  :label="$t('browser.proxy.value')"
+                  label-width="60px"
+                  style="margin-top: 5px"
+                  prop="proxy.value"
+                >
+                  <el-input v-model="form.proxy.value" style="width: 250px" />
+                </el-form-item>
+              </el-form-item>
+            </div>
+          </el-timeline-item>
+          <el-timeline-item>
+            <h3>{{ $t('browser.advanced') }}</h3>
+            <div>
+              <el-form-item :label="$t('browser.ua')">
+                <el-input v-model="form.ua.value" type="textarea" />
+              </el-form-item>
+              <el-form-item :label="$t('browser.sec_ua')">
+                <el-input v-model="form['sec-ch-ua'].value" type="textarea" />
+              </el-form-item>
+              <el-form-item :label="$t('browser.language')">
+                <el-switch
+                  v-model="form['ua-language'].mode"
+                  :active-value="2"
+                  :inactive-value="1"
+                />
+                <span style="margin-left: 10px">{{ $t('browser.language_tips') }}</span>
+                <el-select
+                  v-if="form['ua-language'].mode == 1"
+                  v-model="form['ua-language'].language"
+                  :placeholder="$t('browser.select')"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="(item, i) in Languages"
+                    :key="i"
+                    :label="(language == 'zh' ? item.lang : item.en) + '    ' + item.code"
+                    :value="item.code"
+                  >
+                    <span style="float: left">{{ language == 'zh' ? item.lang : item.en }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">
+                      {{ item.code }}
+                    </span>
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item :label="$t('browser.timezone')">
+                <el-switch v-model="form['time-zone'].mode" :active-value="2" :inactive-value="1" />
+                <span style="margin-left: 10px">{{ $t('browser.timezone_tips') }}</span>
+                <el-select
+                  v-if="form['time-zone'].mode == 1"
+                  v-model="form['time-zone'].name"
+                  :placeholder="$t('browser.select')"
+                  style="width: 100%"
+                  @change="
+                    (select) => {
+                      const selItem = TimeZones.find((item) => item.text == select)
+                      form['time-zone'].value = selItem.offset
+                      form['time-zone'].zone = getZone(selItem.offset)
+                    }
+                  "
+                >
+                  <el-option v-for="(item, i) in TimeZones" :key="i" :value="item.text" />
+                </el-select>
+              </el-form-item>
+              <el-form-item :label="$t('browser.webrtc')">
+                <el-radio-group v-model="form.webrtc.mode">
+                  <el-radio-button :label="0">{{ $t('browser.replace') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.allow') }}</el-radio-button>
+                  <el-radio-button :label="2">{{ $t('browser.block') }}</el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item :label="$t('browser.location')">
+                <el-radio-group v-model="form.location.enable">
+                  <el-radio-button label="0">{{ $t('browser.ask') }}</el-radio-button>
+                  <el-radio-button label="1">{{ $t('browser.allow') }}</el-radio-button>
+                  <el-radio-button label="2">{{ $t('browser.block') }}</el-radio-button>
+                </el-radio-group>
+                <div v-if="form.location.enable != 2">
+                  <el-switch v-model="form.location.mode" :active-value="2" :inactive-value="1" />
+                  <span style="margin-left: 10px">{{ $t('browser.location_tips') }}</span>
+                  <div v-if="form.location.mode == 1">
+                    <el-form-item :label="$t('browser.longitude')" label-width="80px">
+                      <el-input v-model="form.location.longitude" style="width: 100px" />
+                    </el-form-item>
+                    <el-form-item :label="$t('browser.latitude')" label-width="80px">
+                      <el-input v-model="form.location.latitude" style="width: 100px" />
+                    </el-form-item>
+                    <el-form-item :label="$t('browser.precision')" label-width="80px">
+                      <el-input v-model="form.location.precision" style="width: 100px" />
+                    </el-form-item>
+                  </div>
+                </div>
+              </el-form-item>
+              <el-form-item :label="$t('browser.screen')">
+                <el-radio-group v-model="form.screen.mode">
+                  <el-radio-button :label="0">{{ $t('browser.system_match') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.custom') }}</el-radio-button>
+                </el-radio-group>
+                <el-select
+                  v-if="form.screen.mode === 1"
+                  v-model="form.screen._value"
+                  :placeholder="$t('browser.select')"
+                  style="margin-left: 10px"
+                >
+                  <el-option
+                    v-for="(item, i) in resolutionList"
+                    :key="i"
+                    :value="item"
+                    :label="item"
+                  />
+                </el-select>
+              </el-form-item>
+              <el-form-item :label="$t('browser.fonts')">
+                <el-radio-group v-model="form.fonts.mode">
+                  <el-radio-button :label="0">{{ $t('browser.system_default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.random_match') }}</el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item :label="$t('browser.canvas')">
+                <el-radio-group v-model="form.canvas.mode">
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.random') }}</el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item :label="$t('browser.webgl_img')">
+                <el-radio-group v-model="form['webgl-img'].mode">
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.random') }}</el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item :label="$t('browser.webgl')">
+                <el-radio-group v-model="form.webgl.mode">
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.custom') }}</el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+              <template v-if="form.webgl.mode == 1">
+                <el-form-item :label="$t('browser.webgl_manu')">
+                  <el-select v-model="form.webgl.vendor" :placeholder="$t('browser.select')">
+                    <el-option value="Google Inc. (NVIDIA)" />
+                  </el-select>
+                </el-form-item>
+                <el-form-item :label="$t('browser.webgl_render')">
+                  <el-select
+                    v-model="form.webgl.render"
+                    :placeholder="$t('browser.select')"
+                    style="width: 100%"
+                  >
+                    <el-option v-for="(item, i) in WebGLRenders" :key="i" :value="item" />
+                  </el-select>
+                </el-form-item>
+              </template>
+              <el-form-item :label="$t('browser.audio')">
+                <el-radio-group v-model="form['audio-context'].mode">
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.random') }}</el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+              <!-- <el-form-item :label="$t('browser.media')">
+                <el-radio-group v-model="form.media.mode">
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.random') }}</el-radio-button>
+                </el-radio-group>
+              </el-form-item> -->
+              <el-form-item :label="$t('browser.client_rects')">
+                <el-radio-group v-model="form['client-rects'].mode">
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.random') }}</el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item :label="$t('browser.speech_voices')">
+                <el-radio-group v-model="form['speech-voices'].mode">
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.random') }}</el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item :label="$t('browser.cpu')">
+                <el-select v-model="form.cpu.value" style="width: 60px">
+                  <el-option :value="2" />
+                  <el-option :value="4" />
+                  <el-option :value="6" />
+                  <el-option :value="8" />
+                </el-select>
+                &nbsp;
+                <span>{{ $t('browser.cpu_unit') }}</span>
+              </el-form-item>
+              <el-form-item :label="$t('browser.memory')">
+                <el-select v-model="form.memory.value" style="width: 60px">
+                  <el-option :value="1" />
+                  <el-option :value="2" />
+                  <el-option :value="4" />
+                  <el-option :value="8" />
+                </el-select>
+                &nbsp;
+                <span>GB</span>
+              </el-form-item>
+              <el-form-item :label="$t('browser.device')" style="height: 36px">
+                <el-radio-group v-model="form['device-name'].mode">
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.custom') }}</el-radio-button>
+                </el-radio-group>
+                <div v-if="form['device-name'].mode == 1" style="display: inline-block">
+                  <el-input
+                    v-model="form['device-name'].value"
+                    style="width: 200px; margin-left: 10px"
+                  />
+                  <el-button type="text" @click="onReRandomComputerName">
+                    {{ $t('browser.random_change') }}
+                  </el-button>
+                </div>
+              </el-form-item>
+              <el-form-item :label="$t('browser.mac')" style="height: 36px">
+                <el-radio-group v-model="form.mac.mode">
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.custom') }}</el-radio-button>
+                </el-radio-group>
+                <div v-if="form.mac.mode == 1" style="display: inline-block">
+                  <el-input v-model="form.mac.value" style="width: 200px; margin-left: 10px" />
+                  <el-button type="text" @click="onReRandomAddr">
+                    {{ $t('browser.random_change') }}
+                  </el-button>
+                </div>
+              </el-form-item>
+              <el-form-item :label="$t('browser.dnt')">
+                <el-switch v-model="form.dnt.value" :active-value="1" :inactive-value="0" />
+              </el-form-item>
+              <el-form-item :label="$t('browser.ssl')">
+                <el-radio-group v-model="form.ssl.mode">
+                  <el-radio-button :label="1">{{ $t('browser.enable') }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.disable') }}</el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item v-if="form.ssl.mode == 1" :label="$t('browser.ssl_disabled')">
+                <el-checkbox-group v-model="form.ssl.value">
+                  <el-checkbox v-for="(val, key) in SSL" :key="key" :label="val">
+                    {{ key }}
+                  </el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item :label="$t('browser.port_scan')">
+                <el-radio-group v-model="form['port-scan'].mode">
+                  <el-radio-button :label="1">{{ $t('browser.enable') }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.disable') }}</el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item v-if="form['port-scan'].mode == 1" :label="$t('browser.enable_ports')">
+                <el-input
+                  :value="form['port-scan'].value.join(',')"
+                  :placeholder="$t('browser.enable_ports_tips')"
+                  @input="(value) => (form['port-scan'].value = value.split(','))"
+                  @change="
+                    (value) =>
+                      (form['port-scan'].value = value
+                        .split(',')
+                        .filter((item) => /^\d+$/.test(item)))
+                  "
+                />
+              </el-form-item>
+              <el-form-item :label="$t('browser.gpu')">
+                <el-switch v-model="form.gpu.value" :active-value="1" :inactive-value="0" />
+              </el-form-item>
+            </div>
+          </el-timeline-item>
+          <el-timeline-item :hide-timestamp="true" />
+        </el-timeline>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="medium" @click="dialogFormVisible = false">
+          {{ $t('browser.cancel') }}
+        </el-button>
+        <el-button
+          type="primary"
+          size="medium"
+          @click="dialogStatus === 'create' ? onCreateData() : onUpdateData()"
+        >
+          {{ $t('browser.confirm') }}
+        </el-button>
+      </div>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import {
+  getBrowserList,
+  addBrowser,
+  updateBrowser,
+  deleteBrowser,
+  chromeSend,
+  getBrowserVersion,
+  updateRuningState,
+} from '@/api/native'
+import waves from '@/directive/waves' // waves directive
+import random from 'random'
+import { parseTime, genRandomMacAddr, genRandomComputerName, loadScript } from '@/utils'
+import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import TimeZones from '@/utils/timezones.json'
+import Languages from '@/utils/languages.json'
+import SSL from '@/utils/ssl.json'
+import Versions from '@/utils/versions.json'
+import { getFontList } from '@/utils/fonts'
+
+let IPGeo = {}
+let fontList = []
+let osVer = '10.0'
+let chromeVer = ''
+const sslList = ['0xc02c', '0xa02c', '0xb02c', '0xd02c', '0xe02c', '0xf02c']
+export default {
+  name: 'ComplexTable',
+  components: { Pagination },
+  directives: { waves },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        published: 'success',
+        draft: 'info',
+        deleted: 'danger',
+      }
+      return statusMap[status]
+    },
+  },
+  data() {
+    return {
+      tableKey: 0,
+      list: null,
+      listLoading: true,
+      listQuery: {
+        page: 1,
+        limit: 5,
+        title: undefined,
+      },
+      dialogFormVisible: false,
+      dialogStatus: '',
+      textMap: {
+        update: this.$t('browser.edit'),
+        create: this.$t('browser.add'),
+      },
+      form: {
+        proxy: {},
+        ua: {},
+        'sec-ch-ua': {},
+        'ua-language': {},
+        'time-zone': {},
+        location: {},
+        screen: {},
+        fonts: {},
+        canvas: {},
+        'webgl-img': {},
+        webgl: {},
+        'audio-context': {},
+        media: {},
+        'client-rects': {},
+        'speech-voices': {},
+        ssl: {},
+        cpu: {},
+        memory: {},
+        'device-name': {},
+        mac: {},
+        dnt: {},
+        'port-scan': {},
+        gpu: {},
+        webrtc: {},
+      },
+      rules: {
+        // name: [{ required: true, message: this.$t('browser.required'), trigger: 'change' }],
+        'proxy.value': [
+          { required: true, message: this.$t('browser.required'), trigger: 'change' },
+        ],
+      },
+      downloadLoading: false,
+      platforms: ['Win 7', 'Win 8', 'Win 10', 'Win 11'],
+      WebGLRenders: [
+        'ANGLE (Intel(R) HD Graphics 520 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (Intel(R) HD Graphics 5300 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (Intel(R) HD Graphics 620 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (Intel(R) HD Graphics 620 Direct3D9Ex vs_3_0 ps_3_0)',
+        'ANGLE (Intel(R) HD Graphics Direct3D11 vs_4_1 ps_4_1)',
+        'ANGLE (NVIDIA GeForce GTX 1050 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 1050 Ti Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 1660 Ti Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce RTX 2070 SUPER Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (Intel(R) HD Graphics Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (Intel(R) HD Graphics Family Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (Intel(R) UHD Graphics 620 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (Intel(R) HD Graphics 4400 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 750 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA Quadro K600 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA Quadro M1000M Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (AMD Radeon (TM) R9 370 Series Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (AMD Radeon HD 7700 Series Direct3D9Ex vs_3_0 ps_3_0)',
+        'ANGLE (NVIDIA GeForce GTX 750  Direct3D9Ex vs_3_0 ps_3_0)',
+        'ANGLE (NVIDIA GeForce GTX 760 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 750 Direct3D9Ex vs_3_0 ps_3_0)',
+        'ANGLE (NVIDIA GeForce GTX 750 Ti Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 750 Ti Direct3D9Ex vs_3_0 ps_3_0)',
+        'ANGLE (NVIDIA GeForce GTX 760 Direct3D9Ex vs_3_0 ps_3_0)',
+        'ANGLE (NVIDIA GeForce GTX 770 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 780 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 850M Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 850M Direct3D9Ex vs_3_0 ps_3_0)',
+        'ANGLE (NVIDIA GeForce GTX 860M Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 950 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 950 Direct3D9Ex vs_3_0 ps_3_0)',
+        'ANGLE (NVIDIA GeForce GTX 950M Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 950M Direct3D9Ex vs_3_0 ps_3_0)',
+        'ANGLE (NVIDIA GeForce GTX 960 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 960 Direct3D9Ex vs_3_0 ps_3_0)',
+        'ANGLE (NVIDIA GeForce GTX 960M Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 960M Direct3D9Ex vs_3_0 ps_3_0)',
+        'ANGLE (NVIDIA GeForce GTX 970 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 970 Direct3D9Ex vs_3_0 ps_3_0)',
+        'ANGLE (NVIDIA GeForce GTX 980 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 980 Direct3D9Ex vs_3_0 ps_3_0)',
+        'ANGLE (NVIDIA GeForce GTX 980 Ti Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce GTX 980M Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce MX130 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce MX150 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce MX230 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce MX250 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce RTX 2060 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce RTX 2060 Direct3D9Ex vs_3_0 ps_3_0)',
+        'ANGLE (NVIDIA GeForce RTX 2060 SUPER Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA GeForce RTX 2070 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA Quadro K620 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA Quadro FX 380 Direct3D11 vs_4_0 ps_4_0)',
+        'ANGLE (NVIDIA Quadro NVS 295 Direct3D11 vs_4_0 ps_4_0)',
+        'ANGLE (NVIDIA Quadro P1000 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA Quadro P2000 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA Quadro P400 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA Quadro P4000 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA Quadro P600 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (NVIDIA Quadro P620 Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (ATI Mobility Radeon HD 4330 Direct3D11 vs_4_1 ps_4_1)',
+        'ANGLE (ATI Mobility Radeon HD 4500 Series Direct3D11 vs_4_1 ps_4_1)',
+        'ANGLE (ATI Mobility Radeon HD 5000 Series Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (ATI Mobility Radeon HD 5400 Series Direct3D11 vs_5_0 ps_5_0)',
+        'ANGLE (Intel, Intel(R) UHD Graphics Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.100.8935)',
+        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1070 Direct3D11 vs_5_0 ps_5_0, D3D11-27.21.14.6079)',
+        'ANGLE (Intel, Intel(R) UHD Graphics Direct3D11 vs_5_0 ps_5_0, D3D11-26.20.100.7870)',
+        'ANGLE (AMD, Radeon (TM) RX 470 Graphics Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.1034.6)',
+        'ANGLE (Intel, Intel(R) UHD Graphics 620 Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.100.8681)',
+        'ANGLE (NVIDIA, NVIDIA GeForce GTX 750 Ti Direct3D11 vs_5_0 ps_5_0, D3D11-10.18.13.6881)',
+        'ANGLE (NVIDIA, NVIDIA GeForce GTX 970 Direct3D11 vs_5_0 ps_5_0, D3D11-27.21.14.5671)',
+        'ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.14028.11002)',
+        'ANGLE (Intel, Intel(R) HD Graphics 630 Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.100.8681)',
+        'ANGLE (NVIDIA, NVIDIA GeForce GTX 750 Ti Direct3D11 vs_5_0 ps_5_0, D3D11-27.21.14.5671)',
+        'ANGLE (AMD, AMD Radeon RX 5700 XT Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.13025.1000)',
+        'ANGLE (AMD, AMD Radeon RX 6900 XT Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.13011.1004)',
+        'ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.13002.23)',
+        'ANGLE (Intel, Intel(R) HD Graphics 530 Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.100.9466)',
+        'ANGLE (Intel, Intel(R) HD Graphics 5500 Direct3D11 vs_5_0 ps_5_0, D3D11-20.19.15.5126)',
+        'ANGLE (Intel, Intel(R) HD Graphics 6000 Direct3D11 vs_5_0 ps_5_0, D3D11-20.19.15.5126)',
+        'ANGLE (Intel, Intel(R) HD Graphics 610 Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.100.9466)',
+        'ANGLE (Intel, Intel(R) HD Graphics 630 Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.100.9168)',
+        'ANGLE (Intel, Intel(R) HD Graphics Direct3D11 vs_5_0 ps_5_0, D3D11-27.21.14.6589)',
+        'ANGLE (Intel, Intel(R) UHD Graphics 620 Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.100.9126)',
+        'ANGLE (Intel, Mesa Intel(R) UHD Graphics 620 (KBL GT2), OpenGL 4.6 (Core Profile) Mesa 21.2.2)',
+        'ANGLE (NVIDIA Corporation, GeForce GTX 1050 Ti/PCIe/SSE2, OpenGL 4.5.0 NVIDIA 460.73.01)',
+        'ANGLE (NVIDIA Corporation, GeForce GTX 1050 Ti/PCIe/SSE2, OpenGL 4.5.0 NVIDIA 460.80)',
+        'ANGLE (NVIDIA Corporation, GeForce GTX 1050/PCIe/SSE2, OpenGL 4.5 core)',
+        'ANGLE (NVIDIA Corporation, GeForce GTX 1060 6GB/PCIe/SSE2, OpenGL 4.5 core)',
+        'ANGLE (NVIDIA Corporation, GeForce GTX 1080 Ti/PCIe/SSE2, OpenGL 4.5 core)',
+        'ANGLE (NVIDIA Corporation, GeForce GTX 1650/PCIe/SSE2, OpenGL 4.5 core)',
+        'ANGLE (NVIDIA Corporation, GeForce GTX 650/PCIe/SSE2, OpenGL 4.5 core)',
+        'ANGLE (NVIDIA Corporation, GeForce GTX 750 Ti/PCIe/SSE2, OpenGL 4.5 core)',
+        'ANGLE (NVIDIA Corporation, GeForce GTX 860M/PCIe/SSE2, OpenGL 4.5 core)',
+        'ANGLE (NVIDIA Corporation, GeForce GTX 950M/PCIe/SSE2, OpenGL 4.5 core)',
+        'ANGLE (NVIDIA Corporation, GeForce MX150/PCIe/SSE2, OpenGL 4.5 core)',
+        'ANGLE (NVIDIA Corporation, GeForce RTX 2070/PCIe/SSE2, OpenGL 4.5 core)',
+        'ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 660/PCIe/SSE2, OpenGL 4.5.0 NVIDIA 470.57.02)',
+        'ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 2060 SUPER/PCIe/SSE2, OpenGL 4.5.0 NVIDIA 470.63.01)',
+        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1050 Ti Direct3D9Ex vs_3_0 ps_3_0, nvd3dumx.dll-26.21.14.4250)',
+        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1060 5GB Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.14.7168)',
+        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1060 6GB Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.14.7212)',
+        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1070 Ti Direct3D11 vs_5_0 ps_5_0, D3D11-27.21.14.6677)',
+        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1080 Ti Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.14.7111)',
+        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1650 Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.14.7212)',
+        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1650 Ti Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.14.7111)',
+        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 SUPER Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.14.7196)',
+        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.14.7196)',
+      ],
+      resolutionList: [
+        '800 x 600',
+        '1024 x 768',
+        '1280 x 720',
+        '1280 x 800',
+        '1280 x 960',
+        '1280 x 1024',
+        '1360 x 768',
+        '1400 x 900',
+        '1400 x 1050',
+        '1600 x 900',
+        '1600 x 1200',
+        '1920 x 1080',
+        '1920 x 1200',
+        '2048 x 1152',
+        '2304 x 1440',
+        '2560 x 1440',
+        '2560 x 1600',
+        '2880 x 1800',
+        '5120 x 2880',
+      ],
+      TimeZones,
+      Languages,
+      SSL,
+      Versions: Array.from(new Set(Versions.map((item) => Number(item.split('.')[0])))),
+    }
+  },
+  computed: {
+    language() {
+      return this.$store.getters.language
+    },
+  },
+  watch: {
+    'form.screen._value'(val) {
+      const wh = val.split('x')
+      this.form.screen.width = parseInt(wh[0])
+      this.form.screen.height = parseInt(wh[1])
+    },
+    'form.chrome_version'(val) {
+      this.form[
+        'sec-ch-ua'
+      ].value = `"Google Chrome";v="${val}", "Not(A:Brand";v="8", "Chromium";v="${val}"`
+
+      chromeVer = Versions.find((item) => Number(item.split('.')[0]) === val)
+      this.form.ua.value = `'Mozilla/5.0 (Windows NT ${osVer}; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36'`
+    },
+    'form.os'(val) {
+      switch (val) {
+        case 'Win 7':
+          osVer = '6.1'
+          break
+        case 'Win 8':
+          osVer = '6.2'
+          break
+        case 'Win 10':
+        case 'Win 11':
+          osVer = '10.0'
+          break
+      }
+
+      this.form.ua.value = `'Mozilla/5.0 (Windows NT ${osVer}; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36'`
+
+      let vers = Array.from(new Set(Versions.map((item) => Number(item.split('.')[0]))))
+      if (val === 'Win 7' || val === 'Win 8') {
+        vers = vers.filter((item) => item <= 109)
+      }
+      this.Versions = vers
+      if (!vers.includes(this.form.chrome_version)) {
+        this.form.chrome_version = vers[0]
+      }
+    },
+  },
+  beforeCreate() {
+    window._updateState = (runingIds) => {
+      this.list = (this.list || []).map((item) => {
+        item.isRunning = runingIds.includes(item.id.toString())
+        if (item.isRunning) {
+          item.runLoading = false
+        }
+
+        return item
+      })
+    }
+  },
+  async created() {
+    this.getList()
+
+    this.$watch(
+      () => this.form['ua-language'].language,
+      (val) => {
+        this.form['ua-language'].value = [val, val.split('-')[0]]
+        this.form['time-zone'].locale = val
+      }
+    )
+
+    const req = await fetch(
+      'https://api.ipgeolocation.io/ipgeo?apiKey=36d02a0030f940e6a4922d553f2e3f00'
+    )
+    const res = await req.json()
+    IPGeo = res
+
+    fontList = getFontList()
+
+    const ver = await chromeSend('getBrowserVersion').catch((err) => {
+      console.warn(err)
+    })
+    loadScript(`http://virtualbrowser.cc/update/check_update.js?v=${ver}`)
+  },
+  methods: {
+    async getList() {
+      this.listLoading = true
+      this.list = await getBrowserList()
+      await updateRuningState()
+      this.listLoading = false
+    },
+    handleFilter() {
+      this.listQuery.page = 1
+      this.getList()
+    },
+    resetForm() {
+      const ipGeoTimeZone = IPGeo.time_zone?.name
+      const currentZone = TimeZones.find((item) => item.utc.find((it) => it === ipGeoTimeZone))
+
+      this.form = {
+        id: undefined,
+        name: '',
+        os: 'Win 11',
+        chrome_version: 113,
+        proxy: {
+          mode: 0,
+          value: '',
+        },
+        ua: {
+          mode: 1,
+          value:
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
+        },
+        'sec-ch-ua': {
+          mode: 1,
+          value: `"Google Chrome";v="112", "Not(A:Brand";v="8", "Chromium";v="112"`,
+        },
+        'ua-language': {
+          mode: 1,
+          language: IPGeo.languages?.split(',')[0] || '',
+          value: IPGeo.languages,
+        },
+        'time-zone': {
+          mode: 2,
+          zone: this.getZone(currentZone?.offset || 0),
+          locale: IPGeo.languages?.split(',')[0] || '',
+          name: currentZone?.text || '',
+          value: currentZone?.offset || 0,
+        },
+        webrtc: {
+          mode: 0,
+        },
+        location: {
+          mode: 2,
+          enable: 1,
+          longitude: IPGeo.longitude,
+          latitude: IPGeo.latitude,
+          precision: random.int(10, 5000),
+        },
+        screen: {
+          mode: 0,
+          width: screen.width,
+          height: screen.height,
+          _value: `${screen.width} x ${screen.height}`,
+        },
+        fonts: {
+          mode: 1,
+          value: fontList.sort(() => Math.random() - 0.5).slice(0, random.int(1, 5)),
+        },
+        canvas: {
+          mode: 1,
+          r: random.int(-10, 10),
+          g: random.int(-10, 10),
+          b: random.int(-10, 10),
+          a: random.int(-10, 10),
+        },
+        'webgl-img': {
+          mode: 1,
+          r: random.int(-10, 10),
+          g: random.int(-10, 10),
+          b: random.int(-10, 10),
+          a: random.int(-10, 10),
+        },
+        webgl: {
+          mode: 1,
+          vendor: 'Google Inc. (NVIDIA)',
+          render: this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)],
+        },
+        'audio-context': {
+          mode: 1,
+          channel: random.float(0, 0.0000001),
+          analyer: random.float(0, 0.1),
+        },
+        media: { mode: 1 },
+        'client-rects': {
+          mode: 1,
+          width: random.float(-1, 1),
+          height: random.float(-1, 1),
+        },
+        'speech-voices': { mode: 1 },
+        ssl: {
+          mode: 0,
+          value: [],
+        },
+        cpu: { mode: 1, value: 4 },
+        memory: { mode: 1, value: 8 },
+        'device-name': { mode: 1, value: genRandomComputerName() },
+        mac: { mode: 1, value: genRandomMacAddr() },
+        dnt: { mode: 1, value: 0 },
+        'port-scan': { mode: 1, value: [] },
+        gpu: { mode: 1, value: 1 },
+      }
+    },
+    handleCreate() {
+      this.resetForm()
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    onCreateData() {
+      this.$refs['dataForm'].validate(async (valid, result) => {
+        if (valid) {
+          this.form.timestamp = Date.now()
+          await addBrowser(this.form)
+
+          this.getList()
+          this.dialogFormVisible = false
+          this.$notify({
+            title: this.$t('browser.success'),
+            message: this.$t('browser.create') + this.$t('browser.success'),
+            type: 'success',
+            duration: 2000,
+          })
+        } else {
+          const arr = Object.values(result)
+            .map((item) => this.$t('browser.' + item[0].field) + item[0].message)
+            .slice(0, 1)
+          console.log(result, arr)
+
+          this.$message({
+            type: 'error',
+            dangerouslyUseHTMLString: true,
+            message: '<p>' + arr.join('</p><p>') + '</p>',
+          })
+        }
+      })
+    },
+    handleUpdate(row) {
+      this.form = Object.assign({}, row) // copy obj
+      this.form.timestamp = new Date(this.form.timestamp)
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    onUpdateData() {
+      this.$refs['dataForm'].validate(async (valid, result) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.form)
+          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          await updateBrowser(tempData)
+          this.getList()
+          this.dialogFormVisible = false
+          this.$notify({
+            title: this.$t('browser.success'),
+            message: this.$t('browser.update') + this.$t('browser.success'),
+            type: 'success',
+            duration: 2000,
+          })
+        } else {
+          const arr = Object.values(result)
+            .map((item) => this.$t('browser.' + item[0].field) + item[0].message)
+            .slice(0, 1)
+          console.log(result, arr)
+
+          this.$message({
+            type: 'error',
+            dangerouslyUseHTMLString: true,
+            message: '<p>' + arr.join('</p><p>') + '</p>',
+          })
+        }
+      })
+    },
+    handleDelete(row, index) {
+      this.$confirm(this.$t('browser.delete_confirm').replace('${name}', row.name))
+        .then(async () => {
+          await deleteBrowser(row.id)
+          this.getList()
+          this.$notify({
+            title: this.$t('browser.success'),
+            message: this.$t('browser.delete') + this.$t('browser.success'),
+            type: 'success',
+            duration: 2000,
+          })
+        })
+        .catch(() => {})
+    },
+    handleLaunch(row) {
+      console.log('handleLaunch', row)
+      chromeSend('launchBrowser', row.id.toString())
+      row.runLoading = true
+    },
+    onReRandomComputerName() {
+      this.form['device-name'].value = genRandomComputerName()
+    },
+    onReRandomAddr() {
+      this.form.mac.value = genRandomMacAddr()
+    },
+    getZone(offset) {
+      const plus = offset < 0 ? '+' : ''
+      return 'Etc/GMT' + plus + -offset
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+@import '@/styles/element-variables.scss';
+
+.filter-container {
+  display: flex;
+  justify-content: space-between;
+
+  .filter-item:not(:last-child) {
+    margin-right: 10px;
+  }
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.formDlg {
+  ::v-deep {
+    .el-dialog {
+      min-width: 400px;
+    }
+    .el-dialog__body {
+      padding-top: 5px;
+      padding-bottom: 0;
+    }
+    .el-timeline {
+      padding: 0;
+
+      .el-timeline-item__tail {
+        border-color: $--color-primary;
+      }
+      .el-timeline-item__node {
+        background-color: $--color-primary;
+      }
+
+      .el-timeline-item__content {
+        h3 {
+          color: $--color-primary;
+          margin: 0;
+          font-size: 1em;
+        }
+      }
+    }
+
+    .el-form-item {
+      margin-bottom: 15px;
+    }
+    .el-form-item__label {
+      font-size: 12px;
+      word-break: keep-all;
+    }
+    .el-form-item__error {
+      padding-top: 0;
+    }
+    .el-input__inner,
+    .el-textarea__inner {
+      // padding-left: 8px;
+      // padding-right: 8px;
+    }
+  }
+}
+</style>
