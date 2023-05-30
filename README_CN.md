@@ -6,9 +6,9 @@
 
 
 # 简介
-浏览器指纹识别是指通过识别和记录浏览器本身、操作系统和硬件配置等各种因素，生成一个唯一的标识符的过程。它是通过收集浏览器的各种特征（如用户代理、语言、屏幕大小、插件版本、字体、时间设置等）和综合分析得出的数字签名。由于每个人的浏览器配置不同，所以可以使用浏览器指纹来跟踪用户行为、识别身份、监视在线活动，甚至用于非法目的，如欺诈和网络钓鱼。
+VirtualBrowser 是基于 [Chromium](https://dev.chromium.org) 的指纹浏览器，支持 Windows 7 及以上操作系统，并计划在未来支持 Mac、Android、Linux 等操作系统。
 
-VirtualBrowser 是基于 [Chromium](https://dev.chromium.org) 的指纹浏览器，支持 Windows 10 及以上操作系统，并计划在未来支持 Mac、Android、Linux 等操作系统。
+浏览器指纹识别是指通过识别和记录浏览器本身、操作系统和硬件配置等各种因素，生成一个唯一的标识符的过程。它是通过收集浏览器的各种特征（如用户代理、语言、屏幕大小、插件版本、字体、时间设置等）和综合分析得出的数字签名。由于每个人的浏览器配置不同，所以可以使用浏览器指纹来跟踪用户行为、识别身份、监视在线活动，甚至用于非法目的，如欺诈和网络钓鱼。
 
 与 Chromium 相比，VirtualBrowser 具有两个优点：
 
@@ -21,11 +21,15 @@ VirtualBrowser 是基于 [Chromium](https://dev.chromium.org) 的指纹浏览器
 
 ## 创建新的浏览器环境
 1. 打开 VirtualBrowser 并选择“创建浏览器”。
+![Image text](https://github.com/Virtual-Browser/VirtualBrowser/blob/main/assets/welcome_zh-cn.png)
 2. 修改弹出对话框中的配置信息或使用默认设置。
+![Image text](https://github.com/Virtual-Browser/VirtualBrowser/blob/main/assets/create_zh-cn.png)
+![Image text](https://github.com/Virtual-Browser/VirtualBrowser/blob/main/assets/create_success_zh-cn.png)
 
 ## 启动浏览器环境
 1. 单击已创建环境中的“启动”按钮，以打开新创建的浏览器环境。
 2. 新启动的浏览器即为新的指纹环境。
+![Image text](https://github.com/Virtual-Browser/VirtualBrowser/blob/main/assets/launch.png)
 
 # 亲测可用的指纹修改
 可以使用 [fingerprintjs](https://fingerprintjs.github.io/fingerprintjs/) 和 [browserleaks](https://browserleaks.com/) 来测试指纹修改效果。
