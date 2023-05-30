@@ -19,11 +19,15 @@ First, download the latest VirtualBrowser installation package from the [release
 
 ## Creating a new browser environment
 1. Open VirtualBrowser and select Create Browser.
-2. Modify the configuration information in the pop-up dialog or use the default settings.
+![Image text](https://github.com/Virtual-Browser/VirtualBrowser/blob/main/assets/welcome.png)
+2. Modify the configuration information in the pop-up dialog or use the default settings. 
+![Image text](https://github.com/Virtual-Browser/VirtualBrowser/blob/main/assets/create.png)
+![Image text](https://github.com/Virtual-Browser/VirtualBrowser/blob/main/assets/createsuccess.png)
 
 ## Starting the browser environment
 1. Click the Start button in the created environment to open the newly created browser environment.
 2. The newly started browser is the new fingerprint environment.
+![Image text](https://github.com/Virtual-Browser/VirtualBrowser/blob/main/assets/launch.png)
 
 # Tested and Effective Fingerprint Modifications
 You can test fingerprint modifications using [fingerprintjs](https://fingerprintjs.github.io/fingerprintjs/) and [browserleaks](https://browserleaks.com/).
