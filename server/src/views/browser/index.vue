@@ -70,8 +70,8 @@
                 row.runLoading
                   ? 'browser.launching'
                   : row.isRunning
-                  ? 'browser.launched'
-                  : 'browser.launch'
+                    ? 'browser.launched'
+                    : 'browser.launch'
               )
             }}
           </el-button>
@@ -660,7 +660,8 @@ export default {
         'sec-ch-ua'
       ].value = `"Google Chrome";v="${val}", "Not(A:Brand";v="8", "Chromium";v="${val}"`
 
-      chromeVer = Versions.find((item) => Number(item.split('.')[0]) === val)
+      const curVers = Versions.filter((item) => Number(item.split('.')[0]) === val)
+      chromeVer = curVers[random.int(0, curVers.length - 1)]
       this.form.ua.value = `'Mozilla/5.0 (Windows NT ${osVer}; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36'`
     },
     'form.os'(val) {
@@ -723,7 +724,7 @@ export default {
     const ver = await chromeSend('getBrowserVersion').catch((err) => {
       console.warn(err)
     })
-    loadScript(`http://virtualbrowser.cc/update/check_update.js?v=${ver}`)
+    loadScript(`http://virtualbrowser.cc/update/check_update.js?v=${ver}&t=${Date.now()}`)
   },
   methods: {
     async getList() {
@@ -744,7 +745,7 @@ export default {
         id: undefined,
         name: '',
         os: 'Win 11',
-        chrome_version: 113,
+        chrome_version: 114,
         proxy: {
           mode: 0,
           value: '',
@@ -752,11 +753,11 @@ export default {
         ua: {
           mode: 1,
           value:
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.134 Safari/537.36',
         },
         'sec-ch-ua': {
           mode: 1,
-          value: `"Google Chrome";v="112", "Not(A:Brand";v="8", "Chromium";v="112"`,
+          value: `"Google Chrome";v="114", "Not(A:Brand";v="8", "Chromium";v="114"`,
         },
         'ua-language': {
           mode: 1,
@@ -843,7 +844,7 @@ export default {
       })
     },
     onCreateData() {
-      this.$refs['dataForm'].validate(async (valid, result) => {
+      this.$refs['dataForm'].validate(async(valid, result) => {
         if (valid) {
           this.form.timestamp = Date.now()
           await addBrowser(this.form)
@@ -880,7 +881,7 @@ export default {
       })
     },
     onUpdateData() {
-      this.$refs['dataForm'].validate(async (valid, result) => {
+      this.$refs['dataForm'].validate(async(valid, result) => {
         if (valid) {
           const tempData = Object.assign({}, this.form)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
@@ -909,7 +910,7 @@ export default {
     },
     handleDelete(row, index) {
       this.$confirm(this.$t('browser.delete_confirm').replace('${name}', row.name))
-        .then(async () => {
+        .then(async() => {
           await deleteBrowser(row.id)
           this.getList()
           this.$notify({
