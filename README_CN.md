@@ -71,7 +71,7 @@ VirtualBrowser 还不完善。如果您对 VirtualBrowser 感兴趣，可以通�
 
 # 联系我们
 - email:  [virtual.browser.2020@gmail.com](mailto:virtual.browser.2020@gmail.com)
-- 官网:  [virtualbrowser](http://virtualbrowser.cc)
+- 官网:  [http://virtualbrowser.cc](http://virtualbrowser.cc)
 - QQ群: `564142956`
 
 ![Join QQ Group](assets/VirtualBrowser-qq-group.png)
