@@ -1,4 +1,4 @@
-import { v4 as uuid_v4 } from 'uuid'
+import { v4 as uuid_v4 } from "uuid";
 
 /* eslint-disable */
 window.cr = {}

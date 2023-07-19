@@ -14,7 +14,7 @@
               <img :src="geo.country_flag" />
               {{ geo.country_name }}({{ geo.country_code2 }})
             </span>
-            {{ geo.city ? '/' : '' }}
+            {{ geo.city ? "/" : "" }}
             <span>{{ geo.city }}</span>
           </span>
         </p>
@@ -38,6 +38,11 @@
             </span>
           </span>
         </p>
+        <p>
+          <img src="./assets/VirtualBrowser-qq-group.png" /><br />
+          QQ Group:
+          <code>564142956</code>
+        </p>
       </div>
       <el-timeline v-if="false" class="timeline">
         <el-timeline-item
@@ -46,7 +51,9 @@
           :timestamp="key"
           placement="top"
         >
-          <el-card class="card"><pre v-html="formatResult(value.value)"></pre></el-card>
+          <el-card class="card">
+            <pre v-html="formatResult(value.value)"></pre>
+          </el-card>
         </el-timeline-item>
       </el-timeline>
     </main>
@@ -54,29 +61,29 @@
 </template>
 
 <script lang="ts" setup>
-import FingerprintJS from '@fingerprintjs/fingerprintjs'
-import { onMounted, ref } from 'vue'
-import formatHighlight from 'json-format-highlight'
-import { chromeSend } from './utils/native.js'
-import random from 'random'
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import { onMounted, ref } from "vue";
+import formatHighlight from "json-format-highlight";
+import { chromeSend } from "./utils/native.js";
+import random from "random";
 
 const geo = ref({
   time_zone: {},
-})
-const fingerprint = ref()
-const visitorId = ref('')
+});
+const fingerprint = ref();
+const visitorId = ref("");
 
 onMounted(async () => {
   const req = await fetch(
-    'https://api.ipgeolocation.io/ipgeo?apiKey=36d02a0030f940e6a4922d553f2e3f00'
-  )
-  const res = await req.json()
-  geo.value = res
+    "https://api.ipgeolocation.io/ipgeo?apiKey=36d02a0030f940e6a4922d553f2e3f00"
+  );
+  const res = await req.json();
+  geo.value = res;
 
   const ipGeo = {
-    'time-zone': {
+    "time-zone": {
       zone: getZone(res.time_zone.offset || 0),
-      locale: res.languages?.split(',')[0] || '',
+      locale: res.languages?.split(",")[0] || "",
       // name: res.time_zone.name,
       // value: res.time_zone.offset,
     },
@@ -85,35 +92,35 @@ onMounted(async () => {
       latitude: parseFloat(res.latitude),
       precision: random.int(10, 5000),
     },
-    'ua-language': {
+    "ua-language": {
       // language: res.languages?.split(',')[0],
       value: res.languages,
     },
-  }
+  };
 
-  await chromeSend('setIpGeo', ipGeo).catch((err: Error) => {
-    console.warn(err)
-  })
+  await chromeSend("setIpGeo", ipGeo).catch((err: Error) => {
+    console.warn(err);
+  });
 
-  const fp = await FingerprintJS.load()
-  const result = await fp.get()
-  visitorId.value = result.visitorId
-  fingerprint.value = result.components
-})
+  const fp = await FingerprintJS.load();
+  const result = await fp.get();
+  visitorId.value = result.visitorId;
+  fingerprint.value = result.components;
+});
 
 const getZone = (offset: number) => {
-  const plus = offset < 0 ? '+' : ''
-  return 'Etc/GMT' + plus + -offset
-}
+  const plus = offset < 0 ? "+" : "";
+  return "Etc/GMT" + plus + -offset;
+};
 
 const formatResult = (json: JSON) => {
-  let colorJson = formatHighlight(json)
+  let colorJson = formatHighlight(json);
   colorJson = colorJson.replace(/"data:image\/.+?"/g, ($0: string) => {
-    return `<img src=${$0} style="vertical-align: text-top;" />`
-  })
+    return `<img src=${$0} style="vertical-align: text-top;" />`;
+  });
 
-  return colorJson
-}
+  return colorJson;
+};
 </script>
 
 <style lang="scss">
@@ -142,6 +149,16 @@ const formatResult = (json: JSON) => {
       h3 {
         font-size: 36px;
         margin: 5px;
+      }
+      code {
+        padding: 0.2em 0.4em;
+        margin: 0;
+        font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
+          Liberation Mono, monospace;
+        font-size: 120%;
+        white-space: break-spaces;
+        background-color: rgba(175, 184, 193, 0.2);
+        border-radius: 6px;
       }
       .item {
         border: 1px dashed rgba(128, 128, 128, 0.4);
