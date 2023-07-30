@@ -55,7 +55,7 @@ export default {
       setting: 'Proxy',
       value: 'Proxy',
     },
-    proxy_tips: 'Support HTTP and SOCKS5 protocols, the format is: http://ip:port | socks5://ip:port',
+    proxy_tips: 'support HTTP and SOCKS5 protocols<br>example:127.0.0.1:80<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;127.0.0.1:1080@socks#ssh',
     ua: 'User Agent',
     sec_ua: 'Sec-CH-UA',
     timezone: 'TimeZone',

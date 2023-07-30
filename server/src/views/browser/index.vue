@@ -98,6 +98,12 @@
       </el-table-column>
     </el-table>
 
+    <div class="qq-group">
+      <img src="@/assets/VirtualBrowser-qq-group.png">
+      <p>QQ Group:
+        <code>564142956</code></p>
+    </div>
+
     <el-dialog
       :title="$t(dialogStatus == 'create' ? 'browser.add' : 'browser.edit')"
       :visible.sync="dialogFormVisible"
@@ -142,7 +148,7 @@
                   prop="proxy.value"
                 >
                   <el-input v-model="form.proxy.value" style="max-width: 250px" />
-                  <div class="tips">{{ $t('browser.proxy_tips') }}</div>
+                  <div class="tips" v-html="$t('browser.proxy_tips')" />
                 </el-form-item>
               </el-form-item>
             </div>
@@ -967,6 +973,8 @@ export default {
     .tips {
       font-size: 12px;
       color: #999;
+      line-height: 1.5;
+      margin-top: 5px;
     }
     .el-dialog__body {
       padding-top: 5px;
@@ -1008,6 +1016,24 @@ export default {
       // padding-left: 8px;
       // padding-right: 8px;
     }
+  }
+}
+
+.qq-group {
+  margin-left: -15px;
+  p {
+    margin-top: -5px;
+    margin-left: 18px;
+    font-size: 13px;
+  }
+  code {
+    padding: .2em .4em;
+    margin: 0;
+    font-family: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
+    font-size: 120%;
+    white-space: break-spaces;
+    background-color: rgba(175,184,193,.2);
+    border-radius: 6px
   }
 }
 </style>
