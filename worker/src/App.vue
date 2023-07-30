@@ -44,6 +44,10 @@
           <code>564142956</code>
         </p>
       </div>
+      <div class="network-error" v-if="networkErr">
+        <h1>未连接到互联网</h1>
+        <p>请检查您的网络或代理设置</p>
+      </div>
       <el-timeline v-if="false" class="timeline">
         <el-timeline-item
           v-for="(value, key, index) in fingerprint"
@@ -72,17 +76,25 @@ const geo = ref({
 });
 const fingerprint = ref();
 const visitorId = ref("");
+const networkErr = ref(false);
 
 onMounted(async () => {
   const req = await fetch(
     "https://api.ipgeolocation.io/ipgeo?apiKey=36d02a0030f940e6a4922d553f2e3f00"
-  );
+  ).catch((err) => {
+    console.log(err);
+    networkErr.value = true;
+  });
+  if (!req) {
+    return;
+  }
+
   const res = await req.json();
   geo.value = res;
 
   const ipGeo = {
     "time-zone": {
-      zone: getZone(res.time_zone.offset || 0),
+      zone: getZone(res.time_zone.offset_with_dst || 0),
       locale: res.languages?.split(",")[0] || "",
       // name: res.time_zone.name,
       // value: res.time_zone.offset,
@@ -186,6 +198,19 @@ const formatResult = (json: JSON) => {
       --el-card-padding: 10px;
       pre {
         margin: 0;
+      }
+    }
+
+    .network-error {
+      max-width: 200px;
+      margin: auto;
+
+      h1 {
+        color: rgb(32, 33, 36);
+        font-weight: 500;
+      }
+      p {
+        color: rgb(95, 99, 104);
       }
     }
   }
