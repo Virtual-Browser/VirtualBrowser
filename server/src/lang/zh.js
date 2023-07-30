@@ -54,6 +54,7 @@ export default {
       setting: '代理设置',
       value: '代理',
     },
+    proxy_tips: '支持HTTP和SOCKS5协议，格式为：http://ip:port | socks5://ip:port',
     ua: 'User Agent',
     sec_ua: 'Sec-CH-UA',
     timezone: '时区',

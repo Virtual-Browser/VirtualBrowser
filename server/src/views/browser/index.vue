@@ -141,7 +141,8 @@
                   style="margin-top: 5px"
                   prop="proxy.value"
                 >
-                  <el-input v-model="form.proxy.value" style="width: 250px" />
+                  <el-input v-model="form.proxy.value" style="max-width: 250px" />
+                  <div class="tips">{{ $t('browser.proxy_tips') }}</div>
                 </el-form-item>
               </el-form-item>
             </div>
@@ -745,7 +746,7 @@ export default {
         id: undefined,
         name: '',
         os: 'Win 11',
-        chrome_version: 114,
+        chrome_version: 115,
         proxy: {
           mode: 0,
           value: '',
@@ -753,7 +754,7 @@ export default {
         ua: {
           mode: 1,
           value:
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.134 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114 Safari/537.36',
         },
         'sec-ch-ua': {
           mode: 1,
@@ -963,6 +964,10 @@ export default {
     .el-dialog {
       min-width: 400px;
     }
+    .tips {
+      font-size: 12px;
+      color: #999;
+    }
     .el-dialog__body {
       padding-top: 5px;
       padding-bottom: 0;
@@ -970,6 +975,9 @@ export default {
     .el-timeline {
       padding: 0;
 
+      .el-timeline-item {
+        padding-bottom: 5px;
+      }
       .el-timeline-item__tail {
         border-color: $--color-primary;
       }
@@ -985,7 +993,6 @@ export default {
         }
       }
     }
-
     .el-form-item {
       margin-bottom: 15px;
     }
