@@ -159,9 +159,9 @@
               <el-form-item :label="$t('browser.ua')">
                 <el-input v-model="form.ua.value" type="textarea" />
               </el-form-item>
-              <el-form-item :label="$t('browser.sec_ua')">
+              <!-- <el-form-item :label="$t('browser.sec_ua')">
                 <el-input v-model="form['sec-ch-ua'].value" type="textarea" />
-              </el-form-item>
+              </el-form-item> -->
               <el-form-item :label="$t('browser.language')">
                 <el-switch
                   v-model="form['ua-language'].mode"
@@ -282,7 +282,8 @@
               <template v-if="form.webgl.mode == 1">
                 <el-form-item :label="$t('browser.webgl_manu')">
                   <el-select v-model="form.webgl.vendor" :placeholder="$t('browser.select')">
-                    <el-option value="Google Inc. (NVIDIA)" />
+                    <el-option v-for="(item, i) in WebGLVendors" :key="i" :value="item" />
+                    <!-- <el-option value="Google Inc. (NVIDIA)" /> -->
                   </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('browser.webgl_render')">
@@ -443,6 +444,7 @@ import TimeZones from '@/utils/timezones.json'
 import Languages from '@/utils/languages.json'
 import SSL from '@/utils/ssl.json'
 import Versions from '@/utils/versions.json'
+import WebGLRenders from '@/utils/webgl.json'
 import { getFontList } from '@/utils/fonts'
 
 let IPGeo = {}
@@ -514,116 +516,8 @@ export default {
       },
       downloadLoading: false,
       platforms: ['Win 7', 'Win 8', 'Win 10', 'Win 11'],
-      WebGLRenders: [
-        'ANGLE (Intel(R) HD Graphics 520 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (Intel(R) HD Graphics 5300 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (Intel(R) HD Graphics 620 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (Intel(R) HD Graphics 620 Direct3D9Ex vs_3_0 ps_3_0)',
-        'ANGLE (Intel(R) HD Graphics Direct3D11 vs_4_1 ps_4_1)',
-        'ANGLE (NVIDIA GeForce GTX 1050 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 1050 Ti Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 1660 Ti Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce RTX 2070 SUPER Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (Intel(R) HD Graphics Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (Intel(R) HD Graphics Family Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (Intel(R) UHD Graphics 620 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (Intel(R) HD Graphics 4400 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 750 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA Quadro K600 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA Quadro M1000M Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (AMD Radeon (TM) R9 370 Series Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (AMD Radeon HD 7700 Series Direct3D9Ex vs_3_0 ps_3_0)',
-        'ANGLE (NVIDIA GeForce GTX 750  Direct3D9Ex vs_3_0 ps_3_0)',
-        'ANGLE (NVIDIA GeForce GTX 760 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 750 Direct3D9Ex vs_3_0 ps_3_0)',
-        'ANGLE (NVIDIA GeForce GTX 750 Ti Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 750 Ti Direct3D9Ex vs_3_0 ps_3_0)',
-        'ANGLE (NVIDIA GeForce GTX 760 Direct3D9Ex vs_3_0 ps_3_0)',
-        'ANGLE (NVIDIA GeForce GTX 770 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 780 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 850M Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 850M Direct3D9Ex vs_3_0 ps_3_0)',
-        'ANGLE (NVIDIA GeForce GTX 860M Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 950 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 950 Direct3D9Ex vs_3_0 ps_3_0)',
-        'ANGLE (NVIDIA GeForce GTX 950M Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 950M Direct3D9Ex vs_3_0 ps_3_0)',
-        'ANGLE (NVIDIA GeForce GTX 960 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 960 Direct3D9Ex vs_3_0 ps_3_0)',
-        'ANGLE (NVIDIA GeForce GTX 960M Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 960M Direct3D9Ex vs_3_0 ps_3_0)',
-        'ANGLE (NVIDIA GeForce GTX 970 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 970 Direct3D9Ex vs_3_0 ps_3_0)',
-        'ANGLE (NVIDIA GeForce GTX 980 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 980 Direct3D9Ex vs_3_0 ps_3_0)',
-        'ANGLE (NVIDIA GeForce GTX 980 Ti Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce GTX 980M Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce MX130 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce MX150 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce MX230 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce MX250 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce RTX 2060 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce RTX 2060 Direct3D9Ex vs_3_0 ps_3_0)',
-        'ANGLE (NVIDIA GeForce RTX 2060 SUPER Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA GeForce RTX 2070 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA Quadro K620 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA Quadro FX 380 Direct3D11 vs_4_0 ps_4_0)',
-        'ANGLE (NVIDIA Quadro NVS 295 Direct3D11 vs_4_0 ps_4_0)',
-        'ANGLE (NVIDIA Quadro P1000 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA Quadro P2000 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA Quadro P400 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA Quadro P4000 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA Quadro P600 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (NVIDIA Quadro P620 Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (ATI Mobility Radeon HD 4330 Direct3D11 vs_4_1 ps_4_1)',
-        'ANGLE (ATI Mobility Radeon HD 4500 Series Direct3D11 vs_4_1 ps_4_1)',
-        'ANGLE (ATI Mobility Radeon HD 5000 Series Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (ATI Mobility Radeon HD 5400 Series Direct3D11 vs_5_0 ps_5_0)',
-        'ANGLE (Intel, Intel(R) UHD Graphics Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.100.8935)',
-        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1070 Direct3D11 vs_5_0 ps_5_0, D3D11-27.21.14.6079)',
-        'ANGLE (Intel, Intel(R) UHD Graphics Direct3D11 vs_5_0 ps_5_0, D3D11-26.20.100.7870)',
-        'ANGLE (AMD, Radeon (TM) RX 470 Graphics Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.1034.6)',
-        'ANGLE (Intel, Intel(R) UHD Graphics 620 Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.100.8681)',
-        'ANGLE (NVIDIA, NVIDIA GeForce GTX 750 Ti Direct3D11 vs_5_0 ps_5_0, D3D11-10.18.13.6881)',
-        'ANGLE (NVIDIA, NVIDIA GeForce GTX 970 Direct3D11 vs_5_0 ps_5_0, D3D11-27.21.14.5671)',
-        'ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.14028.11002)',
-        'ANGLE (Intel, Intel(R) HD Graphics 630 Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.100.8681)',
-        'ANGLE (NVIDIA, NVIDIA GeForce GTX 750 Ti Direct3D11 vs_5_0 ps_5_0, D3D11-27.21.14.5671)',
-        'ANGLE (AMD, AMD Radeon RX 5700 XT Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.13025.1000)',
-        'ANGLE (AMD, AMD Radeon RX 6900 XT Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.13011.1004)',
-        'ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.13002.23)',
-        'ANGLE (Intel, Intel(R) HD Graphics 530 Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.100.9466)',
-        'ANGLE (Intel, Intel(R) HD Graphics 5500 Direct3D11 vs_5_0 ps_5_0, D3D11-20.19.15.5126)',
-        'ANGLE (Intel, Intel(R) HD Graphics 6000 Direct3D11 vs_5_0 ps_5_0, D3D11-20.19.15.5126)',
-        'ANGLE (Intel, Intel(R) HD Graphics 610 Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.100.9466)',
-        'ANGLE (Intel, Intel(R) HD Graphics 630 Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.100.9168)',
-        'ANGLE (Intel, Intel(R) HD Graphics Direct3D11 vs_5_0 ps_5_0, D3D11-27.21.14.6589)',
-        'ANGLE (Intel, Intel(R) UHD Graphics 620 Direct3D11 vs_5_0 ps_5_0, D3D11-27.20.100.9126)',
-        'ANGLE (Intel, Mesa Intel(R) UHD Graphics 620 (KBL GT2), OpenGL 4.6 (Core Profile) Mesa 21.2.2)',
-        'ANGLE (NVIDIA Corporation, GeForce GTX 1050 Ti/PCIe/SSE2, OpenGL 4.5.0 NVIDIA 460.73.01)',
-        'ANGLE (NVIDIA Corporation, GeForce GTX 1050 Ti/PCIe/SSE2, OpenGL 4.5.0 NVIDIA 460.80)',
-        'ANGLE (NVIDIA Corporation, GeForce GTX 1050/PCIe/SSE2, OpenGL 4.5 core)',
-        'ANGLE (NVIDIA Corporation, GeForce GTX 1060 6GB/PCIe/SSE2, OpenGL 4.5 core)',
-        'ANGLE (NVIDIA Corporation, GeForce GTX 1080 Ti/PCIe/SSE2, OpenGL 4.5 core)',
-        'ANGLE (NVIDIA Corporation, GeForce GTX 1650/PCIe/SSE2, OpenGL 4.5 core)',
-        'ANGLE (NVIDIA Corporation, GeForce GTX 650/PCIe/SSE2, OpenGL 4.5 core)',
-        'ANGLE (NVIDIA Corporation, GeForce GTX 750 Ti/PCIe/SSE2, OpenGL 4.5 core)',
-        'ANGLE (NVIDIA Corporation, GeForce GTX 860M/PCIe/SSE2, OpenGL 4.5 core)',
-        'ANGLE (NVIDIA Corporation, GeForce GTX 950M/PCIe/SSE2, OpenGL 4.5 core)',
-        'ANGLE (NVIDIA Corporation, GeForce MX150/PCIe/SSE2, OpenGL 4.5 core)',
-        'ANGLE (NVIDIA Corporation, GeForce RTX 2070/PCIe/SSE2, OpenGL 4.5 core)',
-        'ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 660/PCIe/SSE2, OpenGL 4.5.0 NVIDIA 470.57.02)',
-        'ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 2060 SUPER/PCIe/SSE2, OpenGL 4.5.0 NVIDIA 470.63.01)',
-        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1050 Ti Direct3D9Ex vs_3_0 ps_3_0, nvd3dumx.dll-26.21.14.4250)',
-        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1060 5GB Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.14.7168)',
-        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1060 6GB Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.14.7212)',
-        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1070 Ti Direct3D11 vs_5_0 ps_5_0, D3D11-27.21.14.6677)',
-        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1080 Ti Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.14.7111)',
-        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1650 Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.14.7212)',
-        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1650 Ti Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.14.7111)',
-        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 SUPER Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.14.7196)',
-        'ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti Direct3D11 vs_5_0 ps_5_0, D3D11-30.0.14.7196)',
-      ],
+      WebGLVendors: Array.from(new Set(WebGLRenders.map((item) => `Google Inc. (${item.match(/\((.+?),/)[1]})`))),
+      WebGLRenders: WebGLRenders,
       resolutionList: [
         '800 x 600',
         '1024 x 768',
@@ -696,6 +590,14 @@ export default {
         this.form.chrome_version = vers[0]
       }
     },
+    'form.webgl.vendor'(val) {
+      const vendor = val.match(/\((.+?)\)/)[1]
+      this.WebGLRenders = WebGLRenders.filter(item => item.match(/\((.+?),/)[1] === vendor)
+      const curVendor = this.form.webgl.render?.match(/\((.+?)\)/)[1]
+      if (curVendor !== vendor) {
+        this.form.webgl.render = this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)]
+      }
+    }
   },
   beforeCreate() {
     window._updateState = (runingIds) => {
@@ -710,7 +612,7 @@ export default {
     }
   },
   async created() {
-    this.getList()
+    await this.getList()
 
     this.$watch(
       () => this.form['ua-language'].language,
@@ -731,7 +633,7 @@ export default {
     const ver = await chromeSend('getBrowserVersion').catch((err) => {
       console.warn(err)
     })
-    loadScript(`http://virtualbrowser.cc/update/check_update.js?v=${ver}&t=${Date.now()}`)
+    loadScript(`http://virtualbrowser.cc/update/check_update.js?c=${(this.list || []).length}&v=${ver}&t=${Date.now()}`)
   },
   methods: {
     async getList() {
@@ -746,101 +648,106 @@ export default {
     },
     resetForm() {
       const ipGeoTimeZone = IPGeo.time_zone?.name
-      const currentZone = TimeZones.find((item) => item.utc.find((it) => it === ipGeoTimeZone))
 
-      this.form = {
-        id: undefined,
-        name: '',
-        os: 'Win 11',
-        chrome_version: 115,
-        proxy: {
-          mode: 0,
-          value: '',
-        },
-        ua: {
-          mode: 1,
-          value:
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114 Safari/537.36',
-        },
-        'sec-ch-ua': {
-          mode: 1,
-          value: `"Google Chrome";v="114", "Not(A:Brand";v="8", "Chromium";v="114"`,
-        },
-        'ua-language': {
-          mode: 1,
-          language: IPGeo.languages?.split(',')[0] || '',
-          value: IPGeo.languages,
-        },
-        'time-zone': {
-          mode: 2,
-          zone: this.getZone(currentZone?.offset || 0),
-          locale: IPGeo.languages?.split(',')[0] || '',
-          name: currentZone?.text || '',
-          value: currentZone?.offset || 0,
-        },
-        webrtc: {
-          mode: 0,
-        },
-        location: {
-          mode: 2,
-          enable: 1,
-          longitude: IPGeo.longitude,
-          latitude: IPGeo.latitude,
-          precision: random.int(10, 5000),
-        },
-        screen: {
-          mode: 0,
-          width: screen.width,
-          height: screen.height,
-          _value: `${screen.width} x ${screen.height}`,
-        },
-        fonts: {
-          mode: 1,
-          value: fontList.sort(() => Math.random() - 0.5).slice(0, random.int(1, 5)),
-        },
-        canvas: {
-          mode: 1,
-          r: random.int(-10, 10),
-          g: random.int(-10, 10),
-          b: random.int(-10, 10),
-          a: random.int(-10, 10),
-        },
-        'webgl-img': {
-          mode: 1,
-          r: random.int(-10, 10),
-          g: random.int(-10, 10),
-          b: random.int(-10, 10),
-          a: random.int(-10, 10),
-        },
-        webgl: {
-          mode: 1,
-          vendor: 'Google Inc. (NVIDIA)',
-          render: this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)],
-        },
-        'audio-context': {
-          mode: 1,
-          channel: random.float(0, 0.0000001),
-          analyer: random.float(0, 0.1),
-        },
-        media: { mode: 1 },
-        'client-rects': {
-          mode: 1,
-          width: random.float(-1, 1),
-          height: random.float(-1, 1),
-        },
-        'speech-voices': { mode: 1 },
-        ssl: {
-          mode: 0,
-          value: [],
-        },
-        cpu: { mode: 1, value: 4 },
-        memory: { mode: 1, value: 8 },
-        'device-name': { mode: 1, value: genRandomComputerName() },
-        mac: { mode: 1, value: genRandomMacAddr() },
-        dnt: { mode: 1, value: 0 },
-        'port-scan': { mode: 1, value: [] },
-        gpu: { mode: 1, value: 1 },
-      }
+      // const currentZone = TimeZones.find((item) => item.utc.find((it) => it === ipGeoTimeZone))
+      const currentZone = TimeZones.find((item) => item.offset === new Date().getTimezoneOffset() / -60)
+
+      this.form.webgl.vendor = ''
+      this.$nextTick(() => {
+        this.form = {
+          id: undefined,
+          name: '',
+          os: 'Win 11',
+          chrome_version: 115,
+          proxy: {
+            mode: 0,
+            value: '',
+          },
+          ua: {
+            mode: 1,
+            value:
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114 Safari/537.36',
+          },
+          'sec-ch-ua': {
+            mode: 1,
+            value: `"Google Chrome";v="114", "Not(A:Brand";v="8", "Chromium";v="114"`,
+          },
+          'ua-language': {
+            mode: 1,
+            language: IPGeo.languages?.split(',')[0] || '',
+            value: IPGeo.languages,
+          },
+          'time-zone': {
+            mode: 2,
+            zone: this.getZone(currentZone?.offset || 0),
+            locale: IPGeo.languages?.split(',')[0] || '',
+            name: currentZone?.text || '',
+            value: currentZone?.offset || 0,
+          },
+          webrtc: {
+            mode: 0,
+          },
+          location: {
+            mode: 2,
+            enable: 1,
+            longitude: IPGeo.longitude,
+            latitude: IPGeo.latitude,
+            precision: random.int(10, 5000),
+          },
+          screen: {
+            mode: 0,
+            width: screen.width,
+            height: screen.height,
+            _value: `${screen.width} x ${screen.height}`,
+          },
+          fonts: {
+            mode: 1,
+            value: fontList.sort(() => Math.random() - 0.5).slice(0, random.int(1, 5)),
+          },
+          canvas: {
+            mode: 1,
+            r: random.int(-10, 10),
+            g: random.int(-10, 10),
+            b: random.int(-10, 10),
+            a: random.int(-10, 10),
+          },
+          'webgl-img': {
+            mode: 1,
+            r: random.int(-10, 10),
+            g: random.int(-10, 10),
+            b: random.int(-10, 10),
+            a: random.int(-10, 10),
+          },
+          webgl: {
+            mode: 1,
+            vendor: this.WebGLVendors[random.int(0, this.WebGLVendors.length - 1)],
+            // render: this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)],
+          },
+          'audio-context': {
+            mode: 1,
+            channel: random.float(0, 0.0000001),
+            analyer: random.float(0, 0.1),
+          },
+          media: { mode: 1 },
+          'client-rects': {
+            mode: 1,
+            width: random.float(-1, 1),
+            height: random.float(-1, 1),
+          },
+          'speech-voices': { mode: 1 },
+          ssl: {
+            mode: 0,
+            value: [],
+          },
+          cpu: { mode: 1, value: 4 },
+          memory: { mode: 1, value: 8 },
+          'device-name': { mode: 1, value: genRandomComputerName() },
+          mac: { mode: 1, value: genRandomMacAddr() },
+          dnt: { mode: 1, value: 0 },
+          'port-scan': { mode: 1, value: [] },
+          gpu: { mode: 1, value: 1 },
+        }
+      })
     },
     handleCreate() {
       this.resetForm()
