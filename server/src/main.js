@@ -1,5 +1,5 @@
 import Vue from 'vue'
-
+import Clipboard from 'v-clipboard'
 import Cookies from 'js-cookie'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
@@ -33,6 +33,7 @@ if (process.env.NODE_ENV === 'production') {
   mockXHR()
 }
 
+Vue.use(Clipboard)
 Vue.use(Element, {
   size: localStorage.getItem('size') || 'mini', // set element-ui default size
   i18n: (key, value) => i18n.t(key, value),

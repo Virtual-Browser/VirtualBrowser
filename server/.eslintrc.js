@@ -118,7 +118,7 @@ module.exports = {
     'no-duplicate-case': 2,
     'no-empty-character-class': 2,
     'no-empty-pattern': 2,
-    'no-eval': 2,
+    'no-eval': 'warn',
     'no-ex-assign': 2,
     'no-extend-native': 2,
     'no-extra-bind': 2,

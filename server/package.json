@@ -26,6 +26,7 @@
     "random": "^4.1.0",
     "screenfull": "^4.2.1",
     "uuid": "^9.0.0",
+    "v-clipboard": "^3.0.0-next.1",
     "vue": "2.6.10",
     "vue-i18n": "7.3.2",
     "vue-router": "3.0.2",

@@ -151,6 +151,14 @@
                   <div class="tips" v-html="$t('browser.proxy_tips')" />
                 </el-form-item>
               </el-form-item>
+              <el-form-item :label="$t('browser.cookie.value')" prop="cookie.value">
+                <div style="display: flex; align-items: flex-start;">
+                  <el-input v-model="form.cookie.value" type="textarea" rows="6" :placeholder="$t('browser.cookie.placeholder')" />
+                  <el-button type="text" style="margin: -5px 0 0 5px;" @click="dialogCookieFormatVisible=true">
+                    {{ $t('browser.cookie.format') }}
+                  </el-button>
+                </div>
+              </el-form-item>
             </div>
           </el-timeline-item>
           <el-timeline-item>
@@ -423,6 +431,23 @@
         </el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      :visible.sync="dialogCookieFormatVisible"
+      :title="$t('browser.cookie.format_title')"
+      class="dialog-cookie"
+    >
+      <el-input
+        v-model="cookieFormat"
+        type="textarea"
+        :rows="19"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-tooltip v-model="copied" :manual="true" :hide-after="3000" :content="$t('browser.cookie.copied')" placement="top">
+          <el-button v-clipboard="()=>cookieFormat" v-clipboard:success="onCopy" type="primary">{{ $t('browser.cookie.copy') }}</el-button>
+        </el-tooltip>
+        <el-button @click="dialogCookieFormatVisible = false">{{ $t('browser.cookie.close') }}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -452,6 +477,7 @@ let fontList = []
 let osVer = '10.0'
 let chromeVer = ''
 const sslList = ['0xc02c', '0xa02c', '0xb02c', '0xd02c', '0xe02c', '0xf02c']
+let tooltipTimer
 export default {
   name: 'ComplexTable',
   components: { Pagination },
@@ -467,6 +493,38 @@ export default {
     },
   },
   data() {
+    const validateCookie = (rule, value, callback) => {
+      if (value === '') {
+        this.form.cookie.mode = 0
+        callback()
+        return
+      }
+
+      let json
+      try {
+        json = eval(`(${value})`)
+      } catch {
+        callback(new Error(this.$t('browser.cookie.format_error')))
+        return
+      }
+
+      if (Object.prototype.toString.call(json) !== '[object Array]') {
+        callback(new Error(this.$t('browser.cookie.format_error')))
+        return
+      }
+
+      const checkNameValue = json.every(item => {
+        return item.name && item.value
+      })
+
+      if (!checkNameValue) {
+        callback(new Error(this.$t('browser.cookie.format_error')))
+        return
+      }
+
+      this.form.cookie.mode = 1
+      callback()
+    }
     return {
       tableKey: 0,
       list: null,
@@ -478,12 +536,14 @@ export default {
       },
       dialogFormVisible: false,
       dialogStatus: '',
+      dialogCookieFormatVisible: false,
       textMap: {
         update: this.$t('browser.edit'),
         create: this.$t('browser.add'),
       },
       form: {
         proxy: {},
+        cookie: {},
         ua: {},
         'sec-ch-ua': {},
         'ua-language': {},
@@ -513,6 +573,9 @@ export default {
         'proxy.value': [
           { required: true, message: this.$t('browser.required'), trigger: 'change' },
         ],
+        'cookie.value': [
+          { validator: validateCookie, trigger: 'blur' }
+        ]
       },
       downloadLoading: false,
       platforms: ['Win 7', 'Win 8', 'Win 10', 'Win 11'],
@@ -543,6 +606,26 @@ export default {
       Languages,
       SSL,
       Versions: Array.from(new Set(Versions.map((item) => Number(item.split('.')[0])))),
+      cookieFormat: `[{
+	"name": "cookie1",
+	"value": "1",
+	"domain": "/",
+	"path": "/",
+	"session": false,
+	"httpOnly": false,
+	"secure": false,
+	"sameSite": "None"
+}, {
+	"name": "cookie2",
+	"value": "2",
+	"domain": "/",
+	"path": "/",
+	"session": false,
+	"httpOnly": false,
+	"secure": false,
+	"sameSite": "None"
+}]`,
+      copied: false,
     }
   },
   computed: {
@@ -591,6 +674,10 @@ export default {
       }
     },
     'form.webgl.vendor'(val) {
+      if (!val) {
+        return
+      }
+
       const vendor = val.match(/\((.+?)\)/)[1]
       this.WebGLRenders = WebGLRenders.filter(item => item.match(/\((.+?),/)[1] === vendor)
       const curVendor = this.form.webgl.render?.match(/\((.+?)\)/)[1]
@@ -660,6 +747,10 @@ export default {
           os: 'Win 11',
           chrome_version: 115,
           proxy: {
+            mode: 0,
+            value: '',
+          },
+          cookie: {
             mode: 0,
             value: '',
           },
@@ -786,11 +877,12 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.form = Object.assign({}, row) // copy obj
-      this.form.timestamp = new Date(this.form.timestamp)
+      this.resetForm()
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
+        this.form = Object.assign(this.form, row) // copy obj
+        this.form.timestamp = new Date(this.form.timestamp)
         this.$refs['dataForm'].clearValidate()
       })
     },
@@ -851,6 +943,11 @@ export default {
       const plus = offset < 0 ? '+' : ''
       return 'Etc/GMT' + plus + -offset
     },
+    onCopy() {
+      this.copied = true
+      clearTimeout(tooltipTimer)
+      tooltipTimer = setTimeout(() => { this.copied = false }, 3000)
+    }
   },
 }
 </script>
@@ -916,12 +1013,20 @@ export default {
       word-break: keep-all;
     }
     .el-form-item__error {
-      padding-top: 0;
+      // padding-top: 0;
     }
     .el-input__inner,
     .el-textarea__inner {
       // padding-left: 8px;
       // padding-right: 8px;
+    }
+  }
+}
+
+.dialog-cookie {
+  ::v-deep {
+    .el-dialog__body {
+      padding: 10px 20px;
     }
   }
 }
