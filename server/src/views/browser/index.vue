@@ -176,19 +176,66 @@
                     $t("browser.custom")
                   }}</el-radio-button>
                 </el-radio-group>
-                <el-form-item
+                <div
                   v-if="form.proxy.mode == 2"
-                  :label="$t('browser.proxy.value')"
-                  label-width="60px"
-                  style="margin-top: 5px"
-                  prop="proxy.value"
+                  style="margin-top: 10px;"
                 >
-                  <el-input
-                    v-model="form.proxy.value"
-                    style="max-width: 250px"
-                  />
-                  <div class="tips" v-html="$t('browser.proxy_tips')" />
-                </el-form-item>
+                  <el-form-item
+                    :label="$t('browser.proxy.protocol')"
+                    label-width="70px"
+                  >
+                    <el-select v-model="form.proxy.protocol" style="width:100px">
+                      <el-option value="HTTP" />
+                      <el-option value="HTTPS" />
+                      <el-option value="SOCKS5" />
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item
+                    :label="$t('browser.proxy.host')"
+                    label-width="70px"
+                    prop="proxy.host"
+                  >
+                    <el-input
+                      v-model="form.proxy.host"
+                      style="max-width: 250px"
+                    />
+                    :
+                    <el-input
+                      v-model="form.proxy.port"
+                      style="width:70px"
+                      :placeholder="$t('browser.proxy.port')"
+                    />
+                  </el-form-item>
+                  <el-form-item
+                    :label="$t('browser.proxy.user')"
+                    label-width="70px"
+                  >
+                    <el-input
+                      v-model="form.proxy.user"
+                      style="max-width: 100px"
+                    />
+                  </el-form-item>
+                  <el-form-item
+                    :label="$t('browser.proxy.pass')"
+                    label-width="70px"
+                  >
+                    <el-input
+                      v-model="form.proxy.pass"
+                      style="max-width: 100px"
+                    />
+                  </el-form-item>
+                  <!-- <el-form-item
+                    :label="$t('browser.proxy.value')"
+                    label-width="60px"
+                    prop="proxy.value"
+                  >
+                    <el-input
+                      v-model="form.proxy.value"
+                      style="max-width: 250px"
+                    />
+                    <div class="tips" v-html="$t('browser.proxy_tips')" />
+                  </el-form-item> -->
+                </div>
               </el-form-item>
               <el-form-item
                 :label="$t('browser.cookie.value')"
@@ -783,6 +830,13 @@ export default {
             trigger: 'change',
           },
         ],
+        'proxy.host': [
+          {
+            required: true,
+            message: this.$t('browser.required'),
+            trigger: 'change',
+          },
+        ],
         'cookie.value': [{ validator: validateCookie, trigger: 'blur' }],
       },
       downloadLoading: false,
@@ -953,6 +1007,7 @@ export default {
     async getList() {
       this.listLoading = true
       this.list = await getBrowserList()
+      this.processUpdateData()
       await updateRuningState()
       this.listLoading = false
     },
@@ -978,6 +1033,11 @@ export default {
           proxy: {
             mode: 0,
             value: '',
+            protocol: 'HTTP',
+            host: '',
+            port: '',
+            user: '',
+            pass: ''
           },
           cookie: {
             mode: 0,
@@ -1100,7 +1160,6 @@ export default {
               (item) => this.$t('browser.' + item[0].field) + item[0].message
             )
             .slice(0, 1)
-          console.log(result, arr)
 
           this.$message({
             type: 'error',
@@ -1109,6 +1168,48 @@ export default {
           })
         }
       })
+    },
+    async processUpdateData() {
+      for (let i = 0; i < this.list.length; i++) {
+        const item = this.list[i]
+        if (this.processData(item)) {
+          await updateBrowser(item)
+        }
+      }
+    },
+    processData(data) {
+      let changed = false
+
+      const { proxy } = data
+      if (proxy.mode === 2) {
+        let oldProxy = proxy.value
+        if (oldProxy && !proxy.host) {
+          oldProxy = oldProxy.replace(/#.*/, '')
+          let protocol
+          if (oldProxy.includes('@socks')) {
+            protocol = 'SOCKS5'
+            oldProxy = 'http://' + oldProxy.replace('@socks', '')
+          } else if (!oldProxy.includes('://')) {
+            oldProxy = 'http://' + oldProxy
+          }
+          try {
+            const proxyURL = new URL(oldProxy)
+            proxy.protocol = protocol || proxyURL.protocol.replace(':', '').toUpperCase()
+            proxy.host = proxyURL.hostname
+            proxy.port = proxyURL.port
+            proxy.user = proxyURL.username
+            proxy.pass = proxyURL.password
+
+            changed = true
+          } catch (ex) {
+            console.warn('Parse Proxy Error: ', ex)
+          }
+
+          // proxy.value = ''
+        }
+      }
+
+      return changed
     },
     handleUpdate(row) {
       this.resetForm()
@@ -1140,7 +1241,6 @@ export default {
               (item) => this.$t('browser.' + item[0].field) + item[0].message
             )
             .slice(0, 1)
-          console.log(result, arr)
 
           this.$message({
             type: 'error',
@@ -1167,7 +1267,6 @@ export default {
         .catch(() => {})
     },
     handleLaunch(row) {
-      console.log('handleLaunch', row)
       chromeSend('launchBrowser', row.id.toString())
       row.runLoading = true
     },
@@ -1189,11 +1288,9 @@ export default {
       }, 3000)
     },
     onImport({ raw: file }) {
-      console.log(file)
       const reader = new FileReader()
       reader.onload = async(e) => {
         const jsonStr = e.target.result
-        console.log('onImport', jsonStr)
 
         let json
         try {

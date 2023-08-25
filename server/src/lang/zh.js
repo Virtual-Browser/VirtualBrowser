@@ -57,6 +57,11 @@ export default {
     proxy: {
       setting: '代理设置',
       value: '代理',
+      protocol: '代理协议',
+      host: '代理主机',
+      port: '端口',
+      user: '代理账号',
+      pass: '代理密码',
     },
     proxy_tips: '支持HTTP和SOCKS5协议<br>例如：127.0.0.1:80<br>ㅤㅤㅤ127.0.0.1:1080@socks#ssh 代理',
     cookie: {

@@ -58,6 +58,11 @@ export default {
     proxy: {
       setting: 'Proxy',
       value: 'Proxy',
+      protocol: 'Protocol',
+      host: 'Host',
+      port: 'Port',
+      user: 'Username',
+      pass: 'Password',
     },
     proxy_tips: 'support HTTP and SOCKS5 protocols<br>example:127.0.0.1:80<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;127.0.0.1:1080@socks#ssh',
     cookie: {
