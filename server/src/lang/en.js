@@ -39,6 +39,10 @@ export default {
     add: 'Create Browser',
     name: 'Name',
     search: 'Search',
+    import: {
+      import: 'Import',
+      export: 'Export',
+    },
     id: 'ID',
     date: 'Date',
     launch: 'Launch',

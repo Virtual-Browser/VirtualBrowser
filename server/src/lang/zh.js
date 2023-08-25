@@ -38,6 +38,10 @@ export default {
     add: '创建浏览器',
     name: '名称',
     search: '搜索',
+    import: {
+      import: '导入',
+      export: '导出',
+    },
     id: '序号',
     date: '创建时间',
     launch: '启动',
