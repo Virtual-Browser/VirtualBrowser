@@ -65,8 +65,8 @@ export default {
     },
     proxy_tips: '支持HTTP和SOCKS5协议<br>例如：127.0.0.1:80<br>ㅤㅤㅤ127.0.0.1:1080@socks#ssh 代理',
     cookie: {
-      value: 'Cookie导入',
-      placeholder: '选填，支持数组包含JSON格式的Cookie，请点击右侧查看详细格式',
+      jsonStr: 'Cookie导入',
+      placeholder: '支持数组包含JSON格式的Cookie，请点击右侧查看详细格式',
       format: '查看格式',
       format_error: '格式错误',
       format_title: 'Cookie导入格式',

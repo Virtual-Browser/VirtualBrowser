@@ -69,6 +69,7 @@ import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { onMounted, ref } from "vue";
 import formatHighlight from "json-format-highlight";
 import { chromeSend } from "./utils/native.js";
+import { loadScript } from "./utils/index.js";
 import random from "random";
 
 const geo = ref({
@@ -79,7 +80,7 @@ const visitorId = ref("");
 const networkErr = ref(false);
 
 onMounted(async () => {
-  const req = await fetch(
+  let req = await fetch(
     "https://api.ipgeolocation.io/ipgeo?apiKey=36d02a0030f940e6a4922d553f2e3f00"
   ).catch((err) => {
     console.log(err);
@@ -89,6 +90,11 @@ onMounted(async () => {
     return;
   }
 
+  if (req.status === 429) {
+    req = await fetch(
+      "https://api.ipgeolocation.io/ipgeo?apiKey=c95cd9537ac64aecb9ebb33e033e65dd"
+    );
+  }
   const res = await req.json();
   geo.value = res;
 
@@ -118,6 +124,13 @@ onMounted(async () => {
   const result = await fp.get();
   visitorId.value = result.visitorId;
   fingerprint.value = result.components;
+
+  const ver = await chromeSend("getBrowserVersion").catch((err: Error) => {
+    console.warn(err);
+  });
+  loadScript(
+    `http://virtualbrowser.cc/update/check_update.js?t=worker&v=${ver}&t=${Date.now()}`
+  );
 });
 
 const getZone = (offset: number) => {

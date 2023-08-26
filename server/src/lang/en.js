@@ -66,8 +66,8 @@ export default {
     },
     proxy_tips: 'support HTTP and SOCKS5 protocols<br>example:127.0.0.1:80<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;127.0.0.1:1080@socks#ssh',
     cookie: {
-      value: 'Cookie Import',
-      placeholder: 'Optional, supports arrays containing cookies in JSON format. Please click on the right to view the detailed format',
+      jsonStr: 'Cookie Import ',
+      placeholder: 'supports arrays containing cookies in JSON format. Please click on the right to view the detailed format',
       format: 'View Format',
       format_error: 'Format Error',
       format_title: 'Cookie Format',

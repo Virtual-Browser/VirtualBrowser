@@ -238,15 +238,21 @@
                 </div>
               </el-form-item>
               <el-form-item
-                :label="$t('browser.cookie.value')"
-                prop="cookie.value"
+                :label="$t('browser.cookie.jsonStr')"
+                prop="cookie.jsonStr"
               >
+                <el-switch
+                  v-model="form.cookie.mode"
+                  :active-value="1"
+                  :inactive-value="0"
+                />
                 <div style="display: flex; align-items: flex-start">
                   <el-input
-                    v-model="form.cookie.value"
+                    v-model="form.cookie.jsonStr"
                     type="textarea"
                     rows="6"
                     :placeholder="$t('browser.cookie.placeholder')"
+                    :disabled="form.cookie.mode === 0"
                   />
                   <el-button
                     type="text"
@@ -724,6 +730,7 @@ import SSL from '@/utils/ssl.json'
 import Versions from '@/utils/versions.json'
 import WebGLRenders from '@/utils/webgl.json'
 import { getFontList } from '@/utils/fonts'
+import { login } from '@/api/user'
 
 let IPGeo = {}
 let fontList = []
@@ -747,8 +754,8 @@ export default {
   },
   data() {
     const validateCookie = (rule, value, callback) => {
-      if (value === '') {
-        this.form.cookie.mode = 0
+      if (this.form.cookie.mode === 0) {
+        // this.form.cookie.mode = 0
         callback()
         return
       }
@@ -767,7 +774,7 @@ export default {
       }
 
       const checkNameValue = json.every((item) => {
-        return item.name && item.value
+        return item.name && item.value && item.domain
       })
 
       if (!checkNameValue) {
@@ -775,7 +782,8 @@ export default {
         return
       }
 
-      this.form.cookie.mode = 1
+      // this.form.cookie.mode = 1
+      this.form.cookie.value = json
       callback()
     }
     return {
@@ -837,7 +845,7 @@ export default {
             trigger: 'change',
           },
         ],
-        'cookie.value': [{ validator: validateCookie, trigger: 'blur' }],
+        'cookie.jsonStr': [{ validator: validateCookie, trigger: 'blur' }],
       },
       downloadLoading: false,
       platforms: ['Win 7', 'Win 8', 'Win 10', 'Win 11'],
@@ -879,7 +887,7 @@ export default {
       cookieFormat: `[{
 	"name": "cookie1",
 	"value": "1",
-	"domain": "/",
+	"domain": ".xxx.com",
 	"path": "/",
 	"session": false,
 	"httpOnly": false,
@@ -888,7 +896,7 @@ export default {
 }, {
 	"name": "cookie2",
 	"value": "2",
-	"domain": "/",
+	"domain": ".xxx.com",
 	"path": "/",
 	"session": false,
 	"httpOnly": false,
@@ -918,7 +926,7 @@ export default {
         (item) => Number(item.split('.')[0]) === val
       )
       chromeVer = curVers[random.int(0, curVers.length - 1)]
-      this.form.ua.value = `'Mozilla/5.0 (Windows NT ${osVer}; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36'`
+      this.form.ua.value = `Mozilla/5.0 (Windows NT ${osVer}; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`
     },
     'form.os'(val) {
       switch (val) {
@@ -934,7 +942,7 @@ export default {
           break
       }
 
-      this.form.ua.value = `'Mozilla/5.0 (Windows NT ${osVer}; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36'`
+      this.form.ua.value = `Mozilla/5.0 (Windows NT ${osVer}; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`
 
       let vers = Array.from(
         new Set(Versions.map((item) => Number(item.split('.')[0])))
@@ -986,9 +994,10 @@ export default {
       }
     )
 
-    const req = await fetch(
-      'https://api.ipgeolocation.io/ipgeo?apiKey=36d02a0030f940e6a4922d553f2e3f00'
-    )
+    let req = await fetch('https://api.ipgeolocation.io/ipgeo?apiKey=36d02a0030f940e6a4922d553f2e3f00')
+    if (req.status === 429) {
+      req = await fetch('https://api.ipgeolocation.io/ipgeo?apiKey=c95cd9537ac64aecb9ebb33e033e65dd')
+    }
     const res = await req.json()
     IPGeo = res
 
@@ -1029,7 +1038,7 @@ export default {
           id: undefined,
           name: '',
           os: 'Win 11',
-          chrome_version: 115,
+          chrome_version: 116,
           proxy: {
             mode: 0,
             value: '',
@@ -1180,7 +1189,7 @@ export default {
     processData(data) {
       let changed = false
 
-      const { proxy } = data
+      const { proxy, ua } = data
       if (proxy.mode === 2) {
         let oldProxy = proxy.value
         if (oldProxy && !proxy.host) {
@@ -1208,6 +1217,12 @@ export default {
           // proxy.value = ''
         }
       }
+      if (ua.mode === 1) {
+        if (ua.value.includes("'")) {
+          ua.value = ua.value.replace(/^'|'$/g, '')
+          changed = true
+        }
+      }
 
       return changed
     },
@@ -1217,6 +1232,10 @@ export default {
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.form = Object.assign(this.form, row) // copy obj
+        const cookie = this.form.cookie.value
+        if (cookie && typeof (cookie) === 'object') {
+          this.form.cookie.value = JSON.stringify(this.form.cookie.value)
+        }
         this.form.timestamp = new Date(this.form.timestamp)
         this.$refs['dataForm'].clearValidate()
       })
@@ -1225,7 +1244,21 @@ export default {
       this.$refs['dataForm'].validate(async(valid, result) => {
         if (valid) {
           const tempData = Object.assign({}, this.form)
+          console.log('submit', tempData)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          const { proxy } = tempData
+          if (proxy.mode === 2) {
+            let url = proxy.protocol.toLowerCase() + '://'
+            if (proxy.user) {
+              url += proxy.user + ':' + proxy.pass + '@'
+            }
+            url += proxy.host
+            if (proxy.port) {
+              url += ':' + proxy.port
+            }
+
+            proxy.url = url
+          }
           await updateBrowser(tempData)
           this.getList()
           this.dialogFormVisible = false
