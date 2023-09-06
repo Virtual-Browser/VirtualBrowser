@@ -31,7 +31,9 @@
         >
           <el-button>{{ $t("browser.import.import") }}</el-button>
         </el-upload>
-        <el-button style="margin-left: 10px" @click="onExport">{{ $t("browser.import.export") }}</el-button>
+        <el-button style="margin-left: 10px" @click="onExport">{{
+          $t("browser.import.export")
+        }}</el-button>
       </div>
     </div>
 
@@ -176,15 +178,15 @@
                     $t("browser.custom")
                   }}</el-radio-button>
                 </el-radio-group>
-                <div
-                  v-if="form.proxy.mode == 2"
-                  style="margin-top: 10px;"
-                >
+                <div v-if="form.proxy.mode == 2" style="margin-top: 10px">
                   <el-form-item
                     :label="$t('browser.proxy.protocol')"
                     label-width="70px"
                   >
-                    <el-select v-model="form.proxy.protocol" style="width:100px">
+                    <el-select
+                      v-model="form.proxy.protocol"
+                      style="width: 100px"
+                    >
                       <el-option value="HTTP" />
                       <el-option value="HTTPS" />
                       <el-option value="SOCKS5" />
@@ -202,7 +204,7 @@
                     :
                     <el-input
                       v-model="form.proxy.port"
-                      style="width:70px"
+                      style="width: 70px"
                       :placeholder="$t('browser.proxy.port')"
                     />
                   </el-form-item>
@@ -994,9 +996,13 @@ export default {
       }
     )
 
-    let req = await fetch('https://api.ipgeolocation.io/ipgeo?apiKey=36d02a0030f940e6a4922d553f2e3f00')
+    let req = await fetch(
+      'https://api.ipgeolocation.io/ipgeo?apiKey=36d02a0030f940e6a4922d553f2e3f00'
+    )
     if (req.status === 429) {
-      req = await fetch('https://api.ipgeolocation.io/ipgeo?apiKey=c95cd9537ac64aecb9ebb33e033e65dd')
+      req = await fetch(
+        'https://api.ipgeolocation.io/ipgeo?apiKey=c95cd9537ac64aecb9ebb33e033e65dd'
+      )
     }
     const res = await req.json()
     IPGeo = res
@@ -1046,7 +1052,7 @@ export default {
             host: '',
             port: '',
             user: '',
-            pass: ''
+            pass: '',
           },
           cookie: {
             mode: 0,
@@ -1153,6 +1159,7 @@ export default {
       this.$refs['dataForm'].validate(async(valid, result) => {
         if (valid) {
           this.form.timestamp = Date.now()
+          this.preProcessData(this.form)
           await addBrowser(this.form)
 
           this.getList()
@@ -1203,7 +1210,8 @@ export default {
           }
           try {
             const proxyURL = new URL(oldProxy)
-            proxy.protocol = protocol || proxyURL.protocol.replace(':', '').toUpperCase()
+            proxy.protocol =
+              protocol || proxyURL.protocol.replace(':', '').toUpperCase()
             proxy.host = proxyURL.hostname
             proxy.port = proxyURL.port
             proxy.user = proxyURL.username
@@ -1226,6 +1234,21 @@ export default {
 
       return changed
     },
+    preProcessData(data) {
+      const { proxy } = data
+      if (proxy.mode === 2) {
+        let url = proxy.protocol.toLowerCase() + '://'
+        if (proxy.user) {
+          url += proxy.user + ':' + proxy.pass + '@'
+        }
+        url += proxy.host
+        if (proxy.port) {
+          url += ':' + proxy.port
+        }
+
+        proxy.url = url
+      }
+    },
     handleUpdate(row) {
       this.resetForm()
       this.dialogStatus = 'update'
@@ -1233,7 +1256,7 @@ export default {
       this.$nextTick(() => {
         this.form = Object.assign(this.form, row) // copy obj
         const cookie = this.form.cookie.value
-        if (cookie && typeof (cookie) === 'object') {
+        if (cookie && typeof cookie === 'object') {
           this.form.cookie.value = JSON.stringify(this.form.cookie.value)
         }
         this.form.timestamp = new Date(this.form.timestamp)
@@ -1246,19 +1269,7 @@ export default {
           const tempData = Object.assign({}, this.form)
           console.log('submit', tempData)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          const { proxy } = tempData
-          if (proxy.mode === 2) {
-            let url = proxy.protocol.toLowerCase() + '://'
-            if (proxy.user) {
-              url += proxy.user + ':' + proxy.pass + '@'
-            }
-            url += proxy.host
-            if (proxy.port) {
-              url += ':' + proxy.port
-            }
-
-            proxy.url = url
-          }
+          this.preProcessData(tempData)
           await updateBrowser(tempData)
           this.getList()
           this.dialogFormVisible = false
