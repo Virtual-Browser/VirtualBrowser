@@ -214,7 +214,7 @@
                   >
                     <el-input
                       v-model="form.proxy.user"
-                      style="max-width: 100px"
+                      style="max-width: 250px"
                     />
                   </el-form-item>
                   <el-form-item
@@ -223,7 +223,7 @@
                   >
                     <el-input
                       v-model="form.proxy.pass"
-                      style="max-width: 100px"
+                      style="max-width: 250px"
                     />
                   </el-form-item>
                   <!-- <el-form-item
@@ -774,6 +774,16 @@ export default {
         callback(new Error(this.$t('browser.cookie.format_error')))
         return
       }
+
+      json = json.map(item => {
+        const cookie = {}
+        Object.keys(item).forEach(key => {
+          const newKey = key.substring(0, 1).toLowerCase() + key.substring(1)
+          cookie[newKey] = item[key]
+        })
+
+        return cookie
+      })
 
       const checkNameValue = json.every((item) => {
         return item.name && item.value && item.domain
