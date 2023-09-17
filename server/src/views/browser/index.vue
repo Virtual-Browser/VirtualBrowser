@@ -732,6 +732,7 @@ import SSL from '@/utils/ssl.json'
 import Versions from '@/utils/versions.json'
 import WebGLRenders from '@/utils/webgl.json'
 import { getFontList } from '@/utils/fonts'
+import { compareVersions } from 'compare-versions'
 import { login } from '@/api/user'
 
 let IPGeo = {}
@@ -775,9 +776,9 @@ export default {
         return
       }
 
-      json = json.map(item => {
+      json = json.map((item) => {
         const cookie = {}
-        Object.keys(item).forEach(key => {
+        Object.keys(item).forEach((key) => {
           const newKey = key.substring(0, 1).toLowerCase() + key.substring(1)
           cookie[newKey] = item[key]
         })
@@ -1021,7 +1022,34 @@ export default {
 
     const ver = await chromeSend('getBrowserVersion').catch((err) => {
       console.warn(err)
+      return '1.116.0.0'
     })
+
+    window._callback = (data) => {
+      if (sessionStorage.getItem('check_update_showed') === '1') {
+        // return;
+      }
+      if (compareVersions(ver, data.ver) >= 0) {
+        return
+      }
+
+      sessionStorage.setItem('check_update_showed', 1)
+      const update = data.update.map((item) => `<li>${item}</li>`).join('')
+      this.$alert(
+        `<div>版本：<b>${data.ver}</b></div>
+         <div class="update">更新：<ol>${update}</ol></div>`,
+        '发现新版本',
+        {
+          dangerouslyUseHTMLString: true,
+          showCancelButton: true,
+          confirmButtonText: '更新',
+        }
+      )
+        .then(() => {
+          window.open(data.url)
+        })
+        .catch(() => {})
+    }
     loadScript(
       `http://virtualbrowser.cc/update/check_update.js?c=${
         (this.list || []).length

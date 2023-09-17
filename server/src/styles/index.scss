@@ -197,3 +197,14 @@ aside {
 .multiselect--active {
   z-index: 1000 !important;
 }
+
+.update {
+  margin-top: 5px;
+  display: flex;
+
+  ol {
+    margin: 0;
+    padding: 0;
+    padding-left: 15px;
+  }
+}
