@@ -776,12 +776,26 @@ export default {
         return
       }
 
+      const setDefaultValue = (obj, key, value) => {
+        if (obj[key] === undefined) {
+          obj[key] = value
+        }
+      }
+
       json = json.map((item) => {
         const cookie = {}
         Object.keys(item).forEach((key) => {
-          const newKey = key.substring(0, 1).toLowerCase() + key.substring(1)
+          let newKey = key.substring(0, 1).toLowerCase() + key.substring(1)
+          if (newKey === 'samesite') {
+            newKey = 'sameSite'
+          }
           cookie[newKey] = item[key]
         })
+
+        setDefaultValue(cookie, 'sameSite', '')
+        setDefaultValue(cookie, 'session', false)
+        setDefaultValue(cookie, 'secure', false)
+        setDefaultValue(cookie, 'httpOnly', false)
 
         return cookie
       })
@@ -1027,7 +1041,7 @@ export default {
 
     window._callback = (data) => {
       if (sessionStorage.getItem('check_update_showed') === '1') {
-        // return;
+        return
       }
       if (compareVersions(ver, data.ver) >= 0) {
         return
