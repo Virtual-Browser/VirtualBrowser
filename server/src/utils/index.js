@@ -1,4 +1,6 @@
 import { v4 as uuid_v4 } from 'uuid'
+import random from 'random'
+import voices from '@/utils/speech-voices.json'
 
 /**
  * Created by PanJiaChen on 16/11/18.
@@ -85,7 +87,15 @@ export function formatTime(time, option) {
     return parseTime(time, option)
   } else {
     return (
-      d.getMonth() + 1 + '月' + d.getDate() + '日' + d.getHours() + '时' + d.getMinutes() + '分'
+      d.getMonth() +
+      1 +
+      '月' +
+      d.getDate() +
+      '日' +
+      d.getHours() +
+      '时' +
+      d.getMinutes() +
+      '分'
     )
   }
 }
@@ -223,7 +233,8 @@ export function toggleClass(element, className) {
     classString += '' + className
   } else {
     classString =
-      classString.substr(0, nameIndex) + classString.substr(nameIndex + className.length)
+      classString.substr(0, nameIndex) +
+      classString.substr(nameIndex + className.length)
   }
   element.className = classString
 }
@@ -365,6 +376,38 @@ export function genRandomMacAddr() {
   e[0] = (252 & e[0]) | 2
 
   return e.map(o).join('-').toUpperCase()
+}
+
+const allVoicesObtained = () =>
+  new Promise(function(resolve, reject) {
+    let voices = window.speechSynthesis.getVoices()
+    if (voices.length !== 0) {
+      resolve(voices)
+    } else {
+      window.speechSynthesis.addEventListener('voiceschanged', function() {
+        voices = window.speechSynthesis.getVoices()
+        resolve(voices)
+      })
+    }
+  })
+
+// let voices;
+// (async function() {
+//   voices = await allVoicesObtained()
+// })()
+
+export function genRandomSpeechVoices() {
+  voices.sort(() => Math.random() - 0.5)
+  const ret = voices.slice(0, random.int(3, 5))
+  return ret.map((item) => {
+    return {
+      default: item.default,
+      lang: item.lang,
+      localService: item.localService,
+      name: item.name,
+      voiceURI: item.voiceURI,
+    }
+  })
 }
 
 export function loadScript(src) {

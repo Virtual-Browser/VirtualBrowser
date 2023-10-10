@@ -524,7 +524,7 @@
                 </el-radio-group>
               </el-form-item>
               <el-form-item :label="$t('browser.speech_voices')">
-                <el-radio-group v-model="form['speech-voices'].mode">
+                <el-radio-group v-model="form['speech_voices'].mode">
                   <el-radio-button :label="0">{{
                     $t("browser.default")
                   }}</el-radio-button>
@@ -723,6 +723,7 @@ import {
   parseTime,
   genRandomMacAddr,
   genRandomComputerName,
+  genRandomSpeechVoices,
   loadScript,
 } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -845,7 +846,7 @@ export default {
         'audio-context': {},
         media: {},
         'client-rects': {},
-        'speech-voices': {},
+        'speech_voices': {},
         ssl: {},
         cpu: {},
         memory: {},
@@ -1096,7 +1097,7 @@ export default {
           id: undefined,
           name: '',
           os: 'Win 11',
-          chrome_version: 116,
+          chrome_version: 117,
           proxy: {
             mode: 0,
             value: '',
@@ -1184,7 +1185,10 @@ export default {
             width: random.float(-1, 1),
             height: random.float(-1, 1),
           },
-          'speech-voices': { mode: 1 },
+          'speech_voices': {
+            mode: 1,
+            value: genRandomSpeechVoices()
+          },
           ssl: {
             mode: 0,
             value: [],
