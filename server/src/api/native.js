@@ -12,7 +12,7 @@ window.updateLaunchState = function () {
   updateRuningState()
 }
 
-export async function chromeSend(name, ...params) {
+export async function chromeSendTimeout(name, timeout=2000, ...params) {
   const pTimeOut = (timeout) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -31,7 +31,11 @@ export async function chromeSend(name, ...params) {
     chrome.send(name, args)
   })
 
-  return Promise.race([pCall, pTimeOut(2000)])
+  return Promise.race([pCall, pTimeOut(timeout)])
+}
+
+export async function chromeSend(name, ...params) {
+  return chromeSendTimeout(name, 2000, ...params)
 }
 
 export async function getBrowserList() {

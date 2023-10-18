@@ -65,7 +65,7 @@
       <el-table-column
         :label="$t('browser.ip_port')"
         width="200px"
-        >
+      >
         <template slot-scope="{ row }">
           <span>
             {{ row.proxy.protocol }}
@@ -236,6 +236,14 @@
                       v-model="form.proxy.pass"
                       style="max-width: 250px"
                     />
+                    &nbsp;
+                    <el-button
+                      type="primary"
+                      style="margin-left: 7px"
+                      :disabled2="checkProxyState.checking"
+                      :loading="checkProxyState.checking"
+                      @click="checkProxy"
+                    >检测{{ checkProxyState.checking ? '中':'' }}</el-button>
                   </el-form-item>
                   <!-- <el-form-item
                     :label="$t('browser.proxy.value')"
@@ -724,7 +732,7 @@ import {
   updateBrowser,
   deleteBrowser,
   chromeSend,
-  getBrowserVersion,
+  chromeSendTimeout,
   updateRuningState,
 } from '@/api/native'
 import { saveAs } from 'file-saver'
@@ -770,7 +778,7 @@ export default {
   data() {
     const validateCookie = (rule, value, callback) => {
       if (this.form.cookie.mode === 0) {
-        // this.form.cookie.mode = 0
+        this.form.cookie.value = ''
         callback()
         return
       }
@@ -857,7 +865,7 @@ export default {
         'audio-context': {},
         media: {},
         'client-rects': {},
-        'speech_voices': {},
+        speech_voices: {},
         ssl: {},
         cpu: {},
         memory: {},
@@ -943,6 +951,9 @@ export default {
 	"sameSite": "None"
 }]`,
       copied: false,
+      checkProxyState: {
+        checking: false
+      },
     }
   },
   computed: {
@@ -1028,7 +1039,7 @@ export default {
     this.$watch(
       () => this.form['ua-language'].language,
       (val) => {
-        this.form['ua-language'].value = [val, val.split('-')[0]]
+        this.form['ua-language'].value = [val, val.split('-')[0]].join(',')
         this.form['time-zone'].locale = val
       }
     )
@@ -1196,9 +1207,9 @@ export default {
             width: random.float(-1, 1),
             height: random.float(-1, 1),
           },
-          'speech_voices': {
+          speech_voices: {
             mode: 1,
-            value: genRandomSpeechVoices()
+            value: genRandomSpeechVoices(),
           },
           ssl: {
             mode: 0,
@@ -1433,6 +1444,22 @@ export default {
         type: 'application/json;charset=utf-8',
       })
       saveAs(blob, 'Virtual-Browser.json')
+    },
+    async checkProxy() {
+      this.checkProxyState.checking = true
+      this.preProcessData(this.form)
+      let timeout = false
+      const ret = await chromeSendTimeout('checkProxy', 10 * 1000, this.form.proxy.url).catch(err => { timeout = (err === 'timeout') })
+      this.$alert(
+        `<p>代理：${this.form.proxy.url}</p>
+        <p style="color:${ret ? '#67C23A' : '#F56C6C'}">检测${ret ? '成功' : (timeout ? '超时' : '失败')}</p>`,
+        '代理检测',
+        {
+          type: ret ? 'success' : 'error',
+          dangerouslyUseHTMLString: true,
+        }
+      )
+      this.checkProxyState.checking = false
     },
   },
 }
