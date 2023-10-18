@@ -43,6 +43,7 @@ export default {
       export: '导出',
     },
     id: '序号',
+    ip_port:'IP端口',
     date: '创建时间',
     launch: '启动',
     launching: '启动中',

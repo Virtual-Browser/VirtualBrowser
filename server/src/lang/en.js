@@ -44,6 +44,7 @@ export default {
       export: 'Export',
     },
     id: 'ID',
+    ip_port:'IP Port',
     date: 'Date',
     launch: 'Launch',
     launching: 'Launching',
