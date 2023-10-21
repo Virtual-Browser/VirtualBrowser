@@ -112,7 +112,7 @@ onMounted(async () => {
     },
     "ua-language": {
       // language: res.languages?.split(',')[0],
-      value: res.languages,
+      value: res.languages?.split(",")[0] || "",
     },
   };
 
