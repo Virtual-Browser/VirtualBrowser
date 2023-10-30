@@ -10,10 +10,7 @@
         >
           {{ $t("browser.add") }}
         </el-button>
-        <el-button
-          class="filter-item"
-          type="primary"
-          @click="handleBatchStart">
+        <el-button class="filter-item" type="primary" @click="handleBatchStart">
           {{ $t("browser.batchStart") }}
         </el-button>
       </div>
@@ -53,11 +50,7 @@
       style="width: 100%"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column 
-      type="selection" 
-      width="60" 
-      align="center">
-      </el-table-column>
+      <el-table-column type="selection" width="60" align="center" />
       <el-table-column
         :label="$t('browser.id')"
         prop="id"
@@ -74,14 +67,15 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('browser.ip_port')"
-        width="200px"
-      >
+      <el-table-column :label="$t('browser.ip_port')" width="200px">
         <template slot-scope="{ row }">
           <span>
             {{ row.proxy.protocol }}
-            {{ row.proxy.host && row.proxy.port ? " " + row.proxy.host + ":" + row.proxy.port : "" }}
+            {{
+              row.proxy.host && row.proxy.port
+                ? " " + row.proxy.host + ":" + row.proxy.port
+                : ""
+            }}
           </span>
         </template>
       </el-table-column>
@@ -255,7 +249,7 @@
                       :disabled2="checkProxyState.checking"
                       :loading="checkProxyState.checking"
                       @click="checkProxy"
-                    >检测{{ checkProxyState.checking ? '中':'' }}</el-button>
+                    >检测{{ checkProxyState.checking ? "中" : "" }}</el-button>
                   </el-form-item>
                   <!-- <el-form-item
                     :label="$t('browser.proxy.value')"
@@ -302,11 +296,72 @@
             <h3>{{ $t("browser.advanced") }}</h3>
             <div>
               <el-form-item :label="$t('browser.ua')">
-                <el-input v-model="form.ua.value" type="textarea" />
+                <el-radio-group v-model="form.ua.mode">
+                  <el-radio-button :label="0">{{
+                    $t("browser.default")
+                  }}</el-radio-button>
+                  <el-radio-button :label="1">{{
+                    $t("browser.custom")
+                  }}</el-radio-button>
+                </el-radio-group>
+                <el-input
+                  v-model="form.ua.value"
+                  :disabled="form.ua.mode === 0"
+                  type="textarea"
+                  style="margin-top: 3px"
+                />
               </el-form-item>
-              <!-- <el-form-item :label="$t('browser.sec_ua')">
-                <el-input v-model="form['sec-ch-ua'].value" type="textarea" />
-              </el-form-item> -->
+              <el-form-item :label="$t('browser.sec_ua')">
+                <el-radio-group v-model="form['sec-ch-ua'].mode">
+                  <el-radio-button :label="0">{{
+                    $t("browser.default")
+                  }}</el-radio-button>
+                  <el-radio-button :label="1">{{
+                    $t("browser.custom")
+                  }}</el-radio-button>
+                </el-radio-group>
+                <div
+                  v-show="form['sec-ch-ua'].mode === 1"
+                  class="custom-sec-ua"
+                >
+                  <div v-for="item in form['sec-ch-ua'].value" :key="item" class="item">
+                    <el-form-item label="brand: " label-width="42px">
+                      <el-input v-model="item.brand" />
+                    </el-form-item>
+                    <el-form-item label="version: " label-width="52px">
+                      <el-input v-model="item.version" style="width: 60px" />
+                    </el-form-item>
+                    <el-button
+                      type="danger"
+                      icon="el-icon-minus"
+                      circle
+                      @click="onRemoveBrand(item.brand)"
+                    />
+                  </div>
+                  <div class="item">
+                    <el-form-item
+                      label="brand: "
+                      label-width="42px"
+                      style="visibility: hidden"
+                    >
+                      <el-input />
+                    </el-form-item>
+                    <el-form-item
+                      label="version: "
+                      label-width="52px"
+                      style="visibility: hidden"
+                    >
+                      <el-input style="width: 60px" />
+                    </el-form-item>
+                    <el-button
+                      type="success"
+                      icon="el-icon-plus"
+                      circle
+                      @click="onAddBrand()"
+                    />
+                  </div>
+                </div>
+              </el-form-item>
               <el-form-item :label="$t('browser.language')">
                 <el-switch
                   v-model="form['ua-language'].mode"
@@ -773,6 +828,19 @@ let osVer = '10.0'
 let chromeVer = ''
 const sslList = ['0xc02c', '0xa02c', '0xb02c', '0xd02c', '0xe02c', '0xf02c']
 let tooltipTimer
+const chromiumCoreVer =
+  Number(
+    navigator.userAgentData.brands.find((item) => item.brand === 'Chromium')
+      ?.version
+  ) || 117
+const coreVersions = Array.from(
+  new Set(Versions.map((item) => Number(item.split('.')[0])))
+)
+for (let i = Math.max(...coreVersions) + 1; i <= chromiumCoreVer; i++) {
+  coreVersions.unshift(i)
+  Versions.unshift(`${i}.0.0.0`)
+}
+
 export default {
   name: 'ComplexTable',
   components: { Pagination },
@@ -941,9 +1009,7 @@ export default {
       TimeZones,
       Languages,
       SSL,
-      Versions: Array.from(
-        new Set(Versions.map((item) => Number(item.split('.')[0])))
-      ),
+      Versions: coreVersions,
       cookieFormat: `[{
 	"name": "cookie1",
 	"value": "1",
@@ -965,7 +1031,7 @@ export default {
 }]`,
       copied: false,
       checkProxyState: {
-        checking: false
+        checking: false,
       },
     }
   },
@@ -981,9 +1047,22 @@ export default {
       this.form.screen.height = parseInt(wh[1])
     },
     'form.chrome_version'(val) {
-      this.form[
-        'sec-ch-ua'
-      ].value = `"Google Chrome";v="${val}", "Not(A:Brand";v="8", "Chromium";v="${val}"`
+      if (val === '默认') {
+        val = chromiumCoreVer
+        this.form.ua.mode = 0
+      } else {
+        this.form.ua.mode = 1
+      }
+
+      // this.form[
+      //   "sec-ch-ua"
+      // ].value = `"Google Chrome";v="${val}", "Not(A:Brand";v="8", "Chromium";v="${val}"`;
+
+      this.form['sec-ch-ua'].value.forEach((item) => {
+        if (item.brand === 'Chromium') {
+          item.version = val
+        }
+      })
 
       const curVers = Versions.filter(
         (item) => Number(item.split('.')[0]) === val
@@ -1013,6 +1092,7 @@ export default {
       if (val === 'Win 7' || val === 'Win 8') {
         vers = vers.filter((item) => item <= 109)
       }
+      vers.unshift('默认')
       this.Versions = vers
       if (!vers.includes(this.form.chrome_version)) {
         this.form.chrome_version = vers[0]
@@ -1119,18 +1199,18 @@ export default {
       this.getList()
     },
     handleSelectionChange(selection) {
-    this.selectedRows = selection;
+      this.selectedRows = selection
     },
     handleBatchStart() {
       for (let i = 0; i < this.selectedRows.length; i++) {
-        const row = this.selectedRows[i];
-        this.launchEnvironment(row, i * 2000); 
+        const row = this.selectedRows[i]
+        this.launchEnvironment(row, i * 2000)
       }
     },
     launchEnvironment(row, delay) {
       setTimeout(() => {
-        this.handleLaunch(row);
-      }, delay);
+        this.handleLaunch(row)
+      }, delay)
     },
     resetForm() {
       const ipGeoTimeZone = IPGeo.time_zone?.name
@@ -1146,7 +1226,7 @@ export default {
           id: undefined,
           name: '',
           os: 'Win 11',
-          chrome_version: 117,
+          chrome_version: '默认',
           proxy: {
             mode: 0,
             value: '',
@@ -1166,8 +1246,11 @@ export default {
               'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114 Safari/537.36',
           },
           'sec-ch-ua': {
-            mode: 1,
-            value: `"Google Chrome";v="114", "Not(A:Brand";v="8", "Chromium";v="114"`,
+            mode: 0,
+            value: [
+              { brand: 'Chromium', version: chromiumCoreVer },
+              { brand: 'Not=A?Brand', version: '99' },
+            ],
           },
           'ua-language': {
             mode: 1,
@@ -1336,6 +1419,13 @@ export default {
           changed = true
         }
       }
+      if (typeof data['sec-ch-ua'].value === 'string') {
+        data['sec-ch-ua'].value = [
+          { brand: 'Chromium', version: chromiumCoreVer },
+          { brand: 'Not=A?Brand', version: '99' },
+        ]
+        changed = true
+      }
 
       return changed
     },
@@ -1353,6 +1443,10 @@ export default {
 
         proxy.url = url
       }
+
+      data['sec-ch-ua'].value = data['sec-ch-ua'].value.filter(item => {
+        return item.brand && item.version
+      })
     },
     handleUpdate(row) {
       this.resetForm()
@@ -1476,10 +1570,18 @@ export default {
       this.checkProxyState.checking = true
       this.preProcessData(this.form)
       let timeout = false
-      const ret = await chromeSendTimeout('checkProxy', 10 * 1000, this.form.proxy.url).catch(err => { timeout = (err === 'timeout') })
+      const ret = await chromeSendTimeout(
+        'checkProxy',
+        10 * 1000,
+        this.form.proxy.url
+      ).catch((err) => {
+        timeout = err === 'timeout'
+      })
       this.$alert(
         `<p>代理：${this.form.proxy.url}</p>
-        <p style="color:${ret ? '#67C23A' : '#F56C6C'}">检测${ret ? '成功' : (timeout ? '超时' : '失败')}</p>`,
+        <p style="color:${ret ? '#67C23A' : '#F56C6C'}">检测${
+  ret ? '成功' : timeout ? '超时' : '失败'
+}</p>`,
         '代理检测',
         {
           type: ret ? 'success' : 'error',
@@ -1487,6 +1589,16 @@ export default {
         }
       )
       this.checkProxyState.checking = false
+    },
+    onAddBrand() {
+      this.form['sec-ch-ua'].value.push({ brand: '', version: '' })
+    },
+    onRemoveBrand(brand) {
+      this.form['sec-ch-ua'].value = this.form['sec-ch-ua'].value.filter(
+        (item) => {
+          return item.brand !== brand
+        }
+      )
     },
   },
 }
@@ -1547,6 +1659,7 @@ export default {
     }
     .el-form-item {
       margin-bottom: 15px;
+      margin-right: 5px;
     }
     .el-form-item__label {
       font-size: 12px;
@@ -1559,6 +1672,14 @@ export default {
     .el-textarea__inner {
       // padding-left: 8px;
       // padding-right: 8px;
+    }
+    .custom-sec-ua {
+      margin-top: 5px;
+
+      .item {
+        display: flex;
+        align-items: flex-start;
+      }
     }
   }
 }
