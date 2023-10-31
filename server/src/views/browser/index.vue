@@ -10,6 +10,12 @@
         >
           {{ $t("browser.add") }}
         </el-button>
+        <el-button
+          class="filter-item"
+          type="primary"
+          @click="handleBatchStart">
+          {{ $t("browser.batchStart") }}
+        </el-button>
       </div>
       <div style="display: flex">
         <!-- <el-input
@@ -1103,6 +1109,17 @@ export default {
     },
     handleSelectionChange(selection) {
     this.selectedRows = selection;
+    },
+    handleBatchStart() {
+      for (let i = 0; i < this.selectedRows.length; i++) {
+        const row = this.selectedRows[i];
+        this.launchEnvironment(row, i * 2000); 
+      }
+    },
+    launchEnvironment(row, delay) {
+      setTimeout(() => {
+        this.handleLaunch(row);
+      }, delay);
     },
     resetForm() {
       const ipGeoTimeZone = IPGeo.time_zone?.name
