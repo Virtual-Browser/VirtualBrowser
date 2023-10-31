@@ -1101,9 +1101,8 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    handleFilter() {
-      this.listQuery.page = 1
-      this.getList()
+    handleSelectionChange(selection) {
+    this.selectedRows = selection;
     },
     resetForm() {
       const ipGeoTimeZone = IPGeo.time_zone?.name
