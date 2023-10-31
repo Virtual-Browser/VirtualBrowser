@@ -37,6 +37,7 @@ export default {
   },
   browser: {
     add: 'Create Browser',
+    batchStart: 'Batch start',
     name: 'Name',
     search: 'Search',
     import: {
