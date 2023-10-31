@@ -45,7 +45,13 @@
       fit
       highlight-current-row
       style="width: 100%"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column 
+      type="selection" 
+      width="60" 
+      align="center">
+      </el-table-column>
       <el-table-column
         :label="$t('browser.id')"
         prop="id"
@@ -826,6 +832,7 @@ export default {
       callback()
     }
     return {
+      selectedRows: [],
       tableKey: 0,
       list: null,
       listLoading: true,
@@ -1089,6 +1096,10 @@ export default {
       this.processUpdateData()
       await updateRuningState()
       this.listLoading = false
+    },
+    handleFilter() {
+      this.listQuery.page = 1
+      this.getList()
     },
     handleFilter() {
       this.listQuery.page = 1
@@ -1429,7 +1440,7 @@ export default {
       reader.readAsText(file)
     },
     onExport() {
-      var blob = new Blob([JSON.stringify(this.list, null, 2)], {
+      var blob = new Blob([JSON.stringify(this.selectedRows, null, 2)], {
         type: 'application/json;charset=utf-8',
       })
       saveAs(blob, 'Virtual-Browser.json')
