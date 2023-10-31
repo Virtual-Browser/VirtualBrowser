@@ -10,6 +10,12 @@
         >
           {{ $t("browser.add") }}
         </el-button>
+        <el-button
+          class="filter-item"
+          type="primary"
+          @click="handleBatchStart">
+          {{ $t("browser.batchStart") }}
+        </el-button>
       </div>
       <div style="display: flex">
         <!-- <el-input
@@ -45,7 +51,13 @@
       fit
       highlight-current-row
       style="width: 100%"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column 
+      type="selection" 
+      width="60" 
+      align="center">
+      </el-table-column>
       <el-table-column
         :label="$t('browser.id')"
         prop="id"
@@ -834,6 +846,7 @@ export default {
       callback()
     }
     return {
+      selectedRows: [],
       tableKey: 0,
       list: null,
       listLoading: true,
@@ -1104,6 +1117,20 @@ export default {
     handleFilter() {
       this.listQuery.page = 1
       this.getList()
+    },
+    handleSelectionChange(selection) {
+    this.selectedRows = selection;
+    },
+    handleBatchStart() {
+      for (let i = 0; i < this.selectedRows.length; i++) {
+        const row = this.selectedRows[i];
+        this.launchEnvironment(row, i * 2000); 
+      }
+    },
+    launchEnvironment(row, delay) {
+      setTimeout(() => {
+        this.handleLaunch(row);
+      }, delay);
     },
     resetForm() {
       const ipGeoTimeZone = IPGeo.time_zone?.name
@@ -1440,7 +1467,7 @@ export default {
       reader.readAsText(file)
     },
     onExport() {
-      var blob = new Blob([JSON.stringify(this.list, null, 2)], {
+      var blob = new Blob([JSON.stringify(this.selectedRows, null, 2)], {
         type: 'application/json;charset=utf-8',
       })
       saveAs(blob, 'Virtual-Browser.json')
