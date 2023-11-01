@@ -273,7 +273,7 @@
                   :active-value="1"
                   :inactive-value="0"
                 />
-                <div style="display: flex; align-items: flex-start">
+                <div v-if="form.cookie.mode === 1" style="display: flex; align-items: flex-start">
                   <el-input
                     v-model="form.cookie.jsonStr"
                     type="textarea"
@@ -825,6 +825,7 @@ import { login } from '@/api/user'
 let IPGeo = {}
 let fontList = []
 let osVer = '10.0'
+let osArch = 'Win64; x64'
 let chromeVer = ''
 const sslList = ['0xc02c', '0xa02c', '0xb02c', '0xd02c', '0xe02c', '0xf02c']
 let tooltipTimer
@@ -1068,7 +1069,9 @@ export default {
         (item) => Number(item.split('.')[0]) === val
       )
       chromeVer = curVers[random.int(0, curVers.length - 1)]
-      this.form.ua.value = `Mozilla/5.0 (Windows NT ${osVer}; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`
+      const randomBit = random.int(0, 1); 
+      const osArch = randomBit === 0 ? 'Win64; x64' : 'WOW64';
+      this.form.ua.value = `Mozilla/5.0 (Windows NT ${osVer}; ${osArch}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`
     },
     'form.os'(val) {
       switch (val) {
@@ -1084,7 +1087,7 @@ export default {
           break
       }
 
-      this.form.ua.value = `Mozilla/5.0 (Windows NT ${osVer}; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`
+      this.form.ua.value = `Mozilla/5.0 (Windows NT ${osVer}; ${osArch}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`
 
       let vers = Array.from(
         new Set(Versions.map((item) => Number(item.split('.')[0])))
@@ -1230,7 +1233,7 @@ export default {
           proxy: {
             mode: 0,
             value: '',
-            protocol: 'HTTP',
+            protocol: '',
             host: '',
             port: '',
             user: '',
@@ -1253,7 +1256,7 @@ export default {
             ],
           },
           'ua-language': {
-            mode: 1,
+            mode: 2,
             language: IPGeo.languages?.split(',')[0] || '',
             value: IPGeo.languages,
           },
@@ -1561,10 +1564,12 @@ export default {
       reader.readAsText(file)
     },
     onExport() {
+      var currentDate = new Date().toISOString().replace(/[-:]/g, '');
+      var fileName = 'Virtual-Browser_' + currentDate + '.json';
       var blob = new Blob([JSON.stringify(this.selectedRows, null, 2)], {
         type: 'application/json;charset=utf-8',
-      })
-      saveAs(blob, 'Virtual-Browser.json')
+      });
+      saveAs(blob, fileName);
     },
     async checkProxy() {
       this.checkProxyState.checking = true
