@@ -324,7 +324,7 @@
                   v-show="form['sec-ch-ua'].mode === 1"
                   class="custom-sec-ua"
                 >
-                  <div v-for="item in form['sec-ch-ua'].value" :key="item" class="item">
+                  <div v-for="(item, i) in form['sec-ch-ua'].value" :key="i" class="item">
                     <el-form-item label="brand: " label-width="42px">
                       <el-input v-model="item.brand" />
                     </el-form-item>
@@ -810,6 +810,7 @@ import {
   genRandomMacAddr,
   genRandomComputerName,
   genRandomSpeechVoices,
+  genUserAgent,
   loadScript,
 } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -817,6 +818,7 @@ import TimeZones from '@/utils/timezones.json'
 import Languages from '@/utils/languages.json'
 import SSL from '@/utils/ssl.json'
 import Versions from '@/utils/versions.json'
+import uaFullVersions from '@/utils/ua-full-versions.json'
 import WebGLRenders from '@/utils/webgl.json'
 import { getFontList } from '@/utils/fonts'
 import { compareVersions } from 'compare-versions'
@@ -825,7 +827,7 @@ import { login } from '@/api/user'
 let IPGeo = {}
 let fontList = []
 let osVer = '10.0'
-let chromeVer = ''
+let chromeVer = ''; let uaFullVersion = ''
 const sslList = ['0xc02c', '0xa02c', '0xb02c', '0xd02c', '0xe02c', '0xf02c']
 let tooltipTimer
 const chromiumCoreVer =
@@ -934,6 +936,7 @@ export default {
         proxy: {},
         cookie: {},
         ua: {},
+        'ua-full-version': {},
         'sec-ch-ua': {},
         'ua-language': {},
         'time-zone': {},
@@ -1064,11 +1067,11 @@ export default {
         }
       })
 
-      const curVers = Versions.filter(
-        (item) => Number(item.split('.')[0]) === val
-      )
+      const curVers = Versions.filter((item) => Number(item.split('.')[0]) === val)
       chromeVer = curVers[random.int(0, curVers.length - 1)]
-      this.form.ua.value = `Mozilla/5.0 (Windows NT ${osVer}; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`
+      uaFullVersion = uaFullVersions.find((item) => Number(item.split('.')[0]) === val) || chromeVer
+      this.form.ua.value = genUserAgent(osVer, chromeVer)
+      this.form['ua-full-version'].value = uaFullVersion
     },
     'form.os'(val) {
       switch (val) {
@@ -1084,7 +1087,7 @@ export default {
           break
       }
 
-      this.form.ua.value = `Mozilla/5.0 (Windows NT ${osVer}; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`
+      this.form.ua.value = genUserAgent(osVer, chromeVer)
 
       let vers = Array.from(
         new Set(Versions.map((item) => Number(item.split('.')[0])))
@@ -1242,8 +1245,11 @@ export default {
           },
           ua: {
             mode: 1,
-            value:
-              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114 Safari/537.36',
+            value: genUserAgent(osVer, chromeVer),
+          },
+          'ua-full-version': {
+            mode: 1,
+            value: uaFullVersion,
           },
           'sec-ch-ua': {
             mode: 0,
@@ -1384,7 +1390,7 @@ export default {
     processData(data) {
       let changed = false
 
-      const { proxy, ua } = data
+      const { proxy, ua, chrome_version } = data
       if (proxy.mode === 2) {
         let oldProxy = proxy.value
         if (oldProxy && !proxy.host) {
@@ -1424,6 +1430,16 @@ export default {
           { brand: 'Chromium', version: chromiumCoreVer },
           { brand: 'Not=A?Brand', version: '99' },
         ]
+        changed = true
+      }
+      if (data['ua-full-version'] === undefined) {
+        const chrome_version_num = chrome_version === '默认' ? chromiumCoreVer : chrome_version
+        const chromeVer = Versions.find((item) => Number(item.split('.')[0]) === chrome_version_num)
+        const uaFullVersion = uaFullVersions.find((item) => Number(item.split('.')[0]) === chrome_version_num) || chromeVer
+        data['ua-full-version'] = {
+          mode: 1,
+          value: uaFullVersion
+        }
         changed = true
       }
 

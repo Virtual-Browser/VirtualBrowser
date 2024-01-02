@@ -378,6 +378,10 @@ export function genRandomMacAddr() {
   return e.map(o).join('-').toUpperCase()
 }
 
+export function genUserAgent(osVer, chromeVer) {
+  return `Mozilla/5.0 (Windows NT ${osVer}; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`
+}
+
 const allVoicesObtained = () =>
   new Promise(function(resolve, reject) {
     let voices = window.speechSynthesis.getVoices()

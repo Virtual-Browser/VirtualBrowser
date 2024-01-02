@@ -79,6 +79,8 @@ export async function updateBrowser(item) {
 }
 
 export async function deleteBrowser(id) {
+  await chromeSend('deleteBrowser', id).catch(() => {})
+
   const list = await getBrowserList()
   const idx = list.findIndex((it) => it.id === id)
 
