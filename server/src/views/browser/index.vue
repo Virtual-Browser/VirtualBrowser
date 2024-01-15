@@ -1577,10 +1577,16 @@ export default {
       reader.readAsText(file)
     },
     onExport() {
+      if (this.selectedRows.length === 0) {
+        alert('没有选择导出数据')
+        return
+      }
+      var currentDate = new Date().toISOString().replace(/[-:]/g, '');
+      var fileName = 'Virtual-Browser_' + currentDate + '.json';
       var blob = new Blob([JSON.stringify(this.selectedRows, null, 2)], {
         type: 'application/json;charset=utf-8',
       })
-      saveAs(blob, 'Virtual-Browser.json')
+      saveAs(blob, fileName)
     },
     async checkProxy() {
       this.checkProxyState.checking = true
