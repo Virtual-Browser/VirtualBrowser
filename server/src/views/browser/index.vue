@@ -1259,7 +1259,7 @@ export default {
             ],
           },
           'ua-language': {
-            mode: 1,
+            mode: 2,
             language: IPGeo.languages?.split(',')[0] || '',
             value: IPGeo.languages,
           },
