@@ -224,6 +224,7 @@
                       style="width: 70px"
                       :placeholder="$t('browser.proxy.port')"
                     />
+                    <span style="font-size: 12px; margin-left: 10px; color: rgb(141, 133, 133);">可按‘主机:端口:账号:密码’或‘主机:端口’格式粘贴自动识别</span>
                   </el-form-item>
                   <el-form-item
                     :label="$t('browser.proxy.user')"
