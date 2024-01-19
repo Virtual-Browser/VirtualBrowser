@@ -1044,6 +1044,20 @@ export default {
     },
   },
   watch: {
+    'form.proxy.host': function(newVal, oldVal) {
+      const parts = newVal.split(':')
+      if (parts.length === 4) {
+        this.form.proxy.host = parts[0]
+        this.form.proxy.port = parts[1]
+        this.form.proxy.user = parts[2]
+        this.form.proxy.pass = parts[3]
+      } else if (parts.length === 2) {
+        this.form.proxy.host = parts[0]
+        this.form.proxy.port = parts[1]
+        this.form.proxy.user = ''
+        this.form.proxy.pass = ''
+      }
+    },
     'form.screen._value'(val) {
       const wh = val.split('x')
       this.form.screen.width = parseInt(wh[0])
