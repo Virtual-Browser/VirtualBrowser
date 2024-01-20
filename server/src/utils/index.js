@@ -379,7 +379,8 @@ export function genRandomMacAddr() {
 }
 
 export function genUserAgent(osVer, chromeVer) {
-  return `Mozilla/5.0 (Windows NT ${osVer}; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`
+  const arch = Math.random() < 0.5 ? 'WOW64' : 'Win64; x64'
+  return `Mozilla/5.0 (Windows NT ${osVer}; ${arch}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`
 }
 
 const allVoicesObtained = () =>
