@@ -1366,7 +1366,7 @@ export default {
     RandomFingerprint() {
       const ipGeoTimeZone = IPGeo.time_zone?.name
 
-      const { id, name, proxy } = this.form;
+      const { id, name, timestamp, proxy } = this.form
 
       // const currentZone = TimeZones.find((item) => item.utc.find((it) => it === ipGeoTimeZone))
       const currentZone = TimeZones.find(
@@ -1378,6 +1378,7 @@ export default {
         this.form = {
           id: id,
           name: name,
+          timestamp: timestamp,
           os: 'Win 11',
           chrome_version: '默认',
           proxy: { ...proxy },
