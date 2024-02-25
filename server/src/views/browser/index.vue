@@ -1237,250 +1237,148 @@ export default {
         this.handleLaunch(row)
       }, delay)
     },
+    getDefaultForm() {
+      const currentZone = this.getCurrentTimeZone();
+      const defaultLanguage = IPGeo.languages?.split(',')[0] || '';
+
+      return {
+        id: undefined,
+        name: '',
+        os: 'Win 11',
+        chrome_version: '默认',
+        proxy: {
+          mode: 0,
+          value: '',
+          protocol: 'HTTP',
+          host: '',
+          port: '',
+          user: '',
+          pass: '',
+        },
+        cookie: {
+          mode: 0,
+          value: '',
+        },
+        ua: {
+          mode: 1,
+          value: genUserAgent(osVer, chromeVer),
+        },
+        'ua-full-version': {
+          mode: 1,
+          value: uaFullVersion,
+        },
+        'sec-ch-ua': {
+          mode: 0,
+          value: [
+            { brand: 'Chromium', version: chromiumCoreVer },
+            { brand: 'Not=A?Brand', version: '99' },
+          ],
+        },
+        'ua-language': {
+          mode: 2,
+          language: IPGeo.languages?.split(',')[0] || '',
+          value: IPGeo.languages,
+        },
+        'time-zone': {
+          mode: 2,
+          zone: this.getZone(currentZone?.offset || 0),
+          locale: IPGeo.languages?.split(',')[0] || '',
+          name: currentZone?.text || '',
+          value: currentZone?.offset || 0,
+        },
+        webrtc: {
+          mode: 0,
+        },
+        location: {
+          mode: 2,
+          enable: 1,
+          longitude: IPGeo.longitude,
+          latitude: IPGeo.latitude,
+          precision: random.int(10, 5000),
+        },
+        screen: {
+          mode: 0,
+          width: screen.width,
+          height: screen.height,
+          _value: `${screen.width} x ${screen.height}`,
+        },
+        fonts: {
+          mode: 1,
+          value: fontList
+            .sort(() => Math.random() - 0.5)
+            .slice(0, random.int(1, 5)),
+        },
+        canvas: {
+          mode: 1,
+          r: random.int(-10, 10),
+          g: random.int(-10, 10),
+          b: random.int(-10, 10),
+          a: random.int(-10, 10),
+        },
+        'webgl-img': {
+          mode: 1,
+          r: random.int(-10, 10),
+          g: random.int(-10, 10),
+          b: random.int(-10, 10),
+          a: random.int(-10, 10),
+        },
+        webgl: {
+          mode: 1,
+          vendor:
+            this.WebGLVendors[random.int(0, this.WebGLVendors.length - 1)],
+          // render: this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)],
+        },
+        'audio-context': {
+          mode: 1,
+          channel: random.float(0, 0.0000001),
+          analyer: random.float(0, 0.1),
+        },
+        media: { mode: 1 },
+        'client-rects': {
+          mode: 1,
+          width: random.float(-1, 1),
+          height: random.float(-1, 1),
+        },
+        speech_voices: {
+          mode: 1,
+          value: genRandomSpeechVoices(),
+        },
+        ssl: {
+          mode: 0,
+          value: [],
+        },
+        cpu: { mode: 1, value: 4 },
+        memory: { mode: 1, value: 8 },
+        'device-name': { mode: 1, value: genRandomComputerName() },
+        mac: { mode: 1, value: genRandomMacAddr() },
+        dnt: { mode: 1, value: 0 },
+        'port-scan': { mode: 1, value: [] },
+        gpu: { mode: 1, value: 1 },
+      }
+    },
+    getCurrentTimeZone() {
+      if (!this.cachedTimeZone) {
+        const timezoneOffset = new Date().getTimezoneOffset() / -60;
+        this.cachedTimeZone = TimeZones.find(
+          (item) => item.offset === timezoneOffset
+        )
+      }
+      return this.cachedTimeZone;
+    },
     resetForm() {
-      const ipGeoTimeZone = IPGeo.time_zone?.name
-
-      // const currentZone = TimeZones.find((item) => item.utc.find((it) => it === ipGeoTimeZone))
-      const currentZone = TimeZones.find(
-        (item) => item.offset === new Date().getTimezoneOffset() / -60
-      )
-
-      this.form.webgl.vendor = ''
       this.$nextTick(() => {
-        this.form = {
-          id: undefined,
-          name: '',
-          os: 'Win 11',
-          chrome_version: '默认',
-          proxy: {
-            mode: 0,
-            value: '',
-            protocol: 'HTTP',
-            host: '',
-            port: '',
-            user: '',
-            pass: '',
-          },
-          cookie: {
-            mode: 0,
-            value: '',
-          },
-          ua: {
-            mode: 1,
-            value: genUserAgent(osVer, chromeVer),
-          },
-          'ua-full-version': {
-            mode: 1,
-            value: uaFullVersion,
-          },
-          'sec-ch-ua': {
-            mode: 0,
-            value: [
-              { brand: 'Chromium', version: chromiumCoreVer },
-              { brand: 'Not=A?Brand', version: '99' },
-            ],
-          },
-          'ua-language': {
-            mode: 2,
-            language: IPGeo.languages?.split(',')[0] || '',
-            value: IPGeo.languages,
-          },
-          'time-zone': {
-            mode: 2,
-            zone: this.getZone(currentZone?.offset || 0),
-            locale: IPGeo.languages?.split(',')[0] || '',
-            name: currentZone?.text || '',
-            value: currentZone?.offset || 0,
-          },
-          webrtc: {
-            mode: 0,
-          },
-          location: {
-            mode: 2,
-            enable: 1,
-            longitude: IPGeo.longitude,
-            latitude: IPGeo.latitude,
-            precision: random.int(10, 5000),
-          },
-          screen: {
-            mode: 0,
-            width: screen.width,
-            height: screen.height,
-            _value: `${screen.width} x ${screen.height}`,
-          },
-          fonts: {
-            mode: 1,
-            value: fontList
-              .sort(() => Math.random() - 0.5)
-              .slice(0, random.int(1, 5)),
-          },
-          canvas: {
-            mode: 1,
-            r: random.int(-10, 10),
-            g: random.int(-10, 10),
-            b: random.int(-10, 10),
-            a: random.int(-10, 10),
-          },
-          'webgl-img': {
-            mode: 1,
-            r: random.int(-10, 10),
-            g: random.int(-10, 10),
-            b: random.int(-10, 10),
-            a: random.int(-10, 10),
-          },
-          webgl: {
-            mode: 1,
-            vendor:
-              this.WebGLVendors[random.int(0, this.WebGLVendors.length - 1)],
-            // render: this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)],
-          },
-          'audio-context': {
-            mode: 1,
-            channel: random.float(0, 0.0000001),
-            analyer: random.float(0, 0.1),
-          },
-          media: { mode: 1 },
-          'client-rects': {
-            mode: 1,
-            width: random.float(-1, 1),
-            height: random.float(-1, 1),
-          },
-          speech_voices: {
-            mode: 1,
-            value: genRandomSpeechVoices(),
-          },
-          ssl: {
-            mode: 0,
-            value: [],
-          },
-          cpu: { mode: 1, value: 4 },
-          memory: { mode: 1, value: 8 },
-          'device-name': { mode: 1, value: genRandomComputerName() },
-          mac: { mode: 1, value: genRandomMacAddr() },
-          dnt: { mode: 1, value: 0 },
-          'port-scan': { mode: 1, value: [] },
-          gpu: { mode: 1, value: 1 },
-        }
+        this.form = this.getDefaultForm();
       })
     },
     RandomFingerprint() {
-      const ipGeoTimeZone = IPGeo.time_zone?.name
-
-      const { id, name, timestamp, proxy } = this.form
-
-      // const currentZone = TimeZones.find((item) => item.utc.find((it) => it === ipGeoTimeZone))
-      const currentZone = TimeZones.find(
-        (item) => item.offset === new Date().getTimezoneOffset() / -60
-      )
-
-      this.form.webgl.vendor = ''
+      const { id, name, timestamp, proxy } = this.form;
       this.$nextTick(() => {
         this.form = {
-          id: id,
-          name: name,
-          timestamp: timestamp,
-          os: 'Win 11',
-          chrome_version: '默认',
+          ...this.getDefaultForm(),
+          id,
+          name,
+          timestamp,
           proxy: { ...proxy },
-          cookie: {
-            mode: 0,
-            value: '',
-          },
-          ua: {
-            mode: 1,
-            value: genUserAgent(osVer, chromeVer),
-          },
-          'ua-full-version': {
-            mode: 1,
-            value: uaFullVersion,
-          },
-          'sec-ch-ua': {
-            mode: 0,
-            value: [
-              { brand: 'Chromium', version: chromiumCoreVer },
-              { brand: 'Not=A?Brand', version: '99' },
-            ],
-          },
-          'ua-language': {
-            mode: 2,
-            language: IPGeo.languages?.split(',')[0] || '',
-            value: IPGeo.languages,
-          },
-          'time-zone': {
-            mode: 2,
-            zone: this.getZone(currentZone?.offset || 0),
-            locale: IPGeo.languages?.split(',')[0] || '',
-            name: currentZone?.text || '',
-            value: currentZone?.offset || 0,
-          },
-          webrtc: {
-            mode: 0,
-          },
-          location: {
-            mode: 2,
-            enable: 1,
-            longitude: IPGeo.longitude,
-            latitude: IPGeo.latitude,
-            precision: random.int(10, 5000),
-          },
-          screen: {
-            mode: 0,
-            width: screen.width,
-            height: screen.height,
-            _value: `${screen.width} x ${screen.height}`,
-          },
-          fonts: {
-            mode: 1,
-            value: fontList
-              .sort(() => Math.random() - 0.5)
-              .slice(0, random.int(1, 5)),
-          },
-          canvas: {
-            mode: 1,
-            r: random.int(-10, 10),
-            g: random.int(-10, 10),
-            b: random.int(-10, 10),
-            a: random.int(-10, 10),
-          },
-          'webgl-img': {
-            mode: 1,
-            r: random.int(-10, 10),
-            g: random.int(-10, 10),
-            b: random.int(-10, 10),
-            a: random.int(-10, 10),
-          },
-          webgl: {
-            mode: 1,
-            vendor:
-              this.WebGLVendors[random.int(0, this.WebGLVendors.length - 1)],
-            // render: this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)],
-          },
-          'audio-context': {
-            mode: 1,
-            channel: random.float(0, 0.0000001),
-            analyer: random.float(0, 0.1),
-          },
-          media: { mode: 1 },
-          'client-rects': {
-            mode: 1,
-            width: random.float(-1, 1),
-            height: random.float(-1, 1),
-          },
-          speech_voices: {
-            mode: 1,
-            value: genRandomSpeechVoices(),
-          },
-          ssl: {
-            mode: 0,
-            value: [],
-          },
-          cpu: { mode: 1, value: 4 },
-          memory: { mode: 1, value: 8 },
-          'device-name': { mode: 1, value: genRandomComputerName() },
-          mac: { mode: 1, value: genRandomMacAddr() },
-          dnt: { mode: 1, value: 0 },
-          'port-scan': { mode: 1, value: [] },
-          gpu: { mode: 1, value: 1 },
         }
       })
     },
