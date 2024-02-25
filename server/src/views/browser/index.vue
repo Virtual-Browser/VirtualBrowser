@@ -224,6 +224,7 @@
                       style="width: 70px"
                       :placeholder="$t('browser.proxy.port')"
                     />
+                    <span style="font-size: 12px; margin-left: 10px; color: rgb(141, 133, 133);">可按‘主机:端口:账号:密码’或‘主机:端口’格式粘贴自动识别</span>
                   </el-form-item>
                   <el-form-item
                     :label="$t('browser.proxy.user')"
@@ -297,19 +298,26 @@
             <div>
               <el-form-item :label="$t('browser.ua')">
                 <el-radio-group v-model="form.ua.mode">
-                  <el-radio-button :label="0">{{
-                    $t("browser.default")
-                  }}</el-radio-button>
-                  <el-radio-button :label="1">{{
-                    $t("browser.custom")
-                  }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t("browser.default") }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t("browser.custom") }}</el-radio-button>
                 </el-radio-group>
-                <el-input
-                  v-model="form.ua.value"
-                  :disabled="form.ua.mode === 0"
-                  type="textarea"
-                  style="margin-top: 3px"
-                />
+                <div style="display: flex; align-items: flex-start; margin-top: 3px;">
+                  <div style="flex-grow: 1; margin-right: 10px;">
+                    <el-input
+                      v-model="form.ua.value"
+                      :disabled="form.ua.mode === 0"
+                      type="textarea"
+                      style="width: 100%;"
+                    />
+                  </div>
+                  <el-button
+                    type="primary"
+                    size="small"
+                    icon="el-icon-refresh"
+                    @click="RandomFingerprint"
+                    :disabled="form.ua.mode === 0"
+                  >{{ $t("browser.random") }}</el-button>
+                </div>
               </el-form-item>
               <el-form-item :label="$t('browser.sec_ua')">
                 <el-radio-group v-model="form['sec-ch-ua'].mode">
@@ -1044,6 +1052,20 @@ export default {
     },
   },
   watch: {
+    'form.proxy.host': function(newVal, oldVal) {
+      const parts = newVal.split(':')
+      if (parts.length === 4) {
+        this.form.proxy.host = parts[0]
+        this.form.proxy.port = parts[1]
+        this.form.proxy.user = parts[2]
+        this.form.proxy.pass = parts[3]
+      } else if (parts.length === 2) {
+        this.form.proxy.host = parts[0]
+        this.form.proxy.port = parts[1]
+        this.form.proxy.user = ''
+        this.form.proxy.pass = ''
+      }
+    },
     'form.screen._value'(val) {
       const wh = val.split('x')
       this.form.screen.width = parseInt(wh[0])
@@ -1215,129 +1237,148 @@ export default {
         this.handleLaunch(row)
       }, delay)
     },
+    getDefaultForm() {
+      const currentZone = this.getCurrentTimeZone();
+      const defaultLanguage = IPGeo.languages?.split(',')[0] || '';
+
+      return {
+        id: undefined,
+        name: '',
+        os: 'Win 11',
+        chrome_version: '默认',
+        proxy: {
+          mode: 0,
+          value: '',
+          protocol: 'HTTP',
+          host: '',
+          port: '',
+          user: '',
+          pass: '',
+        },
+        cookie: {
+          mode: 0,
+          value: '',
+        },
+        ua: {
+          mode: 1,
+          value: genUserAgent(osVer, chromeVer),
+        },
+        'ua-full-version': {
+          mode: 1,
+          value: uaFullVersion,
+        },
+        'sec-ch-ua': {
+          mode: 0,
+          value: [
+            { brand: 'Chromium', version: chromiumCoreVer },
+            { brand: 'Not=A?Brand', version: '99' },
+          ],
+        },
+        'ua-language': {
+          mode: 2,
+          language: IPGeo.languages?.split(',')[0] || '',
+          value: IPGeo.languages,
+        },
+        'time-zone': {
+          mode: 2,
+          zone: this.getZone(currentZone?.offset || 0),
+          locale: IPGeo.languages?.split(',')[0] || '',
+          name: currentZone?.text || '',
+          value: currentZone?.offset || 0,
+        },
+        webrtc: {
+          mode: 0,
+        },
+        location: {
+          mode: 2,
+          enable: 1,
+          longitude: IPGeo.longitude,
+          latitude: IPGeo.latitude,
+          precision: random.int(10, 5000),
+        },
+        screen: {
+          mode: 0,
+          width: screen.width,
+          height: screen.height,
+          _value: `${screen.width} x ${screen.height}`,
+        },
+        fonts: {
+          mode: 1,
+          value: fontList
+            .sort(() => Math.random() - 0.5)
+            .slice(0, random.int(1, 5)),
+        },
+        canvas: {
+          mode: 1,
+          r: random.int(-10, 10),
+          g: random.int(-10, 10),
+          b: random.int(-10, 10),
+          a: random.int(-10, 10),
+        },
+        'webgl-img': {
+          mode: 1,
+          r: random.int(-10, 10),
+          g: random.int(-10, 10),
+          b: random.int(-10, 10),
+          a: random.int(-10, 10),
+        },
+        webgl: {
+          mode: 1,
+          vendor:
+            this.WebGLVendors[random.int(0, this.WebGLVendors.length - 1)],
+          // render: this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)],
+        },
+        'audio-context': {
+          mode: 1,
+          channel: random.float(0, 0.0000001),
+          analyer: random.float(0, 0.1),
+        },
+        media: { mode: 1 },
+        'client-rects': {
+          mode: 1,
+          width: random.float(-1, 1),
+          height: random.float(-1, 1),
+        },
+        speech_voices: {
+          mode: 1,
+          value: genRandomSpeechVoices(),
+        },
+        ssl: {
+          mode: 0,
+          value: [],
+        },
+        cpu: { mode: 1, value: 4 },
+        memory: { mode: 1, value: 8 },
+        'device-name': { mode: 1, value: genRandomComputerName() },
+        mac: { mode: 1, value: genRandomMacAddr() },
+        dnt: { mode: 1, value: 0 },
+        'port-scan': { mode: 1, value: [] },
+        gpu: { mode: 1, value: 1 },
+      }
+    },
+    getCurrentTimeZone() {
+      if (!this.cachedTimeZone) {
+        const timezoneOffset = new Date().getTimezoneOffset() / -60;
+        this.cachedTimeZone = TimeZones.find(
+          (item) => item.offset === timezoneOffset
+        )
+      }
+      return this.cachedTimeZone;
+    },
     resetForm() {
-      const ipGeoTimeZone = IPGeo.time_zone?.name
-
-      // const currentZone = TimeZones.find((item) => item.utc.find((it) => it === ipGeoTimeZone))
-      const currentZone = TimeZones.find(
-        (item) => item.offset === new Date().getTimezoneOffset() / -60
-      )
-
-      this.form.webgl.vendor = ''
+      this.$nextTick(() => {
+        this.form = this.getDefaultForm();
+      })
+    },
+    RandomFingerprint() {
+      const { id, name, timestamp, proxy } = this.form;
       this.$nextTick(() => {
         this.form = {
-          id: undefined,
-          name: '',
-          os: 'Win 11',
-          chrome_version: '默认',
-          proxy: {
-            mode: 0,
-            value: '',
-            protocol: 'HTTP',
-            host: '',
-            port: '',
-            user: '',
-            pass: '',
-          },
-          cookie: {
-            mode: 0,
-            value: '',
-          },
-          ua: {
-            mode: 1,
-            value: genUserAgent(osVer, chromeVer),
-          },
-          'ua-full-version': {
-            mode: 1,
-            value: uaFullVersion,
-          },
-          'sec-ch-ua': {
-            mode: 0,
-            value: [
-              { brand: 'Chromium', version: chromiumCoreVer },
-              { brand: 'Not=A?Brand', version: '99' },
-            ],
-          },
-          'ua-language': {
-            mode: 1,
-            language: IPGeo.languages?.split(',')[0] || '',
-            value: IPGeo.languages,
-          },
-          'time-zone': {
-            mode: 2,
-            zone: this.getZone(currentZone?.offset || 0),
-            locale: IPGeo.languages?.split(',')[0] || '',
-            name: currentZone?.text || '',
-            value: currentZone?.offset || 0,
-          },
-          webrtc: {
-            mode: 0,
-          },
-          location: {
-            mode: 2,
-            enable: 1,
-            longitude: IPGeo.longitude,
-            latitude: IPGeo.latitude,
-            precision: random.int(10, 5000),
-          },
-          screen: {
-            mode: 0,
-            width: screen.width,
-            height: screen.height,
-            _value: `${screen.width} x ${screen.height}`,
-          },
-          fonts: {
-            mode: 1,
-            value: fontList
-              .sort(() => Math.random() - 0.5)
-              .slice(0, random.int(1, 5)),
-          },
-          canvas: {
-            mode: 1,
-            r: random.int(-10, 10),
-            g: random.int(-10, 10),
-            b: random.int(-10, 10),
-            a: random.int(-10, 10),
-          },
-          'webgl-img': {
-            mode: 1,
-            r: random.int(-10, 10),
-            g: random.int(-10, 10),
-            b: random.int(-10, 10),
-            a: random.int(-10, 10),
-          },
-          webgl: {
-            mode: 1,
-            vendor:
-              this.WebGLVendors[random.int(0, this.WebGLVendors.length - 1)],
-            // render: this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)],
-          },
-          'audio-context': {
-            mode: 1,
-            channel: random.float(0, 0.0000001),
-            analyer: random.float(0, 0.1),
-          },
-          media: { mode: 1 },
-          'client-rects': {
-            mode: 1,
-            width: random.float(-1, 1),
-            height: random.float(-1, 1),
-          },
-          speech_voices: {
-            mode: 1,
-            value: genRandomSpeechVoices(),
-          },
-          ssl: {
-            mode: 0,
-            value: [],
-          },
-          cpu: { mode: 1, value: 4 },
-          memory: { mode: 1, value: 8 },
-          'device-name': { mode: 1, value: genRandomComputerName() },
-          mac: { mode: 1, value: genRandomMacAddr() },
-          dnt: { mode: 1, value: 0 },
-          'port-scan': { mode: 1, value: [] },
-          gpu: { mode: 1, value: 1 },
+          ...this.getDefaultForm(),
+          id,
+          name,
+          timestamp,
+          proxy: { ...proxy },
         }
       })
     },
@@ -1577,10 +1618,16 @@ export default {
       reader.readAsText(file)
     },
     onExport() {
+      if (this.selectedRows.length === 0) {
+        alert('没有选择导出数据')
+        return
+      }
+      var currentDate = new Date().toISOString().replace(/[-:]/g, '');
+      var fileName = 'Virtual-Browser_' + currentDate + '.json';
       var blob = new Blob([JSON.stringify(this.selectedRows, null, 2)], {
         type: 'application/json;charset=utf-8',
       })
-      saveAs(blob, 'Virtual-Browser.json')
+      saveAs(blob, fileName)
     },
     async checkProxy() {
       this.checkProxyState.checking = true
