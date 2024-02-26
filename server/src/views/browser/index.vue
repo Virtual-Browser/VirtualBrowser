@@ -252,17 +252,23 @@
                       @click="checkProxy"
                     >检测{{ checkProxyState.checking ? "中" : "" }}</el-button>
                   </el-form-item>
-                  <!-- <el-form-item
-                    :label="$t('browser.proxy.value')"
-                    label-width="60px"
-                    prop="proxy.value"
+                  <el-form-item
+                    :label="$t('browser.proxy.API')"
+                    label-width="70px"
                   >
                     <el-input
-                      v-model="form.proxy.value"
+                      v-model="form.proxy.API"
                       style="max-width: 250px"
                     />
-                    <div class="tips" v-html="$t('browser.proxy_tips')" />
-                  </el-form-item> -->
+                      &nbsp;
+                    <el-button
+                      type="primary"
+                      style="margin-left: 7px"
+                      :disabled2="checkProxyState.checking"
+                      :loading="checkProxyState.checking"
+                      @click="checkAPIProxy"
+                    >提取代理{{ checkProxyState.checking ? "中" : "" }}</el-button>
+                  </el-form-item>
                 </div>
               </el-form-item>
               <el-form-item
@@ -633,16 +639,19 @@
                   <el-option :value="4" />
                   <el-option :value="6" />
                   <el-option :value="8" />
+                  <el-option :value="12" />
                 </el-select>
                 &nbsp;
                 <span>{{ $t("browser.cpu_unit") }}</span>
               </el-form-item>
               <el-form-item :label="$t('browser.memory')">
                 <el-select v-model="form.memory.value" style="width: 60px">
-                  <el-option :value="1" />
                   <el-option :value="2" />
                   <el-option :value="4" />
                   <el-option :value="8" />
+                  <el-option :value="16" />
+                  <el-option :value="32" />
+                  <el-option :value="64" />
                 </el-select>
                 &nbsp;
                 <span>GB</span>
@@ -818,6 +827,8 @@ import {
   genRandomMacAddr,
   genRandomComputerName,
   genRandomSpeechVoices,
+  getRandomCpuCore,
+  getRandomMemorySize,
   genUserAgent,
   loadScript,
 } from '@/utils'
@@ -1240,6 +1251,8 @@ export default {
     getDefaultForm() {
       const currentZone = this.getCurrentTimeZone();
       const defaultLanguage = IPGeo.languages?.split(',')[0] || '';
+      const cpuCore = getRandomCpuCore()
+      const memorySize = getRandomMemorySize(cpuCore)
 
       return {
         id: undefined,
@@ -1347,8 +1360,8 @@ export default {
           mode: 0,
           value: [],
         },
-        cpu: { mode: 1, value: 4 },
-        memory: { mode: 1, value: 8 },
+        cpu: { mode: 1, value: cpuCore },
+        memory: { mode: 1, value: memorySize },
         'device-name': { mode: 1, value: genRandomComputerName() },
         mac: { mode: 1, value: genRandomMacAddr() },
         dnt: { mode: 1, value: 0 },
@@ -1652,6 +1665,48 @@ export default {
         }
       )
       this.checkProxyState.checking = false
+    },
+    setAPI(data) {
+      this.$set(this.form.proxy, 'API', data)
+    },
+    async checkAPIProxy() {
+      const apiData = this.form.proxy.API
+      try {
+        const response = await fetch(apiData)
+        if (!response.ok) {
+          throw new Error('网络响应不是 ok')
+        }
+
+        let data
+        const clonedResponse = response.clone()
+
+        try {
+          data = await response.json()
+        } catch (jsonError) {
+          try {
+            const text = await clonedResponse.text()
+            const [ip, port] = text.split(':')
+            if (ip && port) {
+              data = { ip, port }
+            } else {
+              throw new Error('响应格式既不是有效的 JSON 也不是有效的 ip:port 格式')
+            }
+          } catch (textError) {
+            throw new Error('响应体无法读取')
+          }
+        }
+        if (data && data.ip && data.port) {
+          this.form.proxy.host = data.ip
+          this.form.proxy.port = data.port
+        } else {
+          throw new Error('API 响应不包含 ip 或 port')
+        }
+      } catch (error) {
+        console.error('请求代理 API 失败:', error)
+        this.checkProxyState.checking = false
+        return
+      }
+      this.checkProxy()
     },
     onAddBrand() {
       this.form['sec-ch-ua'].value.push({ brand: '', version: '' })

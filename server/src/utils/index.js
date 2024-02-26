@@ -368,6 +368,20 @@ export function genRandomComputerName() {
   return 'DESKTOP-' + e.shift().toUpperCase()
 }
 
+export function getRandomCpuCore() {
+  const cpuOptions = [2, 4, 6, 8, 12]
+  return cpuOptions[Math.floor(Math.random() * cpuOptions.length)]
+}
+
+export function getRandomMemorySize(minCpuCore) {
+  const memoryOptions = [2, 4, 8, 16, 32, 64]
+  let startIndex = memoryOptions.findIndex(size => size >= minCpuCore)
+  if (startIndex === -1) {
+    startIndex = memoryOptions.length - 1
+  }
+  return memoryOptions[startIndex + Math.floor(Math.random() * (memoryOptions.length - startIndex))]
+}
+
 export function genRandomMacAddr() {
   for (var e = [], t = 0; t < 6; t++) e[t] = Math.floor(256 * Math.random())
   function o(e) {
