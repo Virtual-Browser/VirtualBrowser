@@ -1580,6 +1580,9 @@ export default {
         .catch(() => {})
     },
     handleLaunch(row) {
+      if (row.proxy && row.proxy.API) {
+        this.checkAPIProxy()
+      }
       chromeSend('launchBrowser', row.id.toString())
       row.runLoading = true
     },
@@ -1685,11 +1688,15 @@ export default {
         } catch (jsonError) {
           try {
             const text = await clonedResponse.text()
-            const [ip, port] = text.split(':')
-            if (ip && port) {
+            const parts = text.split(':')
+            if (parts.length === 4) {
+              const [user, pass, ip, port] = parts
+              data = { user: user || '', pass: pass || '', ip, port }
+            } else if (parts.length === 2) {
+              const [ip, port] = parts
               data = { ip, port }
             } else {
-              throw new Error('响应格式既不是有效的 JSON 也不是有效的 ip:port 格式')
+              throw new Error('响应格式既不是有效的 JSON 也不是有效的 ip:port 或 用户名:密码:IP:端口 格式')
             }
           } catch (textError) {
             throw new Error('响应体无法读取')
@@ -1698,6 +1705,8 @@ export default {
         if (data && data.ip && data.port) {
           this.form.proxy.host = data.ip
           this.form.proxy.port = data.port
+          this.form.proxy.user = data.user || ''
+          this.form.proxy.pass = data.pass || ''
         } else {
           throw new Error('API 响应不包含 ip 或 port')
         }
