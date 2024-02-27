@@ -397,6 +397,22 @@ export function genUserAgent(osVer, chromeVer) {
   return `Mozilla/5.0 (Windows NT ${osVer}; ${arch}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`
 }
 
+export function getUaFullVersion(uaFullVersions, chromeVer) {
+  const val = Number(chromeVer.split('.')[0])
+
+  const matchingFullVersions = uaFullVersions.filter((item) => Number(item.split('.')[0]) === val)
+
+  let uaFullVersion
+  if (matchingFullVersions.length > 0) {
+    const randomIndex = Math.floor(Math.random() * matchingFullVersions.length)
+    uaFullVersion = matchingFullVersions[randomIndex]
+  } else {
+    uaFullVersion = chromeVer
+  }
+
+  return uaFullVersion
+}
+
 const allVoicesObtained = () =>
   new Promise(function(resolve, reject) {
     let voices = window.speechSynthesis.getVoices()

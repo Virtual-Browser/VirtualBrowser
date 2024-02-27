@@ -830,6 +830,7 @@ import {
   getRandomCpuCore,
   getRandomMemorySize,
   genUserAgent,
+  getUaFullVersion,
   loadScript,
 } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -846,7 +847,7 @@ import { login } from '@/api/user'
 let IPGeo = {}
 let fontList = []
 let osVer = '10.0'
-let chromeVer = ''; let uaFullVersion = ''
+let chromeVer = ''
 const sslList = ['0xc02c', '0xa02c', '0xb02c', '0xd02c', '0xe02c', '0xf02c']
 let tooltipTimer
 const chromiumCoreVer =
@@ -1089,11 +1090,6 @@ export default {
       } else {
         this.form.ua.mode = 1
       }
-
-      // this.form[
-      //   "sec-ch-ua"
-      // ].value = `"Google Chrome";v="${val}", "Not(A:Brand";v="8", "Chromium";v="${val}"`;
-
       this.form['sec-ch-ua'].value.forEach((item) => {
         if (item.brand === 'Chromium') {
           item.version = val
@@ -1102,9 +1098,8 @@ export default {
 
       const curVers = Versions.filter((item) => Number(item.split('.')[0]) === val)
       chromeVer = curVers[random.int(0, curVers.length - 1)]
-      uaFullVersion = uaFullVersions.find((item) => Number(item.split('.')[0]) === val) || chromeVer
       this.form.ua.value = genUserAgent(osVer, chromeVer)
-      this.form['ua-full-version'].value = uaFullVersion
+      this.form['ua-full-version'].value = getUaFullVersion(uaFullVersions, chromeVer)
     },
     'form.os'(val) {
       switch (val) {
@@ -1278,7 +1273,7 @@ export default {
         },
         'ua-full-version': {
           mode: 1,
-          value: uaFullVersion,
+          value: getUaFullVersion(uaFullVersions, chromeVer),
         },
         'sec-ch-ua': {
           mode: 0,
@@ -1489,10 +1484,9 @@ export default {
       if (data['ua-full-version'] === undefined) {
         const chrome_version_num = chrome_version === '默认' ? chromiumCoreVer : chrome_version
         const chromeVer = Versions.find((item) => Number(item.split('.')[0]) === chrome_version_num)
-        const uaFullVersion = uaFullVersions.find((item) => Number(item.split('.')[0]) === chrome_version_num) || chromeVer
         data['ua-full-version'] = {
           mode: 1,
-          value: uaFullVersion
+          value: getUaFullVersion(uaFullVersions, chromeVer)
         }
         changed = true
       }
