@@ -13,6 +13,9 @@
         <el-button class="filter-item" type="primary" @click="handleBatchStart">
           {{ $t("browser.batchStart") }}
         </el-button>
+        <el-button class="filter-item" type="primary" @click="dialogVisible = true">
+          {{ $t("browser.batchCreate") }}
+        </el-button>
       </div>
       <div style="display: flex">
         <!-- <el-input
@@ -806,6 +809,30 @@
         }}</el-button>
       </span>
     </el-dialog>
+    
+    <template>
+      <el-dialog :visible.sync="dialogVisible" title="批量创建">
+        <el-form :model="form">
+          <el-form-item label="环境数量">
+            <el-input v-model.number="form.numberOfEnvironments" type="number" min="1" />
+          </el-form-item>
+          <el-form-item label="代理类型">
+            <el-select v-model="form.proxyType" placeholder="请选择">
+              <el-option label="HTTP" value="HTTP" />
+              <el-option label="HTTPS" value="HTTPS" />
+              <el-option label="SOCKS5" value="SOCKS5" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="代理API链接">
+            <el-input v-model="form.proxyAPI" placeholder="请输入" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleBatchCreate">确认</el-button>
+        </div>
+      </el-dialog>
+    </template>
   </div>
 </template>
 
@@ -937,6 +964,7 @@ export default {
     }
     return {
       selectedRows: [],
+      chromeVer: '',
       tableKey: 0,
       list: null,
       listLoading: true,
@@ -946,6 +974,7 @@ export default {
         title: undefined,
       },
       dialogFormVisible: false,
+      dialogVisible: false,
       dialogStatus: '',
       dialogCookieFormatVisible: false,
       textMap: {
@@ -953,6 +982,9 @@ export default {
         create: this.$t('browser.add'),
       },
       form: {
+        numberOfEnvironments: 1,
+        proxyType: 'HTTP',
+        proxyAPI: '',
         proxy: {},
         cookie: {},
         ua: {},
@@ -1002,9 +1034,12 @@ export default {
       platforms: ['Win 7', 'Win 8', 'Win 10', 'Win 11'],
       WebGLVendors: Array.from(
         new Set(
-          WebGLRenders.map(
-            (item) => `Google Inc. (${item.match(/\((.+?),/)[1]})`
-          )
+          WebGLRenders.map((item) => {
+            const match = item.match(/\((.+?),/)
+            if (match && match[1]) {
+              return `Google Inc. (${match[1]})`
+            }
+          })
         )
       ),
       WebGLRenders: WebGLRenders,
@@ -1262,6 +1297,7 @@ export default {
           port: '',
           user: '',
           pass: '',
+          API: '',
         },
         cookie: {
           mode: 0,
@@ -1720,6 +1756,58 @@ export default {
           return item.brand !== brand
         }
       )
+    },
+    async handleBatchCreate() {
+      if (!this.form.numberOfEnvironments || this.form.numberOfEnvironments < 1) {
+        this.$message.error('无效的环境数量')
+        return
+      }
+      for (let i = 0; i < this.form.numberOfEnvironments; i++) {
+        const newEnvironmentData = this.getDefaultForm()
+        newEnvironmentData.timestamp = Date.now()
+        const uaData = this.updateChromeVer(newEnvironmentData.chrome_version)
+        newEnvironmentData.ua.value = uaData.ua
+        newEnvironmentData['ua-full-version'].value = uaData.uaFullVersion
+
+        if (this.form.proxyAPI) {
+          newEnvironmentData.proxy.API = this.form.proxyAPI
+          newEnvironmentData.proxy.protocol = this.form.proxyType
+          newEnvironmentData.proxy.mode = 2
+        }
+        this.preProcessData(newEnvironmentData)
+        try {
+          await addBrowser(newEnvironmentData)
+          this.$notify({
+            title: this.$t('browser.success'),
+            message: this.$t('browser.create') + this.$t('browser.success'),
+            type: 'success',
+            duration: 2000,
+          })
+        } catch (error) {
+          this.$message.error('创建环境失败: ' + error.message)
+          break
+        }
+      }
+
+      this.form.numberOfEnvironments = 1
+      this.form.proxyType = 'http'
+      this.form.proxyAPI = ''
+
+      this.getList()
+      this.dialogVisible = false
+    },
+    updateChromeVer(val) {
+      if (val === '默认') {
+        val = chromiumCoreVer
+      }
+      const curVers = Versions.filter((item) => Number(item.split('.')[0]) === val)
+      this.chromeVer = curVers[random.int(0, curVers.length - 1)]
+      const UaValue = genUserAgent(osVer, this.chromeVer)
+      const UaFullVersion = getUaFullVersion(uaFullVersions, this.chromeVer)
+      return {
+        ua: UaValue,
+        uaFullVersion: UaFullVersion
+      }
     },
   },
 }

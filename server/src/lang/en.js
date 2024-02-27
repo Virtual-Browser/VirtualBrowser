@@ -38,6 +38,7 @@ export default {
   browser: {
     add: 'Create Browser',
     batchStart: 'Batch start',
+    batchCreate: 'Batch Create',
     name: 'Name',
     search: 'Search',
     import: {
@@ -45,7 +46,7 @@ export default {
       export: 'Export',
     },
     id: 'ID',
-    ip_port:'IP Port',
+    ip_port: 'IP Port',
     date: 'Date',
     launch: 'Launch',
     launching: 'Launching',

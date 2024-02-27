@@ -37,6 +37,7 @@ export default {
   browser: {
     add: '创建浏览器',
     batchStart: '批量启动',
+    batchCreate: '批量创建',
     name: '名称',
     search: '搜索',
     import: {
