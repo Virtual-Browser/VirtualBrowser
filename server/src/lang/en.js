@@ -37,8 +37,10 @@ export default {
   },
   browser: {
     add: 'Create Browser',
+    batchActions: 'Batch Actions',
     batchStart: 'Batch start',
     batchCreate: 'Batch Create',
+    batchDelete: 'Batch Delete',
     name: 'Name',
     search: 'Search',
     import: {

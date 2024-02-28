@@ -36,8 +36,10 @@ export default {
   },
   browser: {
     add: '创建浏览器',
+    batchActions: '批量操作',
     batchStart: '批量启动',
     batchCreate: '批量创建',
+    batchDelete: '批量删除',
     name: '名称',
     search: '搜索',
     import: {

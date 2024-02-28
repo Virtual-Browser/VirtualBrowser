@@ -10,12 +10,16 @@
         >
           {{ $t("browser.add") }}
         </el-button>
-        <el-button class="filter-item" type="primary" @click="handleBatchStart">
-          {{ $t("browser.batchStart") }}
-        </el-button>
-        <el-button class="filter-item" type="primary" @click="dialogVisible = true">
-          {{ $t("browser.batchCreate") }}
-        </el-button>
+        <el-dropdown class="filter-item">
+          <el-button type="primary">
+            {{ $t("browser.batchActions") }}<i class="el-icon-arrow-down el-icon--right" />
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="handleBatchStart">{{ $t("browser.batchStart") }}</el-dropdown-item>
+            <el-dropdown-item @click.native="() => dialogVisible = true">{{ $t("browser.batchCreate") }}</el-dropdown-item>
+            <el-dropdown-item @click.native="handleBatchDelete">{{ $t("browser.batchDelete") }}</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
       <div style="display: flex">
         <!-- <el-input
@@ -1268,6 +1272,15 @@ export default {
       this.selectedRows = selection
     },
     handleBatchStart() {
+      if (this.selectedRows.length === 0) {
+        this.$notify({
+          title: '错误提示',
+          message: '至少需要勾选一个环境',
+          type: 'warning',
+          duration: 2000,
+        })
+        return
+      }
       for (let i = 0; i < this.selectedRows.length; i++) {
         const row = this.selectedRows[i]
         this.launchEnvironment(row, i * 2000)
@@ -1611,7 +1624,7 @@ export default {
     },
     handleLaunch(row) {
       if (row.proxy && row.proxy.API) {
-        this.checkAPIProxy()
+        this.GetAPIProxy(row)
       }
       chromeSend('launchBrowser', row.id.toString())
       row.runLoading = true
@@ -1702,50 +1715,89 @@ export default {
     setAPI(data) {
       this.$set(this.form.proxy, 'API', data)
     },
-    async checkAPIProxy() {
-      const apiData = this.form.proxy.API
+    async fetchAndParseAPI(apiData) {
+      const response = await fetch(apiData)
+      if (!response.ok) {
+        throw new Error(`网络响应不是 ok，状态码为：${response.status}`)
+      }
+
+      let data
+      const clonedResponse = response.clone()
       try {
-        const response = await fetch(apiData)
-        if (!response.ok) {
-          throw new Error('网络响应不是 ok')
+        data = await response.json()
+      } catch (jsonError) {
+        const text = await clonedResponse.text()
+        const parts = text.split(':')
+        switch (parts.length) {
+          case 4:
+            data = { user: parts[0] || '', pass: parts[1] || '', ip: parts[2], port: parts[3] }
+            break
+          case 2:
+            data = { ip: parts[0], port: parts[1] }
+            break
+          default:
+            throw new Error('响应格式既不是有效的 JSON 也不是有效的 ip:port 或 用户名:密码:IP:端口 格式')
         }
+      }
 
-        let data
-        const clonedResponse = response.clone()
+      if (!data || !data.ip || !data.port) {
+        throw new Error('API 响应不包含 ip 或 port');
+      }
 
-        try {
-          data = await response.json()
-        } catch (jsonError) {
-          try {
-            const text = await clonedResponse.text()
-            const parts = text.split(':')
-            if (parts.length === 4) {
-              const [user, pass, ip, port] = parts
-              data = { user: user || '', pass: pass || '', ip, port }
-            } else if (parts.length === 2) {
-              const [ip, port] = parts
-              data = { ip, port }
-            } else {
-              throw new Error('响应格式既不是有效的 JSON 也不是有效的 ip:port 或 用户名:密码:IP:端口 格式')
-            }
-          } catch (textError) {
-            throw new Error('响应体无法读取')
-          }
-        }
-        if (data && data.ip && data.port) {
-          this.form.proxy.host = data.ip
-          this.form.proxy.port = data.port
-          this.form.proxy.user = data.user || ''
-          this.form.proxy.pass = data.pass || ''
-        } else {
-          throw new Error('API 响应不包含 ip 或 port')
-        }
+      return data
+    },
+
+    updateProxyData(proxyData, data) {
+      proxyData.host = data.ip
+      proxyData.port = data.port
+      proxyData.user = data.user || ''
+      proxyData.pass = data.pass || ''
+    },
+
+    async checkAPIProxy() {
+      try {
+        const data = await this.fetchAndParseAPI(this.form.proxy.API)
+        this.updateProxyData(this.form.proxy, data)
+        this.onUpdateData()
       } catch (error) {
         console.error('请求代理 API 失败:', error)
         this.checkProxyState.checking = false
         return
       }
       this.checkProxy()
+    },
+    async GetAPIProxy(row) {
+      try {
+        const data = await this.fetchAndParseAPI(row.proxy.API)
+        this.updateProxyData(row.proxy, data)
+        this.onUpdateRowData(row)
+        this.getList()
+      } catch (error) {
+        console.error('请求代理 API 失败:', error)
+        if (row.checkProxyState) {
+          row.checkProxyState.checking = false
+        }
+        return
+      }
+      this.checkProxy(row)
+    },
+    onUpdateRowData(row) {
+      if (!row || typeof row !== 'object') {
+        console.error('The provided row is undefined or not an object.')
+        return
+      }
+
+      row.timestamp = +new Date()
+      this.preProcessData(row)
+      updateBrowser(row)
+      this.getList()
+      this.dialogFormVisible = false
+      this.$notify({
+        title: this.$t('browser.success'),
+        message: this.$t('browser.update') + this.$t('browser.success'),
+        type: 'success',
+        duration: 2000,
+      })
     },
     onAddBrand() {
       this.form['sec-ch-ua'].value.push({ brand: '', version: '' })
@@ -1790,7 +1842,7 @@ export default {
       }
 
       this.form.numberOfEnvironments = 1
-      this.form.proxyType = 'http'
+      this.form.proxyType = 'HTTP'
       this.form.proxyAPI = ''
 
       this.getList()
@@ -1809,6 +1861,39 @@ export default {
         uaFullVersion: UaFullVersion
       }
     },
+    async handleBatchDelete() {
+      if (this.selectedRows.length === 0) {
+        this.$notify({
+          title: '错误提示',
+          message: '至少需要勾选一个环境',
+          type: 'warning',
+          duration: 2000,
+        })
+        return
+      }
+
+      this.$confirm(
+        this.$t('browser.delete_confirm').replace('${name}', this.selectedRows.map(row => row.name).join(', '))
+      ).then(async() => {
+        try {
+          for (const row of this.selectedRows) {
+            await deleteBrowser(row.id);
+          }
+
+          this.getList()
+          this.$notify({
+            title: this.$t('browser.success'),
+            message: `${this.selectedRows.length} ` + this.$t('browser.delete') + this.$t('browser.success'),
+            type: 'success',
+            duration: 2000,
+          })
+        } catch (error) {
+          console.error('Error during batch delete:', error)
+        }
+      }).catch(() => {
+      })
+    }
+
   },
 }
 </script>
