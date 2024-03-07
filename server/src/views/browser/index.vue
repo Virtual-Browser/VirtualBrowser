@@ -74,15 +74,23 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('browser.ip_port')" width="200px">
+      <el-table-column label="代理" width="200px">
         <template slot-scope="{ row }">
           <span>
-            {{ row.proxy.protocol }}
-            {{
-              row.proxy.host && row.proxy.port
-                ? " " + row.proxy.host + ":" + row.proxy.port
-                : ""
-            }}
+            <template v-if="row.proxy.mode === 0">
+              默认
+            </template>
+            <template v-else-if="row.proxy.mode === 1">
+              不使用代理
+            </template>
+            <template v-else>
+              {{ row.proxy.protocol }}
+              {{
+                row.proxy.host && row.proxy.port
+                  ? " " + row.proxy.host + ":" + row.proxy.port
+                  : ""
+              }}
+            </template>
           </span>
         </template>
       </el-table-column>
