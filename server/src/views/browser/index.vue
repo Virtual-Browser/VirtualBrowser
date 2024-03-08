@@ -1686,7 +1686,12 @@ export default {
     },
     onExport() {
       if (this.selectedRows.length === 0) {
-        alert('没有选择导出数据')
+        this.$notify({
+          title: '错误提示',
+          message: '至少需要勾选一个环境',
+          type: 'warning',
+          duration: 2000,
+        })
         return
       }
       var currentDate = new Date().toISOString().replace(/[-:]/g, '');
