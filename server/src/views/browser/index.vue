@@ -271,7 +271,7 @@
                     :label="$t('browser.proxy.API')"
                     label-width="70px"
                   >
-                    <el-input
+                  <el-input
                       v-model="form.proxy.API"
                       style="max-width: 250px"
                     />
@@ -279,10 +279,8 @@
                     <el-button
                       type="primary"
                       style="margin-left: 7px"
-                      :disabled2="checkProxyState.checking"
-                      :loading="checkProxyState.checking"
                       @click="checkAPIProxy"
-                    >提取代理{{ checkProxyState.checking ? "中" : "" }}</el-button>
+                    >提取代理</el-button>
                   </el-form-item>
                 </div>
               </el-form-item>
@@ -1731,6 +1729,12 @@ export default {
     async fetchAndParseAPI(apiData) {
       const response = await fetch(apiData)
       if (!response.ok) {
+        this.$notify({
+          title: '错误提示',
+          message: '响应错误，请检查API接口有效性',
+          type: 'warning',
+          duration: 2000,
+        })
         throw new Error(`网络响应不是 ok，状态码为：${response.status}`)
       }
 
@@ -1749,12 +1753,24 @@ export default {
             data = { ip: parts[0], port: parts[1] }
             break
           default:
+            this.$notify({
+              title: '错误提示',
+              message: '响应格式既不是有效的JSON格式也不是有效的[ip:端口]或[用户名:密码:IP:端口]格式',
+              type: 'warning',
+              duration: 2000,
+            })
             throw new Error('响应格式既不是有效的 JSON 也不是有效的 ip:port 或 用户名:密码:IP:端口 格式')
         }
       }
 
       if (!data || !data.ip || !data.port) {
-        throw new Error('API 响应不包含 ip 或 port');
+        this.$notify({
+          title: '错误提示',
+          message: '响应不包含ip或端口',
+          type: 'warning',
+          duration: 2000,
+        })
+        throw new Error('API 响应不包含 ip 或 port')
       }
 
       return data
@@ -1768,13 +1784,21 @@ export default {
     },
 
     async checkAPIProxy() {
+      if (!this.form.proxy.API) {
+        this.$notify({
+          title: '错误提示',
+          message: '请输入代理提取API链接',
+          type: 'warning',
+          duration: 2000,
+        })
+        return
+      }
       try {
         const data = await this.fetchAndParseAPI(this.form.proxy.API)
         this.updateProxyData(this.form.proxy, data)
         this.onUpdateData()
       } catch (error) {
         console.error('请求代理 API 失败:', error)
-        this.checkProxyState.checking = false
         return
       }
       this.checkProxy()
@@ -1787,9 +1811,6 @@ export default {
         this.getList()
       } catch (error) {
         console.error('请求代理 API 失败:', error)
-        if (row.checkProxyState) {
-          row.checkProxyState.checking = false
-        }
         return
       }
       this.checkProxy(row)
