@@ -36,7 +36,10 @@ export default {
   },
   browser: {
     add: '创建浏览器',
+    batchActions: '批量操作',
     batchStart: '批量启动',
+    batchCreate: '批量创建',
+    batchDelete: '批量删除',
     name: '名称',
     search: '搜索',
     import: {
@@ -56,6 +59,7 @@ export default {
     platform: '操作系统',
     version: '浏览器版本',
     no_proxy: '不使用代理',
+    API: 'API',
     proxy: {
       setting: '代理设置',
       value: '代理',
@@ -64,6 +68,7 @@ export default {
       port: '端口',
       user: '代理账号',
       pass: '代理密码',
+      API: 'API链接',
     },
     proxy_tips: '支持HTTP和SOCKS5协议<br>例如：127.0.0.1:80<br>ㅤㅤㅤ127.0.0.1:1080@socks#ssh 代理',
     cookie: {

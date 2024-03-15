@@ -368,6 +368,20 @@ export function genRandomComputerName() {
   return 'DESKTOP-' + e.shift().toUpperCase()
 }
 
+export function getRandomCpuCore() {
+  const cpuOptions = [2, 4, 6, 8, 12]
+  return cpuOptions[Math.floor(Math.random() * cpuOptions.length)]
+}
+
+export function getRandomMemorySize(minCpuCore) {
+  const memoryOptions = [2, 4, 8, 16, 32, 64]
+  let startIndex = memoryOptions.findIndex(size => size >= minCpuCore)
+  if (startIndex === -1) {
+    startIndex = memoryOptions.length - 1
+  }
+  return memoryOptions[startIndex + Math.floor(Math.random() * (memoryOptions.length - startIndex))]
+}
+
 export function genRandomMacAddr() {
   for (var e = [], t = 0; t < 6; t++) e[t] = Math.floor(256 * Math.random())
   function o(e) {
@@ -381,6 +395,22 @@ export function genRandomMacAddr() {
 export function genUserAgent(osVer, chromeVer) {
   const arch = Math.random() < 0.5 ? 'WOW64' : 'Win64; x64'
   return `Mozilla/5.0 (Windows NT ${osVer}; ${arch}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`
+}
+
+export function getUaFullVersion(uaFullVersions, chromeVer) {
+  const val = Number(chromeVer.split('.')[0])
+
+  const matchingFullVersions = uaFullVersions.filter((item) => Number(item.split('.')[0]) === val)
+
+  let uaFullVersion
+  if (matchingFullVersions.length > 0) {
+    const randomIndex = Math.floor(Math.random() * matchingFullVersions.length)
+    uaFullVersion = matchingFullVersions[randomIndex]
+  } else {
+    uaFullVersion = chromeVer
+  }
+
+  return uaFullVersion
 }
 
 const allVoicesObtained = () =>

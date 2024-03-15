@@ -44,6 +44,10 @@
           <code>564142956</code>
         </p>
       </div>
+      <div v-if="!apiLinkIsValid" class="api-link-warning">
+        <h2>API链接未设置</h2>
+        <p>请在设置中配置API链接。</p>
+      </div>
       <div class="network-error" v-if="networkErr">
         <h1>未连接到互联网</h1>
         <p>请检查您的网络或代理设置</p>
@@ -66,9 +70,9 @@
 
 <script lang="ts" setup>
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import formatHighlight from "json-format-highlight";
-import { chromeSend } from "./utils/native.js";
+import { chromeSend, getGlobalData } from "./utils/native.js";
 import { loadScript } from "./utils/index.js";
 import random from "random";
 
@@ -78,11 +82,20 @@ const geo = ref({
 const fingerprint = ref();
 const visitorId = ref("");
 const networkErr = ref(false);
+let apiLink = ref("");
+
+const apiLinkIsValid = computed(() => apiLink.value !== "");
 
 onMounted(async () => {
-  let req = await fetch(
-    "https://api.ipgeolocation.io/ipgeo?apiKey=36d02a0030f940e6a4922d553f2e3f00"
-  ).catch((err) => {
+  const store = await getGlobalData();
+  const storedApiLink = store.apiLink;
+  if (storedApiLink) {
+    apiLink.value = storedApiLink;
+  }
+  if (!apiLink.value) {
+    return;
+  }
+  let req = await fetch(apiLink.value).catch((err) => {
     console.log(err);
     networkErr.value = true;
   });
@@ -90,11 +103,6 @@ onMounted(async () => {
     return;
   }
 
-  if (req.status === 429) {
-    req = await fetch(
-      "https://api.ipgeolocation.io/ipgeo?apiKey=c95cd9537ac64aecb9ebb33e033e65dd"
-    );
-  }
   const res = await req.json();
   geo.value = res;
 
@@ -124,13 +132,6 @@ onMounted(async () => {
   const result = await fp.get();
   visitorId.value = result.visitorId;
   fingerprint.value = result.components;
-
-  const ver = await chromeSend("getBrowserVersion").catch((err: Error) => {
-    console.warn(err);
-  });
-  loadScript(
-    `http://virtualbrowser.cc/update/check_update.js?t=worker&v=${ver}&t=${Date.now()}`
-  );
 });
 
 const getZone = (offset: number) => {

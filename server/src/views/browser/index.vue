@@ -10,9 +10,16 @@
         >
           {{ $t("browser.add") }}
         </el-button>
-        <el-button class="filter-item" type="primary" @click="handleBatchStart">
-          {{ $t("browser.batchStart") }}
-        </el-button>
+        <el-dropdown class="filter-item">
+          <el-button type="primary">
+            {{ $t("browser.batchActions") }}<i class="el-icon-arrow-down el-icon--right" />
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="handleBatchStart">{{ $t("browser.batchStart") }}</el-dropdown-item>
+            <el-dropdown-item @click.native="() => dialogVisible = true">{{ $t("browser.batchCreate") }}</el-dropdown-item>
+            <el-dropdown-item @click.native="handleBatchDelete">{{ $t("browser.batchDelete") }}</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
       <div style="display: flex">
         <!-- <el-input
@@ -25,6 +32,7 @@
         <el-button v-waves class="filter-item" icon="el-icon-search" @click="handleFilter">
           {{ $t('browser.search') }}
         </el-button> -->
+        <el-button @click="showSettingsDialog">IP查询API设置</el-button>
         <el-upload
           action=""
           accept=".json"
@@ -32,7 +40,7 @@
           :show-file-list="false"
           :on-change="onImport"
         >
-          <el-button>{{ $t("browser.import.import") }}</el-button>
+          <el-button style="margin-left: 10px">{{ $t("browser.import.import") }}</el-button>
         </el-upload>
         <el-button style="margin-left: 10px" @click="onExport">{{
           $t("browser.import.export")
@@ -67,15 +75,23 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('browser.ip_port')" width="200px">
+      <el-table-column label="代理" width="200px">
         <template slot-scope="{ row }">
           <span>
-            {{ row.proxy.protocol }}
-            {{
-              row.proxy.host && row.proxy.port
-                ? " " + row.proxy.host + ":" + row.proxy.port
-                : ""
-            }}
+            <template v-if="row.proxy.mode === 0">
+              默认
+            </template>
+            <template v-else-if="row.proxy.mode === 1">
+              不使用代理
+            </template>
+            <template v-else>
+              {{ row.proxy.protocol }}
+              {{
+                row.proxy.host && row.proxy.port
+                  ? " " + row.proxy.host + ":" + row.proxy.port
+                  : ""
+              }}
+            </template>
           </span>
         </template>
       </el-table-column>
@@ -252,17 +268,21 @@
                       @click="checkProxy"
                     >检测{{ checkProxyState.checking ? "中" : "" }}</el-button>
                   </el-form-item>
-                  <!-- <el-form-item
-                    :label="$t('browser.proxy.value')"
-                    label-width="60px"
-                    prop="proxy.value"
+                  <el-form-item
+                    :label="$t('browser.proxy.API')"
+                    label-width="70px"
                   >
                     <el-input
-                      v-model="form.proxy.value"
+                      v-model="form.proxy.API"
                       style="max-width: 250px"
                     />
-                    <div class="tips" v-html="$t('browser.proxy_tips')" />
-                  </el-form-item> -->
+                      &nbsp;
+                    <el-button
+                      type="primary"
+                      style="margin-left: 7px"
+                      @click="checkAPIProxy"
+                    >提取代理</el-button>
+                  </el-form-item>
                 </div>
               </el-form-item>
               <el-form-item
@@ -633,16 +653,19 @@
                   <el-option :value="4" />
                   <el-option :value="6" />
                   <el-option :value="8" />
+                  <el-option :value="12" />
                 </el-select>
                 &nbsp;
                 <span>{{ $t("browser.cpu_unit") }}</span>
               </el-form-item>
               <el-form-item :label="$t('browser.memory')">
                 <el-select v-model="form.memory.value" style="width: 60px">
-                  <el-option :value="1" />
                   <el-option :value="2" />
                   <el-option :value="4" />
                   <el-option :value="8" />
+                  <el-option :value="16" />
+                  <el-option :value="32" />
+                  <el-option :value="64" />
                 </el-select>
                 &nbsp;
                 <span>GB</span>
@@ -797,12 +820,62 @@
         }}</el-button>
       </span>
     </el-dialog>
+    <template>
+      <el-dialog :visible.sync="dialogVisible" title="批量创建">
+        <el-form :model="form">
+          <el-form-item label="环境数量">
+            <el-input v-model.number="form.numberOfEnvironments" type="number" min="1" />
+          </el-form-item>
+          <el-form-item label="代理类型">
+            <el-select v-model="form.proxyType" placeholder="请选择">
+              <el-option label="默认" value="默认" />
+              <el-option label="不使用代理" value="不使用代理" />
+              <el-option label="HTTP" value="HTTP" />
+              <el-option label="HTTPS" value="HTTPS" />
+              <el-option label="SOCKS5" value="SOCKS5" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="代理API链接">
+            <el-input v-model="form.proxyAPI" placeholder="请输入" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleBatchCreate">确认</el-button>
+        </div>
+      </el-dialog>
+    </template>
+
+    <el-dialog
+      v-model="showSetDialog"
+      title="IP查询API设置"
+      :visible.sync="showSetDialog"
+    >
+      <el-form :model="form">
+        <el-form-item label="查询渠道">
+          <el-select v-model="Channel" placeholder="请选择">
+            <el-option label="VirtualBrowser" value="virtualbrowser" />
+            <el-option label="ipgeoLocation" value="ipgeolocation" />
+          </el-select>
+        </el-form-item>
+        <el-input
+          v-model="apiLink"
+          placeholder="请输入IP查询API链接"
+        />
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showSetDialog = false">取消</el-button>
+        <el-button type="primary" @click="saveSettings">保存</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import {
   getBrowserList,
+  getGlobalData,
+  setGlobalData,
   addBrowser,
   updateBrowser,
   deleteBrowser,
@@ -818,7 +891,10 @@ import {
   genRandomMacAddr,
   genRandomComputerName,
   genRandomSpeechVoices,
+  getRandomCpuCore,
+  getRandomMemorySize,
   genUserAgent,
+  getUaFullVersion,
   loadScript,
 } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -835,7 +911,7 @@ import { login } from '@/api/user'
 let IPGeo = {}
 let fontList = []
 let osVer = '10.0'
-let chromeVer = ''; let uaFullVersion = ''
+let chromeVer = ''
 const sslList = ['0xc02c', '0xa02c', '0xb02c', '0xd02c', '0xe02c', '0xf02c']
 let tooltipTimer
 const chromiumCoreVer =
@@ -924,7 +1000,13 @@ export default {
       callback()
     }
     return {
+      showSetDialog: false,
+      showSetApiDialog: false,
+      apiLink: '',
+      Channel: 'virtualbrowser',
+      saveApi: false,
       selectedRows: [],
+      chromeVer: '',
       tableKey: 0,
       list: null,
       listLoading: true,
@@ -934,6 +1016,7 @@ export default {
         title: undefined,
       },
       dialogFormVisible: false,
+      dialogVisible: false,
       dialogStatus: '',
       dialogCookieFormatVisible: false,
       textMap: {
@@ -941,6 +1024,9 @@ export default {
         create: this.$t('browser.add'),
       },
       form: {
+        numberOfEnvironments: 1,
+        proxyType: '默认',
+        proxyAPI: '',
         proxy: {},
         cookie: {},
         ua: {},
@@ -990,9 +1076,12 @@ export default {
       platforms: ['Win 7', 'Win 8', 'Win 10', 'Win 11'],
       WebGLVendors: Array.from(
         new Set(
-          WebGLRenders.map(
-            (item) => `Google Inc. (${item.match(/\((.+?),/)[1]})`
-          )
+          WebGLRenders.map((item) => {
+            const match = item.match(/\((.+?),/)
+            if (match && match[1]) {
+              return `Google Inc. (${match[1]})`
+            }
+          })
         )
       ),
       WebGLRenders: WebGLRenders,
@@ -1078,11 +1167,6 @@ export default {
       } else {
         this.form.ua.mode = 1
       }
-
-      // this.form[
-      //   "sec-ch-ua"
-      // ].value = `"Google Chrome";v="${val}", "Not(A:Brand";v="8", "Chromium";v="${val}"`;
-
       this.form['sec-ch-ua'].value.forEach((item) => {
         if (item.brand === 'Chromium') {
           item.version = val
@@ -1091,9 +1175,8 @@ export default {
 
       const curVers = Versions.filter((item) => Number(item.split('.')[0]) === val)
       chromeVer = curVers[random.int(0, curVers.length - 1)]
-      uaFullVersion = uaFullVersions.find((item) => Number(item.split('.')[0]) === val) || chromeVer
       this.form.ua.value = genUserAgent(osVer, chromeVer)
-      this.form['ua-full-version'].value = uaFullVersion
+      this.form['ua-full-version'].value = getUaFullVersion(uaFullVersions, chromeVer)
     },
     'form.os'(val) {
       switch (val) {
@@ -1161,15 +1244,14 @@ export default {
         this.form['time-zone'].locale = val
       }
     )
-
-    let req = await fetch(
-      'https://api.ipgeolocation.io/ipgeo?apiKey=36d02a0030f940e6a4922d553f2e3f00'
-    )
-    if (req.status === 429) {
-      req = await fetch(
-        'https://api.ipgeolocation.io/ipgeo?apiKey=c95cd9537ac64aecb9ebb33e033e65dd'
-      )
+    const store = await getGlobalData()
+    const storedApiLink = store.apiLink
+    if (storedApiLink) {
+      this.apiLink = storedApiLink
+      this.Channel = store.Channel
     }
+
+    const req = await fetch(this.apiLink)
     const res = await req.json()
     IPGeo = res
 
@@ -1211,10 +1293,16 @@ export default {
       }&v=${ver}&t=${Date.now()}`
     )
   },
+  mounted() {
+    this.checkApiLinkSet()
+  },
   methods: {
     async getList() {
       this.listLoading = true
       this.list = await getBrowserList()
+      this.GlobalData = await getGlobalData()
+      this.apiLink = this.GlobalData.apiLink
+      this.Channel = this.GlobalData.Channel
       this.processUpdateData()
       await updateRuningState()
       this.listLoading = false
@@ -1227,6 +1315,15 @@ export default {
       this.selectedRows = selection
     },
     handleBatchStart() {
+      if (this.selectedRows.length === 0) {
+        this.$notify({
+          title: '错误提示',
+          message: '至少需要勾选一个环境',
+          type: 'warning',
+          duration: 2000,
+        })
+        return
+      }
       for (let i = 0; i < this.selectedRows.length; i++) {
         const row = this.selectedRows[i]
         this.launchEnvironment(row, i * 2000)
@@ -1240,6 +1337,8 @@ export default {
     getDefaultForm() {
       const currentZone = this.getCurrentTimeZone();
       const defaultLanguage = IPGeo.languages?.split(',')[0] || '';
+      const cpuCore = getRandomCpuCore()
+      const memorySize = getRandomMemorySize(cpuCore)
 
       return {
         id: undefined,
@@ -1254,6 +1353,7 @@ export default {
           port: '',
           user: '',
           pass: '',
+          API: '',
         },
         cookie: {
           mode: 0,
@@ -1265,7 +1365,7 @@ export default {
         },
         'ua-full-version': {
           mode: 1,
-          value: uaFullVersion,
+          value: getUaFullVersion(uaFullVersions, chromeVer),
         },
         'sec-ch-ua': {
           mode: 0,
@@ -1306,7 +1406,7 @@ export default {
           mode: 1,
           value: fontList
             .sort(() => Math.random() - 0.5)
-            .slice(0, random.int(1, 5)),
+            .slice(0, random.int(1, 10)),
         },
         canvas: {
           mode: 1,
@@ -1347,8 +1447,8 @@ export default {
           mode: 0,
           value: [],
         },
-        cpu: { mode: 1, value: 4 },
-        memory: { mode: 1, value: 8 },
+        cpu: { mode: 1, value: cpuCore },
+        memory: { mode: 1, value: memorySize },
         'device-name': { mode: 1, value: genRandomComputerName() },
         mac: { mode: 1, value: genRandomMacAddr() },
         dnt: { mode: 1, value: 0 },
@@ -1476,10 +1576,9 @@ export default {
       if (data['ua-full-version'] === undefined) {
         const chrome_version_num = chrome_version === '默认' ? chromiumCoreVer : chrome_version
         const chromeVer = Versions.find((item) => Number(item.split('.')[0]) === chrome_version_num)
-        const uaFullVersion = uaFullVersions.find((item) => Number(item.split('.')[0]) === chrome_version_num) || chromeVer
         data['ua-full-version'] = {
           mode: 1,
-          value: uaFullVersion
+          value: getUaFullVersion(uaFullVersions, chromeVer)
         }
         changed = true
       }
@@ -1567,6 +1666,9 @@ export default {
         .catch(() => {})
     },
     handleLaunch(row) {
+      if (row.proxy && row.proxy.API) {
+        this.GetAPIProxy(row)
+      }
       chromeSend('launchBrowser', row.id.toString())
       row.runLoading = true
     },
@@ -1619,7 +1721,12 @@ export default {
     },
     onExport() {
       if (this.selectedRows.length === 0) {
-        alert('没有选择导出数据')
+        this.$notify({
+          title: '错误提示',
+          message: '至少需要勾选一个环境',
+          type: 'warning',
+          duration: 2000,
+        })
         return
       }
       var currentDate = new Date().toISOString().replace(/[-:]/g, '');
@@ -1653,6 +1760,107 @@ export default {
       )
       this.checkProxyState.checking = false
     },
+    setAPI(data) {
+      this.$set(this.form.proxy, 'API', data)
+    },
+    async fetchAndParseAPI(apiData) {
+      const response = await fetch(apiData)
+      if (!response.ok) {
+        this.$notify({
+          title: '错误提示',
+          message: '响应错误，请检查API接口有效性',
+          type: 'warning',
+          duration: 2000,
+        })
+        throw new Error(`网络响应不是 ok，状态码为：${response.status}`)
+      }
+
+      let data
+      const clonedResponse = response.clone()
+      try {
+        data = await response.json()
+      } catch (jsonError) {
+        const text = await clonedResponse.text()
+        const parts = text.split(':')
+        switch (parts.length) {
+          case 4:
+            data = { user: parts[0] || '', pass: parts[1] || '', ip: parts[2], port: parts[3] }
+            break
+          case 2:
+            data = { ip: parts[0], port: parts[1] }
+            break
+          default:
+            this.$notify({
+              title: '错误提示',
+              message: '响应格式既不是有效的JSON格式也不是有效的[ip:端口]或[用户名:密码:IP:端口]格式',
+              type: 'warning',
+              duration: 2000,
+            })
+            throw new Error('响应格式既不是有效的 JSON 也不是有效的 ip:port 或 用户名:密码:IP:端口 格式')
+        }
+      }
+
+      if (!data || !data.ip || !data.port) {
+        this.$notify({
+          title: '错误提示',
+          message: '响应不包含ip或端口',
+          type: 'warning',
+          duration: 2000,
+        })
+        throw new Error('API 响应不包含 ip 或 port')
+      }
+
+      return data
+    },
+
+    updateProxyData(proxyData, data) {
+      proxyData.host = data.ip
+      proxyData.port = data.port
+      proxyData.user = data.user || ''
+      proxyData.pass = data.pass || ''
+    },
+
+    async checkAPIProxy() {
+      try {
+        const data = await this.fetchAndParseAPI(this.form.proxy.API)
+        this.updateProxyData(this.form.proxy, data)
+        this.onUpdateData()
+      } catch (error) {
+        console.error('请求代理 API 失败:', error)
+        return
+      }
+      this.checkProxy()
+    },
+    async GetAPIProxy(row) {
+      try {
+        const data = await this.fetchAndParseAPI(row.proxy.API)
+        this.updateProxyData(row.proxy, data)
+        this.onUpdateRowData(row)
+        this.getList()
+      } catch (error) {
+        console.error('请求代理 API 失败:', error)
+        return
+      }
+      this.checkProxy(row)
+    },
+    onUpdateRowData(row) {
+      if (!row || typeof row !== 'object') {
+        console.error('The provided row is undefined or not an object.')
+        return
+      }
+
+      row.timestamp = +new Date()
+      this.preProcessData(row)
+      updateBrowser(row)
+      this.getList()
+      this.dialogFormVisible = false
+      this.$notify({
+        title: this.$t('browser.success'),
+        message: this.$t('browser.update') + this.$t('browser.success'),
+        type: 'success',
+        duration: 2000,
+      })
+    },
     onAddBrand() {
       this.form['sec-ch-ua'].value.push({ brand: '', version: '' })
     },
@@ -1663,7 +1871,147 @@ export default {
         }
       )
     },
-  },
+    async handleBatchCreate() {
+      if (!this.form.numberOfEnvironments || this.form.numberOfEnvironments < 1) {
+        this.$message.error('无效的环境数量')
+        return
+      }
+      for (let i = 0; i < this.form.numberOfEnvironments; i++) {
+        const newEnvironmentData = this.getDefaultForm()
+        newEnvironmentData.timestamp = Date.now()
+        const uaData = this.updateChromeVer(newEnvironmentData.chrome_version)
+        newEnvironmentData.ua.value = uaData.ua
+        newEnvironmentData['ua-full-version'].value = uaData.uaFullVersion
+
+        if (this.form.proxyAPI) {
+          newEnvironmentData.proxy.API = this.form.proxyAPI
+          newEnvironmentData.proxy.protocol = this.form.proxyType
+          newEnvironmentData.proxy.mode = 2
+        }
+        if (this.form.proxyType === '默认') {
+          newEnvironmentData.proxy.mode = 0
+        }
+        if (this.form.proxyType === '不使用代理') {
+          newEnvironmentData.proxy.mode = 1
+        }
+        this.preProcessData(newEnvironmentData)
+        try {
+          await addBrowser(newEnvironmentData)
+          this.$notify({
+            title: this.$t('browser.success'),
+            message: this.$t('browser.create') + this.$t('browser.success'),
+            type: 'success',
+            duration: 2000,
+          })
+        } catch (error) {
+          this.$message.error('创建环境失败: ' + error.message)
+          break
+        }
+      }
+
+      this.form.numberOfEnvironments = 1
+      this.form.proxyType = '默认'
+      this.form.proxyAPI = ''
+
+      this.getList()
+      this.dialogVisible = false
+    },
+    updateChromeVer(val) {
+      if (val === '默认') {
+        val = chromiumCoreVer
+      }
+      const curVers = Versions.filter((item) => Number(item.split('.')[0]) === val)
+      this.chromeVer = curVers[random.int(0, curVers.length - 1)]
+      const UaValue = genUserAgent(osVer, this.chromeVer)
+      const UaFullVersion = getUaFullVersion(uaFullVersions, this.chromeVer)
+      return {
+        ua: UaValue,
+        uaFullVersion: UaFullVersion
+      }
+    },
+    async handleBatchDelete() {
+      if (this.selectedRows.length === 0) {
+        this.$notify({
+          title: '错误提示',
+          message: '至少需要勾选一个环境',
+          type: 'warning',
+          duration: 2000,
+        })
+        return
+      }
+
+      this.$confirm(
+        this.$t('browser.delete_confirm').replace('${name}', this.selectedRows.map(row => row.name).join(', '))
+      ).then(async() => {
+        try {
+          for (const row of this.selectedRows) {
+            await deleteBrowser(row.id);
+          }
+
+          this.getList()
+          this.$notify({
+            title: this.$t('browser.success'),
+            message: `${this.selectedRows.length} ` + this.$t('browser.delete') + this.$t('browser.success'),
+            type: 'success',
+            duration: 2000,
+          })
+        } catch (error) {
+          console.error('Error during batch delete:', error)
+        }
+      }).catch(() => {
+      })
+    },
+    async showSettingsDialog() {
+      const store = await getGlobalData()
+      this.apiLink = store.apiLink || ''
+      console.log('this.apiLink', store)
+      this.showSetDialog = true
+    },
+    saveSettings() {
+      if (this.Channel === 'virtualbrowser' && !this.apiLink.includes('virtualbrowser')) {
+        this.$notify({
+          title: '错误',
+          message: '请输入正确的渠道API链接',
+          type: 'error',
+          duration: 2000,
+        })
+        return
+      } else if (this.Channel === 'ipgeolocation' && !this.apiLink.includes('ipgeolocation')) {
+        this.$notify({
+          title: '错误',
+          message: '请输入正确的渠道API链接',
+          type: 'error',
+          duration: 2000,
+        })
+        return
+      }
+      if (this.apiLink) {
+        setGlobalData('apiLink', this.apiLink)
+        setGlobalData('Channel', this.Channel)
+        this.$notify({
+          title: '保存成功',
+          message: '保存成功',
+          type: 'success',
+          duration: 2000,
+        })
+        console.log('API链接已保存:', this.apiLink)
+      }
+      this.showSetDialog = false
+    },
+    async checkApiLinkSet() {
+      const store = await getGlobalData()
+      const storedApiLink = store.apiLink
+      if (storedApiLink) {
+        this.apiLink = storedApiLink
+        this.Channel = store.Channel
+      }
+      const apiLink = this.apiLink
+      if (!apiLink) {
+        this.showSetDialog = true
+      }
+    }
+
+  }
 }
 </script>
 

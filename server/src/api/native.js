@@ -51,6 +51,31 @@ export async function getBrowserList() {
   return (list && list.users) || []
 }
 
+export async function getGlobalData() {
+  let GlobalData;
+  try {
+    GlobalData = JSON.parse(localStorage.getItem('GlobalData'))
+    GlobalData = await chromeSend('getGlobalData')
+    GlobalData = JSON.parse(GlobalData.data)
+    if (Object.prototype.toString.call(GlobalData) === '[object Array]') {
+      GlobalData = {}
+    }
+  } catch {
+    //
+  }
+
+  return GlobalData || {}
+}
+
+
+export async function setGlobalData(key, value) {
+  const GlobalData = await getGlobalData()
+  GlobalData[key] = value
+
+  localStorage.setItem('GlobalData', JSON.stringify(GlobalData))
+  await chromeSend('setGlobalData', JSON.stringify(GlobalData)).catch(console.warn)
+}
+
 export async function addBrowser(item) {
   const list = await getBrowserList()
   const maxId = Math.max(0, Math.max(...list.map((item) => item.id)))

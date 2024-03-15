@@ -29,3 +29,19 @@ export async function chromeSend(name, ...params) {
 
   return Promise.race([pCall, pTimeOut(2000)])
 }
+
+export async function getGlobalData() {
+  let GlobalData;
+  try {
+    GlobalData = JSON.parse(localStorage.getItem('GlobalData'))
+    GlobalData = await chromeSend('getGlobalData')
+    GlobalData = JSON.parse(GlobalData.data)
+    if (Object.prototype.toString.call(GlobalData) === '[object Array]') {
+      GlobalData = {}
+    }
+  } catch {
+    //
+  }
+
+  return GlobalData || {}
+}

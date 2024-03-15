@@ -37,7 +37,10 @@ export default {
   },
   browser: {
     add: 'Create Browser',
+    batchActions: 'Batch Actions',
     batchStart: 'Batch start',
+    batchCreate: 'Batch Create',
+    batchDelete: 'Batch Delete',
     name: 'Name',
     search: 'Search',
     import: {
@@ -45,7 +48,7 @@ export default {
       export: 'Export',
     },
     id: 'ID',
-    ip_port:'IP Port',
+    ip_port: 'IP Port',
     date: 'Date',
     launch: 'Launch',
     launching: 'Launching',
@@ -57,6 +60,7 @@ export default {
     platform: 'Platform',
     version: 'Version',
     no_proxy: 'No Proxy',
+    API: 'API',
     proxy: {
       setting: 'Proxy',
       value: 'Proxy',
@@ -65,6 +69,7 @@ export default {
       port: 'Port',
       user: 'Username',
       pass: 'Password',
+      API: 'API Link',
     },
     proxy_tips: 'support HTTP and SOCKS5 protocols<br>example:127.0.0.1:80<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;127.0.0.1:1080@socks#ssh',
     cookie: {
