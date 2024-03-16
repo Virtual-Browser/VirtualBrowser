@@ -1206,21 +1206,20 @@ export default {
         this.form.chrome_version = vers[0]
       }
     },
-    'form.webgl.vendor'(val) {
-      if (!val) {
-        return
-      }
-
-      const vendor = val.match(/\((.+?)\)/)[1]
-      this.WebGLRenders = WebGLRenders.filter(
-        (item) => item.match(/\((.+?),/)[1] === vendor
-      )
-      const curVendor = this.form.webgl.render?.match(/\((.+?)\)/)[1]
-      if (curVendor !== vendor) {
-        this.form.webgl.render =
-          this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)]
-      }
-    },
+    'form.webgl.vendor': {
+      handler(val) {
+        if (!val) return
+        const vendor = val.match(/\((.+?)\)/)[1]
+        this.WebGLRenders = WebGLRenders.filter(item => item.match(/\((.+?),/)[1] === vendor)
+        if (this.WebGLRenders.length > 0) {
+          this.form.webgl.render = this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)]
+        } else {
+          this.form.webgl.render = ''
+        }
+      },
+      immediate: true,
+      deep: true
+    }
   },
   beforeCreate() {
     window._updateState = (runingIds) => {
