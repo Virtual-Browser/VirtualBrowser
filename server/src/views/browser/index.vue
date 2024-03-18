@@ -8,16 +8,23 @@
           icon="el-icon-circle-plus"
           @click="handleCreate"
         >
-          {{ $t("browser.add") }}
+          {{ $t('browser.add') }}
         </el-button>
         <el-dropdown class="filter-item">
           <el-button type="primary">
-            {{ $t("browser.batchActions") }}<i class="el-icon-arrow-down el-icon--right" />
+            {{ $t('browser.batchActions') }}
+            <i class="el-icon-arrow-down el-icon--right" />
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="handleBatchStart">{{ $t("browser.batchStart") }}</el-dropdown-item>
-            <el-dropdown-item @click.native="() => dialogVisible = true">{{ $t("browser.batchCreate") }}</el-dropdown-item>
-            <el-dropdown-item @click.native="handleBatchDelete">{{ $t("browser.batchDelete") }}</el-dropdown-item>
+            <el-dropdown-item @click.native="handleBatchStart">
+              {{ $t('browser.batchStart') }}
+            </el-dropdown-item>
+            <el-dropdown-item @click.native="() => (dialogVisible = true)">
+              {{ $t('browser.batchCreate') }}
+            </el-dropdown-item>
+            <el-dropdown-item @click.native="handleBatchDelete">
+              {{ $t('browser.batchDelete') }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -40,11 +47,11 @@
           :show-file-list="false"
           :on-change="onImport"
         >
-          <el-button style="margin-left: 10px">{{ $t("browser.import.import") }}</el-button>
+          <el-button style="margin-left: 10px">{{ $t('browser.import.import') }}</el-button>
         </el-upload>
-        <el-button style="margin-left: 10px" @click="onExport">{{
-          $t("browser.import.export")
-        }}</el-button>
+        <el-button style="margin-left: 10px" @click="onExport">
+          {{ $t('browser.import.export') }}
+        </el-button>
       </div>
     </div>
 
@@ -59,13 +66,7 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="60" align="center" />
-      <el-table-column
-        :label="$t('browser.id')"
-        prop="id"
-        sortable
-        align="center"
-        width="80"
-      >
+      <el-table-column :label="$t('browser.id')" prop="id" sortable align="center" width="80">
         <template slot-scope="{ row }">
           <span>{{ row.id }}</span>
         </template>
@@ -78,18 +79,12 @@
       <el-table-column label="代理" width="200px">
         <template slot-scope="{ row }">
           <span>
-            <template v-if="row.proxy.mode === 0">
-              默认
-            </template>
-            <template v-else-if="row.proxy.mode === 1">
-              不使用代理
-            </template>
+            <template v-if="row.proxy.mode === 0">默认</template>
+            <template v-else-if="row.proxy.mode === 1">不使用代理</template>
             <template v-else>
               {{ row.proxy.protocol }}
               {{
-                row.proxy.host && row.proxy.port
-                  ? " " + row.proxy.host + ":" + row.proxy.port
-                  : ""
+                row.proxy.host && row.proxy.port ? ' ' + row.proxy.host + ':' + row.proxy.port : ''
               }}
             </template>
           </span>
@@ -103,15 +98,11 @@
         align="center"
       >
         <template slot-scope="{ row }">
-          <span>{{ row.timestamp | parseTime("{y}-{m}-{d} {h}:{i}") }}</span>
+          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
-        :label="$t('browser.launch')"
-        class-name="status-col"
-        width="100"
-      >
+      <el-table-column :label="$t('browser.launch')" class-name="status-col" width="100">
         <template slot-scope="{ row }">
           <el-button
             type="primary"
@@ -123,10 +114,10 @@
             {{
               $t(
                 row.runLoading
-                  ? "browser.launching"
+                  ? 'browser.launching'
                   : row.isRunning
-                    ? "browser.launched"
-                    : "browser.launch"
+                    ? 'browser.launched'
+                    : 'browser.launch'
               )
             }}
           </el-button>
@@ -140,14 +131,14 @@
       >
         <template slot-scope="{ row, $index }">
           <el-button type="primary" @click="handleUpdate(row)">
-            {{ $t("browser.edit") }}
+            {{ $t('browser.edit') }}
           </el-button>
           <el-button
             v-if="row.status != 'deleted'"
             type="danger"
             @click="handleDelete(row, $index)"
           >
-            {{ $t("browser.delete") }}
+            {{ $t('browser.delete') }}
           </el-button>
         </template>
       </el-table-column>
@@ -155,7 +146,10 @@
 
     <div class="qq-group">
       <img src="@/assets/VirtualBrowser-qq-group.png">
-      <p>QQ Group: <code>564142956</code></p>
+      <p>
+        QQ Group:
+        <code>564142956</code>
+      </p>
     </div>
 
     <el-dialog
@@ -173,53 +167,30 @@
       >
         <el-timeline>
           <el-timeline-item>
-            <h3>{{ $t("browser.basic") }}</h3>
+            <h3>{{ $t('browser.basic') }}</h3>
             <div>
               <el-form-item :label="$t('browser.name')" prop="name">
                 <el-input v-model="form.name" />
               </el-form-item>
               <el-form-item :label="$t('browser.platform')">
                 <el-radio-group v-model="form.os">
-                  <el-radio-button
-                    v-for="item in platforms"
-                    :key="item"
-                    :label="item"
-                  />
+                  <el-radio-button v-for="item in platforms" :key="item" :label="item" />
                 </el-radio-group>
               </el-form-item>
               <el-form-item :label="$t('browser.version')">
-                <el-select
-                  v-model="form.chrome_version"
-                  :placeholder="$t('browser.select')"
-                >
-                  <el-option
-                    v-for="item in Versions"
-                    :key="item"
-                    :value="item"
-                  />
+                <el-select v-model="form.chrome_version" :placeholder="$t('browser.select')">
+                  <el-option v-for="item in Versions" :key="item" :value="item" />
                 </el-select>
               </el-form-item>
               <el-form-item :label="$t('browser.proxy.setting')">
                 <el-radio-group v-model="form.proxy.mode">
-                  <el-radio-button :label="0">{{
-                    $t("browser.default")
-                  }}</el-radio-button>
-                  <el-radio-button :label="1">{{
-                    $t("browser.no_proxy")
-                  }}</el-radio-button>
-                  <el-radio-button :label="2">{{
-                    $t("browser.custom")
-                  }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.no_proxy') }}</el-radio-button>
+                  <el-radio-button :label="2">{{ $t('browser.custom') }}</el-radio-button>
                 </el-radio-group>
                 <div v-if="form.proxy.mode == 2" style="margin-top: 10px">
-                  <el-form-item
-                    :label="$t('browser.proxy.protocol')"
-                    label-width="70px"
-                  >
-                    <el-select
-                      v-model="form.proxy.protocol"
-                      style="width: 100px"
-                    >
+                  <el-form-item :label="$t('browser.proxy.protocol')" label-width="70px">
+                    <el-select v-model="form.proxy.protocol" style="width: 100px">
                       <el-option value="HTTP" />
                       <el-option value="HTTPS" />
                       <el-option value="SOCKS5" />
@@ -230,35 +201,22 @@
                     label-width="70px"
                     prop="proxy.host"
                   >
-                    <el-input
-                      v-model="form.proxy.host"
-                      style="max-width: 250px"
-                    />
+                    <el-input v-model="form.proxy.host" style="max-width: 250px" />
                     :
                     <el-input
                       v-model="form.proxy.port"
                       style="width: 70px"
                       :placeholder="$t('browser.proxy.port')"
                     />
-                    <span style="font-size: 12px; margin-left: 10px; color: rgb(141, 133, 133);">可按‘主机:端口:账号:密码’或‘主机:端口’格式粘贴自动识别</span>
+                    <span style="font-size: 12px; margin-left: 10px; color: rgb(141, 133, 133)">
+                      可按‘主机:端口:账号:密码’或‘主机:端口’格式粘贴自动识别
+                    </span>
                   </el-form-item>
-                  <el-form-item
-                    :label="$t('browser.proxy.user')"
-                    label-width="70px"
-                  >
-                    <el-input
-                      v-model="form.proxy.user"
-                      style="max-width: 250px"
-                    />
+                  <el-form-item :label="$t('browser.proxy.user')" label-width="70px">
+                    <el-input v-model="form.proxy.user" style="max-width: 250px" />
                   </el-form-item>
-                  <el-form-item
-                    :label="$t('browser.proxy.pass')"
-                    label-width="70px"
-                  >
-                    <el-input
-                      v-model="form.proxy.pass"
-                      style="max-width: 250px"
-                    />
+                  <el-form-item :label="$t('browser.proxy.pass')" label-width="70px">
+                    <el-input v-model="form.proxy.pass" style="max-width: 250px" />
                     &nbsp;
                     <el-button
                       type="primary"
@@ -266,34 +224,21 @@
                       :disabled2="checkProxyState.checking"
                       :loading="checkProxyState.checking"
                       @click="checkProxy"
-                    >检测{{ checkProxyState.checking ? "中" : "" }}</el-button>
+                    >
+                      检测{{ checkProxyState.checking ? '中' : '' }}
+                    </el-button>
                   </el-form-item>
-                  <el-form-item
-                    :label="$t('browser.proxy.API')"
-                    label-width="70px"
-                  >
-                    <el-input
-                      v-model="form.proxy.API"
-                      style="max-width: 250px"
-                    />
-                      &nbsp;
-                    <el-button
-                      type="primary"
-                      style="margin-left: 7px"
-                      @click="checkAPIProxy"
-                    >提取代理</el-button>
+                  <el-form-item :label="$t('browser.proxy.API')" label-width="70px">
+                    <el-input v-model="form.proxy.API" style="max-width: 250px" />
+                    &nbsp;
+                    <el-button type="primary" style="margin-left: 7px" @click="checkAPIProxy">
+                      提取代理
+                    </el-button>
                   </el-form-item>
                 </div>
               </el-form-item>
-              <el-form-item
-                :label="$t('browser.cookie.jsonStr')"
-                prop="cookie.jsonStr"
-              >
-                <el-switch
-                  v-model="form.cookie.mode"
-                  :active-value="1"
-                  :inactive-value="0"
-                />
+              <el-form-item :label="$t('browser.cookie.jsonStr')" prop="cookie.jsonStr">
+                <el-switch v-model="form.cookie.mode" :active-value="1" :inactive-value="0" />
                 <div style="display: flex; align-items: flex-start">
                   <el-input
                     v-model="form.cookie.jsonStr"
@@ -307,51 +252,46 @@
                     style="margin: -5px 0 0 5px"
                     @click="dialogCookieFormatVisible = true"
                   >
-                    {{ $t("browser.cookie.format") }}
+                    {{ $t('browser.cookie.format') }}
                   </el-button>
                 </div>
               </el-form-item>
             </div>
           </el-timeline-item>
           <el-timeline-item>
-            <h3>{{ $t("browser.advanced") }}</h3>
+            <h3>{{ $t('browser.advanced') }}</h3>
             <div>
               <el-form-item :label="$t('browser.ua')">
                 <el-radio-group v-model="form.ua.mode">
-                  <el-radio-button :label="0">{{ $t("browser.default") }}</el-radio-button>
-                  <el-radio-button :label="1">{{ $t("browser.custom") }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.custom') }}</el-radio-button>
                 </el-radio-group>
-                <div style="display: flex; align-items: flex-start; margin-top: 3px;">
-                  <div style="flex-grow: 1; margin-right: 10px;">
+                <div style="display: flex; align-items: flex-start; margin-top: 3px">
+                  <div style="flex-grow: 1; margin-right: 10px">
                     <el-input
                       v-model="form.ua.value"
                       :disabled="form.ua.mode === 0"
                       type="textarea"
-                      style="width: 100%;"
+                      style="width: 100%"
                     />
                   </div>
                   <el-button
                     type="primary"
                     size="small"
                     icon="el-icon-refresh"
-                    @click="RandomFingerprint"
                     :disabled="form.ua.mode === 0"
-                  >{{ $t("browser.random") }}</el-button>
+                    @click="RandomFingerprint"
+                  >
+                    {{ $t('browser.random') }}
+                  </el-button>
                 </div>
               </el-form-item>
               <el-form-item :label="$t('browser.sec_ua')">
                 <el-radio-group v-model="form['sec-ch-ua'].mode">
-                  <el-radio-button :label="0">{{
-                    $t("browser.default")
-                  }}</el-radio-button>
-                  <el-radio-button :label="1">{{
-                    $t("browser.custom")
-                  }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.custom') }}</el-radio-button>
                 </el-radio-group>
-                <div
-                  v-show="form['sec-ch-ua'].mode === 1"
-                  class="custom-sec-ua"
-                >
+                <div v-show="form['sec-ch-ua'].mode === 1" class="custom-sec-ua">
                   <div v-for="(item, i) in form['sec-ch-ua'].value" :key="i" class="item">
                     <el-form-item label="brand: " label-width="42px">
                       <el-input v-model="item.brand" />
@@ -367,26 +307,13 @@
                     />
                   </div>
                   <div class="item">
-                    <el-form-item
-                      label="brand: "
-                      label-width="42px"
-                      style="visibility: hidden"
-                    >
+                    <el-form-item label="brand: " label-width="42px" style="visibility: hidden">
                       <el-input />
                     </el-form-item>
-                    <el-form-item
-                      label="version: "
-                      label-width="52px"
-                      style="visibility: hidden"
-                    >
+                    <el-form-item label="version: " label-width="52px" style="visibility: hidden">
                       <el-input style="width: 60px" />
                     </el-form-item>
-                    <el-button
-                      type="success"
-                      icon="el-icon-plus"
-                      circle
-                      @click="onAddBrand()"
-                    />
+                    <el-button type="success" icon="el-icon-plus" circle @click="onAddBrand()" />
                   </div>
                 </div>
               </el-form-item>
@@ -396,9 +323,7 @@
                   :active-value="2"
                   :inactive-value="1"
                 />
-                <span style="margin-left: 10px">{{
-                  $t("browser.language_tips")
-                }}</span>
+                <span style="margin-left: 10px">{{ $t('browser.language_tips') }}</span>
                 <el-select
                   v-if="form['ua-language'].mode == 1"
                   v-model="form['ua-language'].language"
@@ -408,16 +333,10 @@
                   <el-option
                     v-for="(item, i) in Languages"
                     :key="i"
-                    :label="
-                      (language == 'zh' ? item.lang : item.en) +
-                        '    ' +
-                        item.code
-                    "
+                    :label="(language == 'zh' ? item.lang : item.en) + '    ' + item.code"
                     :value="item.code"
                   >
-                    <span style="float: left">{{
-                      language == "zh" ? item.lang : item.en
-                    }}</span>
+                    <span style="float: left">{{ language == 'zh' ? item.lang : item.en }}</span>
                     <span style="float: right; color: #8492a6; font-size: 13px">
                       {{ item.code }}
                     </span>
@@ -425,109 +344,57 @@
                 </el-select>
               </el-form-item>
               <el-form-item :label="$t('browser.timezone')">
-                <el-switch
-                  v-model="form['time-zone'].mode"
-                  :active-value="2"
-                  :inactive-value="1"
-                />
-                <span style="margin-left: 10px">{{
-                  $t("browser.timezone_tips")
-                }}</span>
+                <el-switch v-model="form['time-zone'].mode" :active-value="2" :inactive-value="1" />
+                <span style="margin-left: 10px">{{ $t('browser.timezone_tips') }}</span>
                 <el-select
                   v-if="form['time-zone'].mode == 1"
                   v-model="form['time-zone'].name"
                   :placeholder="$t('browser.select')"
                   style="width: 100%"
                   @change="
-                    (select) => {
-                      const selItem = TimeZones.find(
-                        (item) => item.text == select
-                      );
-                      form['time-zone'].value = selItem.offset;
-                      form['time-zone'].zone = getZone(selItem.offset);
+                    select => {
+                      const selItem = TimeZones.find(item => item.text == select)
+                      form['time-zone'].value = selItem.offset
+                      form['time-zone'].zone = getZone(selItem.offset)
                     }
                   "
                 >
-                  <el-option
-                    v-for="(item, i) in TimeZones"
-                    :key="i"
-                    :value="item.text"
-                  />
+                  <el-option v-for="(item, i) in TimeZones" :key="i" :value="item.text" />
                 </el-select>
               </el-form-item>
               <el-form-item :label="$t('browser.webrtc')">
                 <el-radio-group v-model="form.webrtc.mode">
-                  <el-radio-button :label="0">{{
-                    $t("browser.replace")
-                  }}</el-radio-button>
-                  <el-radio-button :label="1">{{
-                    $t("browser.allow")
-                  }}</el-radio-button>
-                  <el-radio-button :label="2">{{
-                    $t("browser.block")
-                  }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.replace') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.allow') }}</el-radio-button>
+                  <el-radio-button :label="2">{{ $t('browser.block') }}</el-radio-button>
                 </el-radio-group>
               </el-form-item>
               <el-form-item :label="$t('browser.location')">
                 <el-radio-group v-model="form.location.enable">
-                  <el-radio-button label="0">{{
-                    $t("browser.ask")
-                  }}</el-radio-button>
-                  <el-radio-button label="1">{{
-                    $t("browser.allow")
-                  }}</el-radio-button>
-                  <el-radio-button label="2">{{
-                    $t("browser.block")
-                  }}</el-radio-button>
+                  <el-radio-button label="0">{{ $t('browser.ask') }}</el-radio-button>
+                  <el-radio-button label="1">{{ $t('browser.allow') }}</el-radio-button>
+                  <el-radio-button label="2">{{ $t('browser.block') }}</el-radio-button>
                 </el-radio-group>
                 <div v-if="form.location.enable != 2">
-                  <el-switch
-                    v-model="form.location.mode"
-                    :active-value="2"
-                    :inactive-value="1"
-                  />
-                  <span style="margin-left: 10px">{{
-                    $t("browser.location_tips")
-                  }}</span>
+                  <el-switch v-model="form.location.mode" :active-value="2" :inactive-value="1" />
+                  <span style="margin-left: 10px">{{ $t('browser.location_tips') }}</span>
                   <div v-if="form.location.mode == 1">
-                    <el-form-item
-                      :label="$t('browser.longitude')"
-                      label-width="80px"
-                    >
-                      <el-input
-                        v-model="form.location.longitude"
-                        style="width: 100px"
-                      />
+                    <el-form-item :label="$t('browser.longitude')" label-width="80px">
+                      <el-input v-model="form.location.longitude" style="width: 100px" />
                     </el-form-item>
-                    <el-form-item
-                      :label="$t('browser.latitude')"
-                      label-width="80px"
-                    >
-                      <el-input
-                        v-model="form.location.latitude"
-                        style="width: 100px"
-                      />
+                    <el-form-item :label="$t('browser.latitude')" label-width="80px">
+                      <el-input v-model="form.location.latitude" style="width: 100px" />
                     </el-form-item>
-                    <el-form-item
-                      :label="$t('browser.precision')"
-                      label-width="80px"
-                    >
-                      <el-input
-                        v-model="form.location.precision"
-                        style="width: 100px"
-                      />
+                    <el-form-item :label="$t('browser.precision')" label-width="80px">
+                      <el-input v-model="form.location.precision" style="width: 100px" />
                     </el-form-item>
                   </div>
                 </div>
               </el-form-item>
               <el-form-item :label="$t('browser.screen')">
                 <el-radio-group v-model="form.screen.mode">
-                  <el-radio-button :label="0">{{
-                    $t("browser.system_match")
-                  }}</el-radio-button>
-                  <el-radio-button :label="1">{{
-                    $t("browser.custom")
-                  }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.system_match') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.custom') }}</el-radio-button>
                 </el-radio-group>
                 <el-select
                   v-if="form.screen.mode === 1"
@@ -545,55 +412,32 @@
               </el-form-item>
               <el-form-item :label="$t('browser.fonts')">
                 <el-radio-group v-model="form.fonts.mode">
-                  <el-radio-button :label="0">{{
-                    $t("browser.system_default")
-                  }}</el-radio-button>
-                  <el-radio-button :label="1">{{
-                    $t("browser.random_match")
-                  }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.system_default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.random_match') }}</el-radio-button>
                 </el-radio-group>
               </el-form-item>
               <el-form-item :label="$t('browser.canvas')">
                 <el-radio-group v-model="form.canvas.mode">
-                  <el-radio-button :label="0">{{
-                    $t("browser.default")
-                  }}</el-radio-button>
-                  <el-radio-button :label="1">{{
-                    $t("browser.random")
-                  }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.random') }}</el-radio-button>
                 </el-radio-group>
               </el-form-item>
               <el-form-item :label="$t('browser.webgl_img')">
                 <el-radio-group v-model="form['webgl-img'].mode">
-                  <el-radio-button :label="0">{{
-                    $t("browser.default")
-                  }}</el-radio-button>
-                  <el-radio-button :label="1">{{
-                    $t("browser.random")
-                  }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.random') }}</el-radio-button>
                 </el-radio-group>
               </el-form-item>
               <el-form-item :label="$t('browser.webgl')">
                 <el-radio-group v-model="form.webgl.mode">
-                  <el-radio-button :label="0">{{
-                    $t("browser.default")
-                  }}</el-radio-button>
-                  <el-radio-button :label="1">{{
-                    $t("browser.custom")
-                  }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.custom') }}</el-radio-button>
                 </el-radio-group>
               </el-form-item>
               <template v-if="form.webgl.mode == 1">
                 <el-form-item :label="$t('browser.webgl_manu')">
-                  <el-select
-                    v-model="form.webgl.vendor"
-                    :placeholder="$t('browser.select')"
-                  >
-                    <el-option
-                      v-for="(item, i) in WebGLVendors"
-                      :key="i"
-                      :value="item"
-                    />
+                  <el-select v-model="form.webgl.vendor" :placeholder="$t('browser.select')">
+                    <el-option v-for="(item, i) in WebGLVendors" :key="i" :value="item" />
                     <!-- <el-option value="Google Inc. (NVIDIA)" /> -->
                   </el-select>
                 </el-form-item>
@@ -603,22 +447,14 @@
                     :placeholder="$t('browser.select')"
                     style="width: 100%"
                   >
-                    <el-option
-                      v-for="(item, i) in WebGLRenders"
-                      :key="i"
-                      :value="item"
-                    />
+                    <el-option v-for="(item, i) in WebGLRenders" :key="i" :value="item" />
                   </el-select>
                 </el-form-item>
               </template>
               <el-form-item :label="$t('browser.audio')">
                 <el-radio-group v-model="form['audio-context'].mode">
-                  <el-radio-button :label="0">{{
-                    $t("browser.default")
-                  }}</el-radio-button>
-                  <el-radio-button :label="1">{{
-                    $t("browser.random")
-                  }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.random') }}</el-radio-button>
                 </el-radio-group>
               </el-form-item>
               <!-- <el-form-item :label="$t('browser.media')">
@@ -629,22 +465,14 @@
               </el-form-item> -->
               <el-form-item :label="$t('browser.client_rects')">
                 <el-radio-group v-model="form['client-rects'].mode">
-                  <el-radio-button :label="0">{{
-                    $t("browser.default")
-                  }}</el-radio-button>
-                  <el-radio-button :label="1">{{
-                    $t("browser.random")
-                  }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.random') }}</el-radio-button>
                 </el-radio-group>
               </el-form-item>
               <el-form-item :label="$t('browser.speech_voices')">
                 <el-radio-group v-model="form['speech_voices'].mode">
-                  <el-radio-button :label="0">{{
-                    $t("browser.default")
-                  }}</el-radio-button>
-                  <el-radio-button :label="1">{{
-                    $t("browser.random")
-                  }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.random') }}</el-radio-button>
                 </el-radio-group>
               </el-form-item>
               <el-form-item :label="$t('browser.cpu')">
@@ -656,7 +484,7 @@
                   <el-option :value="12" />
                 </el-select>
                 &nbsp;
-                <span>{{ $t("browser.cpu_unit") }}</span>
+                <span>{{ $t('browser.cpu_unit') }}</span>
               </el-form-item>
               <el-form-item :label="$t('browser.memory')">
                 <el-select v-model="form.memory.value" style="width: 60px">
@@ -672,110 +500,68 @@
               </el-form-item>
               <el-form-item :label="$t('browser.device')" style="height: 36px">
                 <el-radio-group v-model="form['device-name'].mode">
-                  <el-radio-button :label="0">{{
-                    $t("browser.default")
-                  }}</el-radio-button>
-                  <el-radio-button :label="1">{{
-                    $t("browser.custom")
-                  }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.custom') }}</el-radio-button>
                 </el-radio-group>
-                <div
-                  v-if="form['device-name'].mode == 1"
-                  style="display: inline-block"
-                >
+                <div v-if="form['device-name'].mode == 1" style="display: inline-block">
                   <el-input
                     v-model="form['device-name'].value"
                     style="width: 200px; margin-left: 10px"
                   />
                   <el-button type="text" @click="onReRandomComputerName">
-                    {{ $t("browser.random_change") }}
+                    {{ $t('browser.random_change') }}
                   </el-button>
                 </div>
               </el-form-item>
               <el-form-item :label="$t('browser.mac')" style="height: 36px">
                 <el-radio-group v-model="form.mac.mode">
-                  <el-radio-button :label="0">{{
-                    $t("browser.default")
-                  }}</el-radio-button>
-                  <el-radio-button :label="1">{{
-                    $t("browser.custom")
-                  }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.custom') }}</el-radio-button>
                 </el-radio-group>
                 <div v-if="form.mac.mode == 1" style="display: inline-block">
-                  <el-input
-                    v-model="form.mac.value"
-                    style="width: 200px; margin-left: 10px"
-                  />
+                  <el-input v-model="form.mac.value" style="width: 200px; margin-left: 10px" />
                   <el-button type="text" @click="onReRandomAddr">
-                    {{ $t("browser.random_change") }}
+                    {{ $t('browser.random_change') }}
                   </el-button>
                 </div>
               </el-form-item>
               <el-form-item :label="$t('browser.dnt')">
-                <el-switch
-                  v-model="form.dnt.value"
-                  :active-value="1"
-                  :inactive-value="0"
-                />
+                <el-switch v-model="form.dnt.value" :active-value="1" :inactive-value="0" />
               </el-form-item>
               <el-form-item :label="$t('browser.ssl')">
                 <el-radio-group v-model="form.ssl.mode">
-                  <el-radio-button :label="1">{{
-                    $t("browser.enable")
-                  }}</el-radio-button>
-                  <el-radio-button :label="0">{{
-                    $t("browser.disable")
-                  }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.enable') }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.disable') }}</el-radio-button>
                 </el-radio-group>
               </el-form-item>
-              <el-form-item
-                v-if="form.ssl.mode == 1"
-                :label="$t('browser.ssl_disabled')"
-              >
+              <el-form-item v-if="form.ssl.mode == 1" :label="$t('browser.ssl_disabled')">
                 <el-checkbox-group v-model="form.ssl.value">
-                  <el-checkbox
-                    v-for="(val, key) in SSL"
-                    :key="key"
-                    :label="val"
-                  >
+                  <el-checkbox v-for="(val, key) in SSL" :key="key" :label="val">
                     {{ key }}
                   </el-checkbox>
                 </el-checkbox-group>
               </el-form-item>
               <el-form-item :label="$t('browser.port_scan')">
                 <el-radio-group v-model="form['port-scan'].mode">
-                  <el-radio-button :label="1">{{
-                    $t("browser.enable")
-                  }}</el-radio-button>
-                  <el-radio-button :label="0">{{
-                    $t("browser.disable")
-                  }}</el-radio-button>
+                  <el-radio-button :label="1">{{ $t('browser.enable') }}</el-radio-button>
+                  <el-radio-button :label="0">{{ $t('browser.disable') }}</el-radio-button>
                 </el-radio-group>
               </el-form-item>
-              <el-form-item
-                v-if="form['port-scan'].mode == 1"
-                :label="$t('browser.enable_ports')"
-              >
+              <el-form-item v-if="form['port-scan'].mode == 1" :label="$t('browser.enable_ports')">
                 <el-input
                   :value="form['port-scan'].value.join(',')"
                   :placeholder="$t('browser.enable_ports_tips')"
-                  @input="
-                    (value) => (form['port-scan'].value = value.split(','))
-                  "
+                  @input="value => (form['port-scan'].value = value.split(','))"
                   @change="
-                    (value) =>
+                    value =>
                       (form['port-scan'].value = value
                         .split(',')
-                        .filter((item) => /^\d+$/.test(item)))
+                        .filter(item => /^\d+$/.test(item)))
                   "
                 />
               </el-form-item>
               <el-form-item :label="$t('browser.gpu')">
-                <el-switch
-                  v-model="form.gpu.value"
-                  :active-value="1"
-                  :inactive-value="0"
-                />
+                <el-switch v-model="form.gpu.value" :active-value="1" :inactive-value="0" />
               </el-form-item>
             </div>
           </el-timeline-item>
@@ -784,14 +570,14 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="medium" @click="dialogFormVisible = false">
-          {{ $t("browser.cancel") }}
+          {{ $t('browser.cancel') }}
         </el-button>
         <el-button
           type="primary"
           size="medium"
           @click="dialogStatus === 'create' ? onCreateData() : onUpdateData()"
         >
-          {{ $t("browser.confirm") }}
+          {{ $t('browser.confirm') }}
         </el-button>
       </div>
     </el-dialog>
@@ -809,15 +595,13 @@
           :content="$t('browser.cookie.copied')"
           placement="top"
         >
-          <el-button
-            v-clipboard="() => cookieFormat"
-            v-clipboard:success="onCopy"
-            type="primary"
-          >{{ $t("browser.cookie.copy") }}</el-button>
+          <el-button v-clipboard="() => cookieFormat" v-clipboard:success="onCopy" type="primary">
+            {{ $t('browser.cookie.copy') }}
+          </el-button>
         </el-tooltip>
-        <el-button @click="dialogCookieFormatVisible = false">{{
-          $t("browser.cookie.close")
-        }}</el-button>
+        <el-button @click="dialogCookieFormatVisible = false">
+          {{ $t('browser.cookie.close') }}
+        </el-button>
       </span>
     </el-dialog>
     <template>
@@ -846,12 +630,15 @@
       </el-dialog>
     </template>
 
-    <el-dialog
-      v-model="showSetDialog"
-      title="IP查询API设置"
-      :visible.sync="showSetDialog"
-    >
+    <el-dialog v-model="showSetDialog" title="IP查询API设置" :visible.sync="showSetDialog">
       <el-form :model="form">
+        <el-form-item label="查询渠道">
+          <el-select v-model="Channel" placeholder="请选择">
+            <el-option label="VirtualBrowser" value="virtualbrowser" />
+            <el-option label="ipgeoLocation" value="ipgeolocation" />
+          </el-select>
+        </el-form-item>
+        <el-input v-model="apiLink" placeholder="请输入IP查询API链接" />
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="查询渠道">
@@ -924,13 +711,8 @@ let chromeVer = ''
 const sslList = ['0xc02c', '0xa02c', '0xb02c', '0xd02c', '0xe02c', '0xf02c']
 let tooltipTimer
 const chromiumCoreVer =
-  Number(
-    navigator.userAgentData.brands.find((item) => item.brand === 'Chromium')
-      ?.version
-  ) || 117
-const coreVersions = Array.from(
-  new Set(Versions.map((item) => Number(item.split('.')[0])))
-)
+  Number(navigator.userAgentData.brands.find(item => item.brand === 'Chromium')?.version) || 117
+const coreVersions = Array.from(new Set(Versions.map(item => Number(item.split('.')[0]))))
 for (let i = Math.max(...coreVersions) + 1; i <= chromiumCoreVer; i++) {
   coreVersions.unshift(i)
   Versions.unshift(`${i}.0.0.0`)
@@ -977,9 +759,9 @@ export default {
         }
       }
 
-      json = json.map((item) => {
+      json = json.map(item => {
         const cookie = {}
-        Object.keys(item).forEach((key) => {
+        Object.keys(item).forEach(key => {
           let newKey = key.substring(0, 1).toLowerCase() + key.substring(1)
           if (newKey === 'samesite') {
             newKey = 'sameSite'
@@ -995,7 +777,7 @@ export default {
         return cookie
       })
 
-      const checkNameValue = json.every((item) => {
+      const checkNameValue = json.every(item => {
         return item.name && item.value && item.domain
       })
 
@@ -1085,7 +867,7 @@ export default {
       platforms: ['Win 7', 'Win 8', 'Win 10', 'Win 11'],
       WebGLVendors: Array.from(
         new Set(
-          WebGLRenders.map((item) => {
+          WebGLRenders.map(item => {
             const match = item.match(/\((.+?),/)
             if (match && match[1]) {
               return `Google Inc. (${match[1]})`
@@ -1176,13 +958,13 @@ export default {
       } else {
         this.form.ua.mode = 1
       }
-      this.form['sec-ch-ua'].value.forEach((item) => {
+      this.form['sec-ch-ua'].value.forEach(item => {
         if (item.brand === 'Chromium') {
           item.version = val
         }
       })
 
-      const curVers = Versions.filter((item) => Number(item.split('.')[0]) === val)
+      const curVers = Versions.filter(item => Number(item.split('.')[0]) === val)
       chromeVer = curVers[random.int(0, curVers.length - 1)]
       this.form.ua.value = genUserAgent(osVer, chromeVer)
       this.form['ua-full-version'].value = getUaFullVersion(uaFullVersions, chromeVer)
@@ -1203,11 +985,9 @@ export default {
 
       this.form.ua.value = genUserAgent(osVer, chromeVer)
 
-      let vers = Array.from(
-        new Set(Versions.map((item) => Number(item.split('.')[0])))
-      )
+      let vers = Array.from(new Set(Versions.map(item => Number(item.split('.')[0]))))
       if (val === 'Win 7' || val === 'Win 8') {
-        vers = vers.filter((item) => item <= 109)
+        vers = vers.filter(item => item <= 109)
       }
       vers.unshift('默认')
       this.Versions = vers
@@ -1227,12 +1007,12 @@ export default {
         }
       },
       immediate: true,
-      deep: true
-    }
+      deep: true,
+    },
   },
   beforeCreate() {
-    window._updateState = (runingIds) => {
-      this.list = (this.list || []).map((item) => {
+    window._updateState = runingIds => {
+      this.list = (this.list || []).map(item => {
         item.isRunning = runingIds.includes(item.id.toString())
         if (item.isRunning) {
           item.runLoading = false
@@ -1247,7 +1027,7 @@ export default {
 
     this.$watch(
       () => this.form['ua-language'].language,
-      (val) => {
+      val => {
         this.form['ua-language'].value = [val, val.split('-')[0]].join(',')
         this.form['time-zone'].locale = val
       }
@@ -1271,12 +1051,12 @@ export default {
 
     fontList = getFontList()
 
-    const ver = await chromeSend('getBrowserVersion').catch((err) => {
+    const ver = await chromeSend('getBrowserVersion').catch(err => {
       console.warn(err)
       return '1.116.0.0'
     })
 
-    window._callback = (data) => {
+    window._callback = data => {
       if (sessionStorage.getItem('check_update_showed') === '1') {
         return
       }
@@ -1285,7 +1065,7 @@ export default {
       }
 
       sessionStorage.setItem('check_update_showed', 1)
-      const update = data.update.map((item) => `<li>${item}</li>`).join('')
+      const update = data.update.map(item => `<li>${item}</li>`).join('')
       this.$alert(
         `<div>版本：<b>${data.ver}</b></div>
          <div class="update">更新：<ol>${update}</ol></div>`,
@@ -1302,7 +1082,7 @@ export default {
         .catch(() => {})
     }
     loadScript(
-      `http://api.virtualbrowser.cc/update/check_update.js?c=${
+      `http://virtualbrowser.cc/update/check_update.js?c=${
         (this.list || []).length
       }&v=${ver}&t=${Date.now()}`
     )
@@ -1349,8 +1129,8 @@ export default {
       }, delay)
     },
     getDefaultForm() {
-      const currentZone = this.getCurrentTimeZone();
-      const defaultLanguage = IPGeo.languages?.split(',')[0] || '';
+      const currentZone = this.getCurrentTimeZone()
+      const defaultLanguage = IPGeo.languages?.split(',')[0] || ''
       const cpuCore = getRandomCpuCore()
       const memorySize = getRandomMemorySize(cpuCore)
 
@@ -1418,9 +1198,7 @@ export default {
         },
         fonts: {
           mode: 1,
-          value: fontList
-            .sort(() => Math.random() - 0.5)
-            .slice(0, random.int(1, 10)),
+          value: fontList.sort(() => Math.random() - 0.5).slice(0, random.int(1, 10)),
         },
         canvas: {
           mode: 1,
@@ -1438,8 +1216,7 @@ export default {
         },
         webgl: {
           mode: 1,
-          vendor:
-            this.WebGLVendors[random.int(0, this.WebGLVendors.length - 1)],
+          vendor: this.WebGLVendors[random.int(0, this.WebGLVendors.length - 1)],
           // render: this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)],
         },
         'audio-context': {
@@ -1472,20 +1249,18 @@ export default {
     },
     getCurrentTimeZone() {
       if (!this.cachedTimeZone) {
-        const timezoneOffset = new Date().getTimezoneOffset() / -60;
-        this.cachedTimeZone = TimeZones.find(
-          (item) => item.offset === timezoneOffset
-        )
+        const timezoneOffset = new Date().getTimezoneOffset() / -60
+        this.cachedTimeZone = TimeZones.find(item => item.offset === timezoneOffset)
       }
-      return this.cachedTimeZone;
+      return this.cachedTimeZone
     },
     resetForm() {
       this.$nextTick(() => {
-        this.form = this.getDefaultForm();
+        this.form = this.getDefaultForm()
       })
     },
     RandomFingerprint() {
-      const { id, name, timestamp, proxy } = this.form;
+      const { id, name, timestamp, proxy } = this.form
       this.$nextTick(() => {
         this.form = {
           ...this.getDefaultForm(),
@@ -1521,9 +1296,7 @@ export default {
           })
         } else {
           const arr = Object.values(result)
-            .map(
-              (item) => this.$t('browser.' + item[0].field) + item[0].message
-            )
+            .map(item => this.$t('browser.' + item[0].field) + item[0].message)
             .slice(0, 1)
 
           this.$message({
@@ -1559,8 +1332,7 @@ export default {
           }
           try {
             const proxyURL = new URL(oldProxy)
-            proxy.protocol =
-              protocol || proxyURL.protocol.replace(':', '').toUpperCase()
+            proxy.protocol = protocol || proxyURL.protocol.replace(':', '').toUpperCase()
             proxy.host = proxyURL.hostname
             proxy.port = proxyURL.port
             proxy.user = proxyURL.username
@@ -1589,10 +1361,10 @@ export default {
       }
       if (data['ua-full-version'] === undefined) {
         const chrome_version_num = chrome_version === '默认' ? chromiumCoreVer : chrome_version
-        const chromeVer = Versions.find((item) => Number(item.split('.')[0]) === chrome_version_num)
+        const chromeVer = Versions.find(item => Number(item.split('.')[0]) === chrome_version_num)
         data['ua-full-version'] = {
           mode: 1,
-          value: getUaFullVersion(uaFullVersions, chromeVer)
+          value: getUaFullVersion(uaFullVersions, chromeVer),
         }
         changed = true
       }
@@ -1650,9 +1422,7 @@ export default {
           })
         } else {
           const arr = Object.values(result)
-            .map(
-              (item) => this.$t('browser.' + item[0].field) + item[0].message
-            )
+            .map(item => this.$t('browser.' + item[0].field) + item[0].message)
             .slice(0, 1)
 
           this.$message({
@@ -1664,9 +1434,7 @@ export default {
       })
     },
     handleDelete(row, index) {
-      this.$confirm(
-        this.$t('browser.delete_confirm').replace('${name}', row.name)
-      )
+      this.$confirm(this.$t('browser.delete_confirm').replace('${name}', row.name))
         .then(async() => {
           await deleteBrowser(row.id)
           this.getList()
@@ -1705,7 +1473,7 @@ export default {
     },
     onImport({ raw: file }) {
       const reader = new FileReader()
-      reader.onload = async(e) => {
+      reader.onload = async e => {
         const jsonStr = e.target.result
 
         let json
@@ -1743,8 +1511,8 @@ export default {
         })
         return
       }
-      var currentDate = new Date().toISOString().replace(/[-:]/g, '');
-      var fileName = 'Virtual-Browser_' + currentDate + '.json';
+      var currentDate = new Date().toISOString().replace(/[-:]/g, '')
+      var fileName = 'Virtual-Browser_' + currentDate + '.json'
       var blob = new Blob([JSON.stringify(this.selectedRows, null, 2)], {
         type: 'application/json;charset=utf-8',
       })
@@ -1754,13 +1522,11 @@ export default {
       this.checkProxyState.checking = true
       this.preProcessData(this.form)
       let timeout = false
-      const ret = await chromeSendTimeout(
-        'checkProxy',
-        10 * 1000,
-        this.form.proxy.url
-      ).catch((err) => {
-        timeout = err === 'timeout'
-      })
+      const ret = await chromeSendTimeout('checkProxy', 10 * 1000, this.form.proxy.url).catch(
+        err => {
+          timeout = err === 'timeout'
+        }
+      )
       this.$alert(
         `<p>代理：${this.form.proxy.url}</p>
         <p style="color:${ret ? '#67C23A' : '#F56C6C'}">检测${
@@ -1806,11 +1572,14 @@ export default {
           default:
             this.$notify({
               title: '错误提示',
-              message: '响应格式既不是有效的JSON格式也不是有效的[ip:端口]或[用户名:密码:IP:端口]格式',
+              message:
+                '响应格式既不是有效的JSON格式也不是有效的[ip:端口]或[用户名:密码:IP:端口]格式',
               type: 'warning',
               duration: 2000,
             })
-            throw new Error('响应格式既不是有效的 JSON 也不是有效的 ip:port 或 用户名:密码:IP:端口 格式')
+            throw new Error(
+              '响应格式既不是有效的 JSON 也不是有效的 ip:port 或 用户名:密码:IP:端口 格式'
+            )
         }
       }
 
@@ -1879,11 +1648,9 @@ export default {
       this.form['sec-ch-ua'].value.push({ brand: '', version: '' })
     },
     onRemoveBrand(brand) {
-      this.form['sec-ch-ua'].value = this.form['sec-ch-ua'].value.filter(
-        (item) => {
-          return item.brand !== brand
-        }
-      )
+      this.form['sec-ch-ua'].value = this.form['sec-ch-ua'].value.filter(item => {
+        return item.brand !== brand
+      })
     },
     async handleBatchCreate() {
       if (!this.form.numberOfEnvironments || this.form.numberOfEnvironments < 1) {
@@ -1934,13 +1701,13 @@ export default {
       if (val === '默认') {
         val = chromiumCoreVer
       }
-      const curVers = Versions.filter((item) => Number(item.split('.')[0]) === val)
+      const curVers = Versions.filter(item => Number(item.split('.')[0]) === val)
       this.chromeVer = curVers[random.int(0, curVers.length - 1)]
       const UaValue = genUserAgent(osVer, this.chromeVer)
       const UaFullVersion = getUaFullVersion(uaFullVersions, this.chromeVer)
       return {
         ua: UaValue,
-        uaFullVersion: UaFullVersion
+        uaFullVersion: UaFullVersion,
       }
     },
     async handleBatchDelete() {
@@ -1955,25 +1722,32 @@ export default {
       }
 
       this.$confirm(
-        this.$t('browser.delete_confirm').replace('${name}', this.selectedRows.map(row => row.name).join(', '))
-      ).then(async() => {
-        try {
-          for (const row of this.selectedRows) {
-            await deleteBrowser(row.id);
-          }
+        this.$t('browser.delete_confirm').replace(
+          '${name}',
+          this.selectedRows.map(row => row.name).join(', ')
+        )
+      )
+        .then(async() => {
+          try {
+            for (const row of this.selectedRows) {
+              await deleteBrowser(row.id)
+            }
 
-          this.getList()
-          this.$notify({
-            title: this.$t('browser.success'),
-            message: `${this.selectedRows.length} ` + this.$t('browser.delete') + this.$t('browser.success'),
-            type: 'success',
-            duration: 2000,
-          })
-        } catch (error) {
-          console.error('Error during batch delete:', error)
-        }
-      }).catch(() => {
-      })
+            this.getList()
+            this.$notify({
+              title: this.$t('browser.success'),
+              message:
+                `${this.selectedRows.length} ` +
+                this.$t('browser.delete') +
+                this.$t('browser.success'),
+              type: 'success',
+              duration: 2000,
+            })
+          } catch (error) {
+            console.error('Error during batch delete:', error)
+          }
+        })
+        .catch(() => {})
     },
     async showSettingsDialog() {
       const store = await getGlobalData()
@@ -2023,14 +1797,13 @@ export default {
       if (!apiLink) {
         this.showSetDialog = true
       }
-    }
-
-  }
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/element-variables.scss";
+@import '@/styles/element-variables.scss';
 
 .filter-container {
   display: flex;
@@ -2127,8 +1900,7 @@ export default {
   code {
     padding: 0.2em 0.4em;
     margin: 0;
-    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
-      Liberation Mono, monospace;
+    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
     font-size: 120%;
     white-space: break-spaces;
     background-color: rgba(175, 184, 193, 0.2);
