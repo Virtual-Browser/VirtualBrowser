@@ -852,12 +852,21 @@
       :visible.sync="showSetDialog"
     >
       <el-form :model="form">
-        <el-form-item label="查询渠道">
-          <el-select v-model="Channel" placeholder="请选择">
-            <el-option label="VirtualBrowser" value="virtualbrowser" />
-            <el-option label="ipgeoLocation" value="ipgeolocation" />
-          </el-select>
-        </el-form-item>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="查询渠道">
+              <el-select v-model="Channel" placeholder="请选择">
+                <el-option label="VirtualBrowser" value="virtualbrowser" />
+                <el-option label="ipgeoLocation" value="ipgeolocation" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <div v-if="Channel === 'virtualbrowser'">
+              点击<a href="https://virtualbrowser.cc" target="_blank" style="color: #42b983">官网</a>获取API Key
+            </div>
+          </el-col>
+        </el-row>
         <el-input
           v-model="apiLink"
           placeholder="请输入IP查询API链接"
@@ -1250,8 +1259,14 @@ export default {
       this.Channel = store.Channel
     }
 
-    const req = await fetch(this.apiLink)
-    const res = await req.json()
+    const req = await fetch(this.apiLink).catch((err) => {
+      console.warn(err)
+      return
+    })
+    const res = await req.json().catch((err) => {
+      console.warn(err)
+      return
+    })
     IPGeo = res
 
     fontList = getFontList()
@@ -1287,7 +1302,7 @@ export default {
         .catch(() => {})
     }
     loadScript(
-      `http://virtualbrowser.cc/update/check_update.js?c=${
+      `http://api.virtualbrowser.cc/update/check_update.js?c=${
         (this.list || []).length
       }&v=${ver}&t=${Date.now()}`
     )
