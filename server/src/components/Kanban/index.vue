@@ -3,12 +3,7 @@
     <div class="board-column-header">
       {{ headerText }}
     </div>
-    <draggable
-      :list="list"
-      v-bind="$attrs"
-      class="board-column-content"
-      :set-data="setData"
-    >
+    <draggable :list="list" v-bind="$attrs" class="board-column-content" :set-data="setData">
       <div v-for="element in list" :key="element.id" class="board-item">
         {{ element.name }} {{ element.id }}
       </div>
@@ -96,4 +91,3 @@ export default {
   }
 }
 </style>
-

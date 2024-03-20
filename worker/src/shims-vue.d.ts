@@ -6,3 +6,5 @@ declare module '*.vue' {
 }
 
 declare module 'json-format-highlight'
+declare module '@/utils/native.js'
+declare module '@/utils/index.js'

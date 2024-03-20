@@ -14,7 +14,7 @@
               <img :src="geo.country_flag" />
               {{ geo.country_name }}({{ geo.country_code2 }})
             </span>
-            {{ geo.city ? "/" : "" }}
+            {{ geo.city ? '/' : '' }}
             <span>{{ geo.city }}</span>
           </span>
         </p>
@@ -39,7 +39,8 @@
           </span>
         </p>
         <p>
-          <img src="./assets/VirtualBrowser-qq-group.png" /><br />
+          <img src="./assets/VirtualBrowser-qq-group.png" />
+          <br />
           QQ Group:
           <code>564142956</code>
         </p>
@@ -69,84 +70,91 @@
 </template>
 
 <script lang="ts" setup>
-import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import { onMounted, ref, computed } from "vue";
-import formatHighlight from "json-format-highlight";
-import { chromeSend, getGlobalData } from "./utils/native.js";
-import { loadScript } from "./utils/index.js";
-import random from "random";
+import FingerprintJS from '@fingerprintjs/fingerprintjs'
+import { onMounted, ref, computed } from 'vue'
+import formatHighlight from 'json-format-highlight'
+import { chromeSend, getGlobalData } from '@/utils/native.js'
+import { loadScript } from '@/utils/index.js'
+import random from 'random'
 
 const geo = ref({
-  time_zone: {},
-});
-const fingerprint = ref();
-const visitorId = ref("");
-const networkErr = ref(false);
-let apiLink = ref("");
+  ip: '',
+  country_flag: '',
+  country_name: '',
+  country_code2: '',
+  city: '',
+  time_zone: { name: '' },
+  longitude: '',
+  latitude: ''
+})
+const fingerprint = ref()
+const visitorId = ref('')
+const networkErr = ref(false)
+let apiLink = ref('')
 
-const apiLinkIsValid = computed(() => apiLink.value !== "");
+const apiLinkIsValid = computed(() => apiLink.value !== '')
 
 onMounted(async () => {
-  const store = await getGlobalData();
-  const storedApiLink = store.apiLink;
+  const store = await getGlobalData()
+  const storedApiLink = store.apiLink
   if (storedApiLink) {
-    apiLink.value = storedApiLink;
+    apiLink.value = storedApiLink
   }
   if (!apiLink.value) {
-    return;
+    return
   }
-  let req = await fetch(apiLink.value).catch((err) => {
-    console.log(err);
-    networkErr.value = true;
-  });
+  let req = await fetch(apiLink.value).catch(err => {
+    console.log(err)
+    networkErr.value = true
+  })
   if (!req) {
-    return;
+    return
   }
 
-  const res = await req.json();
-  geo.value = res;
+  const res = await req.json()
+  geo.value = res
 
   const ipGeo = {
-    "time-zone": {
+    'time-zone': {
       zone: getZone(res.time_zone.offset_with_dst || 0),
-      locale: res.languages?.split(",")[0] || "",
+      locale: res.languages?.split(',')[0] || ''
       // name: res.time_zone.name,
       // value: res.time_zone.offset,
     },
     location: {
       longitude: parseFloat(res.longitude),
       latitude: parseFloat(res.latitude),
-      precision: random.int(10, 5000),
+      precision: random.int(10, 5000)
     },
-    "ua-language": {
+    'ua-language': {
       // language: res.languages?.split(',')[0],
-      value: res.languages?.split(",")[0] || "",
-    },
-  };
+      value: res.languages?.split(',')[0] || ''
+    }
+  }
 
-  await chromeSend("setIpGeo", ipGeo).catch((err: Error) => {
-    console.warn(err);
-  });
+  await chromeSend('setIpGeo', ipGeo).catch((err: Error) => {
+    console.warn(err)
+  })
 
-  const fp = await FingerprintJS.load();
-  const result = await fp.get();
-  visitorId.value = result.visitorId;
-  fingerprint.value = result.components;
-});
+  const fp = await FingerprintJS.load()
+  const result = await fp.get()
+  visitorId.value = result.visitorId
+  fingerprint.value = result.components
+})
 
 const getZone = (offset: number) => {
-  const plus = offset < 0 ? "+" : "";
-  return "Etc/GMT" + plus + -offset;
-};
+  const plus = offset < 0 ? '+' : ''
+  return 'Etc/GMT' + plus + -offset
+}
 
 const formatResult = (json: JSON) => {
-  let colorJson = formatHighlight(json);
+  let colorJson = formatHighlight(json)
   colorJson = colorJson.replace(/"data:image\/.+?"/g, ($0: string) => {
-    return `<img src=${$0} style="vertical-align: text-top;" />`;
-  });
+    return `<img src=${$0} style="vertical-align: text-top;" />`
+  })
 
-  return colorJson;
-};
+  return colorJson
+}
 </script>
 
 <style lang="scss">
@@ -179,8 +187,8 @@ const formatResult = (json: JSON) => {
       code {
         padding: 0.2em 0.4em;
         margin: 0;
-        font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
-          Liberation Mono, monospace;
+        font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono,
+          monospace;
         font-size: 120%;
         white-space: break-spaces;
         background-color: rgba(175, 184, 193, 0.2);

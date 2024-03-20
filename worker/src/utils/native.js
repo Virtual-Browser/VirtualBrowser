@@ -1,4 +1,4 @@
-import { v4 as uuid_v4 } from "uuid";
+import { v4 as uuid_v4 } from 'uuid'
 
 /* eslint-disable */
 window.cr = {}
@@ -9,16 +9,16 @@ cr.webUIResponse = function (cb, status, data) {
 }
 
 export async function chromeSend(name, ...params) {
-  const pTimeOut = (timeout) => {
+  const pTimeOut = timeout => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         reject('timeout')
       }, timeout)
     })
   }
-  const pCall = new Promise((resolve) => {
+  const pCall = new Promise(resolve => {
     const callbackName = 'callback_' + uuid_v4()
-    cr.__callbacks[callbackName] = (data) => {
+    cr.__callbacks[callbackName] = data => {
       resolve(data)
     }
 
@@ -31,7 +31,7 @@ export async function chromeSend(name, ...params) {
 }
 
 export async function getGlobalData() {
-  let GlobalData;
+  let GlobalData
   try {
     GlobalData = JSON.parse(localStorage.getItem('GlobalData'))
     GlobalData = await chromeSend('getGlobalData')

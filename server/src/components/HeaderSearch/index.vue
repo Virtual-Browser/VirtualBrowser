@@ -37,7 +37,7 @@ export default {
       options: [],
       searchPool: [],
       show: false,
-      fuse: undefined,
+      fuse: undefined
     }
   },
   computed: {
@@ -49,7 +49,7 @@ export default {
     },
     supportPinyinSearch() {
       return this.$store.state.settings.supportPinyinSearch
-    },
+    }
   },
   watch: {
     lang() {
@@ -71,7 +71,7 @@ export default {
       } else {
         document.body.removeEventListener('click', this.close)
       }
-    },
+    }
   },
   mounted() {
     this.searchPool = this.generateRoutes(this.routes)
@@ -81,12 +81,12 @@ export default {
       // const { default: pinyin } = await import('pinyin')
       const pinyin = require('pinyin')
       if (Array.isArray(list)) {
-        list.forEach((element) => {
+        list.forEach(element => {
           const title = element.title
           if (Array.isArray(title)) {
-            title.forEach((v) => {
+            title.forEach(v => {
               v = pinyin(v, {
-                style: pinyin.STYLE_NORMAL,
+                style: pinyin.STYLE_NORMAL
               }).join('')
               element.pinyinTitle = v
             })
@@ -125,17 +125,17 @@ export default {
         keys: [
           {
             name: 'title',
-            weight: 0.7,
+            weight: 0.7
           },
           {
             name: 'pinyinTitle',
-            weight: 0.3,
+            weight: 0.3
           },
           {
             name: 'path',
-            weight: 0.3,
-          },
-        ],
+            weight: 0.3
+          }
+        ]
       })
     },
     // Filter out the routes that can be displayed in the sidebar
@@ -149,7 +149,7 @@ export default {
         }
         const data = {
           path: path.resolve(basePath, router.path),
-          title: [...prefixTitle],
+          title: [...prefixTitle]
         }
         if (router.meta && router.meta.title) {
           // generate internationalized title
@@ -178,8 +178,8 @@ export default {
       } else {
         this.options = []
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

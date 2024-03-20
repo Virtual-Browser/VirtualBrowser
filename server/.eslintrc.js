@@ -13,23 +13,15 @@ module.exports = {
   extends: ['plugin:vue/recommended', 'eslint:recommended', 'plugin:prettier/recommended'],
 
   // add your custom rules here
-  //it is base on https://github.com/vuejs/eslint-config-vue
+  // it is base on https://github.com/vuejs/eslint-config-vue
   rules: {
-    'vue/max-attributes-per-line': [
-      2,
-      {
-        singleline: 10,
-        multiline: {
-          max: 1,
-          allowFirstLine: false
-        }
-      }
-    ],
     'vue/singleline-html-element-content-newline': 'off',
     'vue/multiline-html-element-content-newline': 'off',
+    'vue/multi-word-component-names': 'off',
     'vue/name-property-casing': ['error', 'PascalCase'],
     'vue/no-v-html': 'off',
     'vue/no-unused-components': 'warn',
+    'vue/no-mutating-props': 'warn',
     'accessor-pairs': 2,
     'arrow-spacing': [
       2,
@@ -74,7 +66,6 @@ module.exports = {
       }
     ],
     'handle-callback-err': [2, '^(err|error)$'],
-    'jsx-quotes': [2, 'prefer-single'],
     'key-spacing': [
       2,
       {
@@ -249,13 +240,6 @@ module.exports = {
     yoda: [2, 'never'],
     'prefer-const': 2,
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
-    'object-curly-spacing': [
-      2,
-      'always',
-      {
-        objectsInObjects: false
-      }
-    ],
     'array-bracket-spacing': [2, 'never']
   }
 }

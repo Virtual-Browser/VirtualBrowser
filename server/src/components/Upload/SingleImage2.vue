@@ -11,12 +11,13 @@
     >
       <i class="el-icon-upload" />
       <div class="el-upload__text">
-        Drag或<em>点击上传</em>
+        Drag或
+        <em>点击上传</em>
       </div>
     </el-upload>
-    <div v-show="imageUrl.length>0" class="image-preview">
-      <div v-show="imageUrl.length>1" class="image-preview-wrapper">
-        <img :src="imageUrl">
+    <div v-show="imageUrl.length > 0" class="image-preview">
+      <div v-show="imageUrl.length > 1" class="image-preview-wrapper">
+        <img :src="imageUrl" />
         <div class="image-preview-action">
           <i class="el-icon-delete" @click="rmImage" />
         </div>
@@ -60,16 +61,18 @@ export default {
     beforeUpload() {
       const _self = this
       return new Promise((resolve, reject) => {
-        getToken().then(response => {
-          const key = response.data.qiniu_key
-          const token = response.data.qiniu_token
-          _self._data.dataObj.token = token
-          _self._data.dataObj.key = key
-          this.tempUrl = response.data.qiniu_url
-          resolve(true)
-        }).catch(() => {
-          reject(false)
-        })
+        getToken()
+          .then(response => {
+            const key = response.data.qiniu_key
+            const token = response.data.qiniu_token
+            _self._data.dataObj.token = token
+            _self._data.dataObj.key = key
+            this.tempUrl = response.data.qiniu_url
+            resolve(true)
+          })
+          .catch(() => {
+            reject(false)
+          })
       })
     }
   }
@@ -111,8 +114,8 @@ export default {
       color: #fff;
       opacity: 0;
       font-size: 20px;
-      background-color: rgba(0, 0, 0, .5);
-      transition: opacity .3s;
+      background-color: rgba(0, 0, 0, 0.5);
+      transition: opacity 0.3s;
       cursor: pointer;
       text-align: center;
       line-height: 200px;

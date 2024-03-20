@@ -1,17 +1,22 @@
 <template>
-  <a href="https://github.com/PanJiaChen/vue-element-admin" target="_blank" class="github-corner" aria-label="View source on Github">
+  <a
+    href="https://github.com/PanJiaChen/vue-element-admin"
+    target="_blank"
+    class="github-corner"
+    aria-label="View source on Github"
+  >
     <svg
       width="80"
       height="80"
       viewBox="0 0 250 250"
-      style="fill:#40c9c6; color:#fff;"
+      style="fill: #40c9c6; color: #fff"
       aria-hidden="true"
     >
       <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z" />
       <path
         d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
         fill="currentColor"
-        style="transform-origin: 130px 106px;"
+        style="transform-origin: 130px 106px"
         class="octo-arm"
       />
       <path
@@ -25,30 +30,30 @@
 
 <style scoped>
 .github-corner:hover .octo-arm {
-  animation: octocat-wave 560ms ease-in-out
+  animation: octocat-wave 560ms ease-in-out;
 }
 
 @keyframes octocat-wave {
   0%,
   100% {
-    transform: rotate(0)
+    transform: rotate(0);
   }
   20%,
   60% {
-    transform: rotate(-25deg)
+    transform: rotate(-25deg);
   }
   40%,
   80% {
-    transform: rotate(10deg)
+    transform: rotate(10deg);
   }
 }
 
-@media (max-width:500px) {
+@media (max-width: 500px) {
   .github-corner:hover .octo-arm {
-    animation: none
+    animation: none;
   }
   .github-corner .octo-arm {
-    animation: octocat-wave 560ms ease-in-out
+    animation: octocat-wave 560ms ease-in-out;
   }
 }
 </style>

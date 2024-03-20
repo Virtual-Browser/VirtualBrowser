@@ -8,7 +8,7 @@ export default {
       window.close()
     }
   },
-  render: function(h) {
+  render: function (h) {
     return h() // avoid warning message
   }
 }

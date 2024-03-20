@@ -11,11 +11,11 @@ module.exports = defineConfig({
   configureWebpack: {
     plugins: [
       require('unplugin-auto-import/webpack')({
-        resolvers: [ElementPlusResolver()],
+        resolvers: [ElementPlusResolver()]
       }),
       require('unplugin-vue-components/webpack')({
-        resolvers: [ElementPlusResolver()],
-      }),
-    ],
-  },
+        resolvers: [ElementPlusResolver()]
+      })
+    ]
+  }
 })
