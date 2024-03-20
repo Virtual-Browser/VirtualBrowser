@@ -4,15 +4,15 @@ import { getLanguage } from '@/lang/index'
 const state = {
   sidebar: {
     opened: localStorage.getItem('sidebarStatus') ? !!+localStorage.getItem('sidebarStatus') : true,
-    withoutAnimation: false,
+    withoutAnimation: false
   },
   device: 'desktop',
   language: getLanguage(),
-  size: localStorage.getItem('size') || 'medium',
+  size: localStorage.getItem('size') || 'medium'
 }
 
 const mutations = {
-  TOGGLE_SIDEBAR: (state) => {
+  TOGGLE_SIDEBAR: state => {
     state.sidebar.opened = !state.sidebar.opened
     state.sidebar.withoutAnimation = false
     if (state.sidebar.opened) {
@@ -36,7 +36,7 @@ const mutations = {
   SET_SIZE: (state, size) => {
     state.size = size
     localStorage.setItem('size', size)
-  },
+  }
 }
 
 const actions = {
@@ -54,12 +54,12 @@ const actions = {
   },
   setSize({ commit }, size) {
     commit('SET_SIZE', size)
-  },
+  }
 }
 
 export default {
   namespaced: true,
   state,
   mutations,
-  actions,
+  actions
 }

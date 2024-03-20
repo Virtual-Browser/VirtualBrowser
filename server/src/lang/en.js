@@ -15,7 +15,7 @@ export default {
     theme: 'Theme',
     i18n: 'I18n',
     externalLink: 'External Link',
-    profile: 'Profile',
+    profile: 'Profile'
   },
   navbar: {
     dashboard: 'Dashboard',
@@ -23,7 +23,7 @@ export default {
     logOut: 'Log Out',
     profile: 'Profile',
     theme: 'Theme',
-    size: 'Global Size',
+    size: 'Global Size'
   },
   login: {
     title: 'Login Form',
@@ -33,7 +33,7 @@ export default {
     any: 'any',
     thirdparty: 'Or connect with',
     thirdpartyTips:
-      'Can not be simulated on local, so please combine you own business simulation! ! !',
+      'Can not be simulated on local, so please combine you own business simulation! ! !'
   },
   browser: {
     add: 'Create Browser',
@@ -45,7 +45,7 @@ export default {
     search: 'Search',
     import: {
       import: 'Import',
-      export: 'Export',
+      export: 'Export'
     },
     id: 'ID',
     ip_port: 'IP Port',
@@ -69,18 +69,20 @@ export default {
       port: 'Port',
       user: 'Username',
       pass: 'Password',
-      API: 'API Link',
+      API: 'API Link'
     },
-    proxy_tips: 'support HTTP and SOCKS5 protocols<br>example:127.0.0.1:80<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;127.0.0.1:1080@socks#ssh',
+    proxy_tips:
+      'support HTTP and SOCKS5 protocols<br>example:127.0.0.1:80<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;127.0.0.1:1080@socks#ssh',
     cookie: {
       jsonStr: 'Cookie Import ',
-      placeholder: 'supports arrays containing cookies in JSON format. Please click on the right to view the detailed format',
+      placeholder:
+        'supports arrays containing cookies in JSON format. Please click on the right to view the detailed format',
       format: 'View Format',
       format_error: 'Format Error',
       format_title: 'Cookie Format',
       copy: 'Copy',
       close: 'Close',
-      copied: 'Copied',
+      copied: 'Copied'
     },
     ua: 'User Agent',
     sec_ua: 'Sec-CH-UA',
@@ -138,7 +140,7 @@ export default {
     success: 'Success',
     create: 'Create',
     update: 'Update',
-    delete_confirm: 'Are you sure to delete ${name} ?',
+    delete_confirm: 'Are you sure to delete ${name} ?'
   },
   permission: {
     addRole: 'New Role',
@@ -148,35 +150,35 @@ export default {
     tips: 'In some cases, using v-permission will have no effect. For example: Element-UI  el-tab or el-table-column and other scenes that dynamically render dom. You can only do this with v-if.',
     delete: 'Delete',
     confirm: 'Confirm',
-    cancel: 'Cancel',
+    cancel: 'Cancel'
   },
   guide: {
     description:
       'The guide page is useful for some people who entered the project for the first time. You can briefly introduce the features of the project. Demo is based on ',
-    button: 'Show Guide',
+    button: 'Show Guide'
   },
   errorLog: {
     tips: 'Please click the bug icon in the upper right corner',
     description:
       'Now the management system are basically the form of the spa, it enhances the user experience, but it also increases the possibility of page problems, a small negligence may lead to the entire page deadlock. Fortunately Vue provides a way to catch handling exceptions, where you can handle errors or report exceptions.',
-    documentation: 'Document introduction',
+    documentation: 'Document introduction'
   },
   theme: {
     change: 'Change Theme',
     documentation: 'Theme documentation',
-    tips: 'Tips: It is different from the theme-pick on the navbar is two different skinning methods, each with different application scenarios. Refer to the documentation for details.',
+    tips: 'Tips: It is different from the theme-pick on the navbar is two different skinning methods, each with different application scenarios. Refer to the documentation for details.'
   },
   tagsView: {
     refresh: 'Refresh',
     close: 'Close',
     closeOthers: 'Close Others',
-    closeAll: 'Close All',
+    closeAll: 'Close All'
   },
   settings: {
     title: 'Page style setting',
     theme: 'Theme Color',
     tagsView: 'Open Tags-View',
     fixedHeader: 'Fixed Header',
-    sidebarLogo: 'Sidebar Logo',
-  },
+    sidebarLogo: 'Sidebar Logo'
+  }
 }

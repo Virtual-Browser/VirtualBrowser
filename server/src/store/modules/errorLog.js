@@ -6,7 +6,7 @@ const mutations = {
   ADD_ERROR_LOG: (state, log) => {
     state.logs.push(log)
   },
-  CLEAR_ERROR_LOG: (state) => {
+  CLEAR_ERROR_LOG: state => {
     state.logs.splice(0)
   }
 }

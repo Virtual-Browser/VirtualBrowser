@@ -15,12 +15,12 @@ Vue.use(VueI18n)
 const messages = {
   en: {
     ...enLocale,
-    ...elementEnLocale,
+    ...elementEnLocale
   },
   zh: {
     ...zhLocale,
-    ...elementZhLocale,
-  },
+    ...elementZhLocale
+  }
   // es: {
   //   ...esLocale,
   //   ...elementEsLocale,
@@ -49,7 +49,7 @@ const i18n = new VueI18n({
   // options: en | zh | es
   locale: getLanguage(),
   // set locale messages
-  messages,
+  messages
 })
 
 export default i18n

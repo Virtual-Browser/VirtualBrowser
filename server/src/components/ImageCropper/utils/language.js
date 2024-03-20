@@ -53,7 +53,7 @@ export default {
     error: {
       onlyImg: 'Image only',
       outOfSize: 'Image exceeds size limit: ',
-      lowestPx: 'Image\'s size is too low. Expected at least: '
+      lowestPx: "Image's size is too low. Expected at least: "
     }
   },
   ro: {
@@ -80,7 +80,8 @@ export default {
   ru: {
     hint: 'Нажмите, или перетащите файл в это окно',
     loading: 'Загружаю……',
-    noSupported: 'Ваш браузер не поддерживается, пожалуйста, используйте IE10 + или другие браузеры',
+    noSupported:
+      'Ваш браузер не поддерживается, пожалуйста, используйте IE10 + или другие браузеры',
     success: 'Загрузка выполнена успешно',
     fail: 'Ошибка загрузки',
     preview: 'Предпросмотр',
@@ -118,7 +119,8 @@ export default {
   fr: {
     hint: 'Cliquez ou glissez le fichier ici.',
     loading: 'Téléchargement…',
-    noSupported: 'Votre navigateur n\'est pas supporté. Utilisez IE10 + ou un autre navigateur s\'il vous plaît.',
+    noSupported:
+      "Votre navigateur n'est pas supporté. Utilisez IE10 + ou un autre navigateur s'il vous plaît.",
     success: 'Téléchargement réussit',
     fail: 'Téléchargement echoué',
     preview: 'Aperçu',
@@ -130,8 +132,8 @@ export default {
     },
     error: {
       onlyImg: 'Image uniquement',
-      outOfSize: 'L\'image sélectionnée dépasse la taille maximum: ',
-      lowestPx: 'L\'image sélectionnée est trop petite. Dimensions attendues: '
+      outOfSize: "L'image sélectionnée dépasse la taille maximum: ",
+      lowestPx: "L'image sélectionnée est trop petite. Dimensions attendues: "
     }
   },
   nl: {
@@ -175,7 +177,8 @@ export default {
   'es-MX': {
     hint: 'Selecciona o arrastra una imagen',
     loading: 'Subiendo...',
-    noSupported: 'Tu navegador no es soportado, porfavor usa IE10+ u otros navegadores mas recientes',
+    noSupported:
+      'Tu navegador no es soportado, porfavor usa IE10+ u otros navegadores mas recientes',
     success: 'Subido exitosamente',
     fail: 'Sucedió un error',
     preview: 'Vista previa',

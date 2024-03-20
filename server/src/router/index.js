@@ -43,29 +43,29 @@ export const constantRoutes = [
     children: [
       {
         path: '/redirect/:path(.*)',
-        component: require('@/views/redirect/index').default,
-      },
-    ],
+        component: require('@/views/redirect/index').default
+      }
+    ]
   },
   {
     path: '/login',
     component: require('@/views/login/index').default,
-    hidden: true,
+    hidden: true
   },
   {
     path: '/auth-redirect',
     component: require('@/views/login/auth-redirect').default,
-    hidden: true,
+    hidden: true
   },
   {
     path: '/404',
     component: require('@/views/error-page/404').default,
-    hidden: true,
+    hidden: true
   },
   {
     path: '/401',
     component: require('@/views/error-page/401').default,
-    hidden: true,
+    hidden: true
   },
   // {
   //   path: '/',
@@ -90,10 +90,10 @@ export const constantRoutes = [
         path: 'index',
         component: require('@/views/browser/index').default,
         name: 'Browser',
-        meta: { title: 'browser', icon: 'table', affix: true },
-      },
-    ],
-  },
+        meta: { title: 'browser', icon: 'table', affix: true }
+      }
+    ]
+  }
 ]
 
 /**
@@ -121,14 +121,14 @@ export const asyncRoutes = [
   // tableRouter,
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true },
+  { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () =>
   new Router({
     // mode: 'history', // require service support
     scrollBehavior: () => ({ y: 0 }),
-    routes: constantRoutes,
+    routes: constantRoutes
   })
 
 const router = createRouter()

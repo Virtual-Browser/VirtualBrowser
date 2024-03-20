@@ -116,8 +116,8 @@
                 row.runLoading
                   ? 'browser.launching'
                   : row.isRunning
-                    ? 'browser.launched'
-                    : 'browser.launch'
+                  ? 'browser.launched'
+                  : 'browser.launch'
               )
             }}
           </el-button>
@@ -145,7 +145,7 @@
     </el-table>
 
     <div class="qq-group">
-      <img src="@/assets/VirtualBrowser-qq-group.png">
+      <img src="@/assets/VirtualBrowser-qq-group.png" />
       <p>
         QQ Group:
         <code>564142956</code>
@@ -669,7 +669,7 @@ import {
   deleteBrowser,
   chromeSend,
   chromeSendTimeout,
-  updateRuningState,
+  updateRuningState
 } from '@/api/native'
 import { saveAs } from 'file-saver'
 import waves from '@/directive/waves' // waves directive
@@ -683,7 +683,7 @@ import {
   getRandomMemorySize,
   genUserAgent,
   getUaFullVersion,
-  loadScript,
+  loadScript
 } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import TimeZones from '@/utils/timezones.json'
@@ -719,10 +719,10 @@ export default {
       const statusMap = {
         published: 'success',
         draft: 'info',
-        deleted: 'danger',
+        deleted: 'danger'
       }
       return statusMap[status]
-    },
+    }
   },
   data() {
     const validateCookie = (rule, value, callback) => {
@@ -796,7 +796,7 @@ export default {
       listQuery: {
         page: 1,
         limit: 5,
-        title: undefined,
+        title: undefined
       },
       dialogFormVisible: false,
       dialogVisible: false,
@@ -804,7 +804,7 @@ export default {
       dialogCookieFormatVisible: false,
       textMap: {
         update: this.$t('browser.edit'),
-        create: this.$t('browser.add'),
+        create: this.$t('browser.add')
       },
       form: {
         numberOfEnvironments: 1,
@@ -835,7 +835,7 @@ export default {
         dnt: {},
         'port-scan': {},
         gpu: {},
-        webrtc: {},
+        webrtc: {}
       },
       rules: {
         // name: [{ required: true, message: this.$t('browser.required'), trigger: 'change' }],
@@ -843,17 +843,17 @@ export default {
           {
             required: true,
             message: this.$t('browser.required'),
-            trigger: 'change',
-          },
+            trigger: 'change'
+          }
         ],
         'proxy.host': [
           {
             required: true,
             message: this.$t('browser.required'),
-            trigger: 'change',
-          },
+            trigger: 'change'
+          }
         ],
-        'cookie.jsonStr': [{ validator: validateCookie, trigger: 'blur' }],
+        'cookie.jsonStr': [{ validator: validateCookie, trigger: 'blur' }]
       },
       downloadLoading: false,
       platforms: ['Win 7', 'Win 8', 'Win 10', 'Win 11'],
@@ -887,7 +887,7 @@ export default {
         '2560 x 1440',
         '2560 x 1600',
         '2880 x 1800',
-        '5120 x 2880',
+        '5120 x 2880'
       ],
       TimeZones,
       Languages,
@@ -914,17 +914,17 @@ export default {
 }]`,
       copied: false,
       checkProxyState: {
-        checking: false,
-      },
+        checking: false
+      }
     }
   },
   computed: {
     language() {
       return this.$store.getters.language
-    },
+    }
   },
   watch: {
-    'form.proxy.host': function(newVal, oldVal) {
+    'form.proxy.host': function (newVal, oldVal) {
       const parts = newVal.split(':')
       if (parts.length === 4) {
         this.form.proxy.host = parts[0]
@@ -999,8 +999,8 @@ export default {
         }
       },
       immediate: true,
-      deep: true,
-    },
+      deep: true
+    }
   },
   beforeCreate() {
     window._updateState = runingIds => {
@@ -1063,7 +1063,7 @@ export default {
         {
           dangerouslyUseHTMLString: true,
           showCancelButton: true,
-          confirmButtonText: '更新',
+          confirmButtonText: '更新'
         }
       )
         .then(() => {
@@ -1104,7 +1104,7 @@ export default {
           title: '错误提示',
           message: '至少需要勾选一个环境',
           type: 'warning',
-          duration: 2000,
+          duration: 2000
         })
         return
       }
@@ -1137,96 +1137,96 @@ export default {
           port: '',
           user: '',
           pass: '',
-          API: '',
+          API: ''
         },
         cookie: {
           mode: 0,
-          value: '',
+          value: ''
         },
         ua: {
           mode: 1,
-          value: genUserAgent(osVer, chromeVer),
+          value: genUserAgent(osVer, chromeVer)
         },
         'ua-full-version': {
           mode: 1,
-          value: getUaFullVersion(uaFullVersions, chromeVer),
+          value: getUaFullVersion(uaFullVersions, chromeVer)
         },
         'sec-ch-ua': {
           mode: 0,
           value: [
             { brand: 'Chromium', version: chromiumCoreVer },
-            { brand: 'Not=A?Brand', version: '99' },
-          ],
+            { brand: 'Not=A?Brand', version: '99' }
+          ]
         },
         'ua-language': {
           mode: 2,
           language: IPGeo.languages?.split(',')[0] || '',
-          value: IPGeo.languages,
+          value: IPGeo.languages
         },
         'time-zone': {
           mode: 2,
           zone: this.getZone(currentZone?.offset || 0),
           locale: IPGeo.languages?.split(',')[0] || '',
           name: currentZone?.text || '',
-          value: currentZone?.offset || 0,
+          value: currentZone?.offset || 0
         },
         webrtc: {
-          mode: 0,
+          mode: 0
         },
         location: {
           mode: 2,
           enable: 1,
           longitude: IPGeo.longitude,
           latitude: IPGeo.latitude,
-          precision: random.int(10, 5000),
+          precision: random.int(10, 5000)
         },
         screen: {
           mode: 0,
           width: screen.width,
           height: screen.height,
-          _value: `${screen.width} x ${screen.height}`,
+          _value: `${screen.width} x ${screen.height}`
         },
         fonts: {
           mode: 1,
-          value: fontList.sort(() => Math.random() - 0.5).slice(0, random.int(1, 10)),
+          value: fontList.sort(() => Math.random() - 0.5).slice(0, random.int(1, 10))
         },
         canvas: {
           mode: 1,
           r: random.int(-10, 10),
           g: random.int(-10, 10),
           b: random.int(-10, 10),
-          a: random.int(-10, 10),
+          a: random.int(-10, 10)
         },
         'webgl-img': {
           mode: 1,
           r: random.int(-10, 10),
           g: random.int(-10, 10),
           b: random.int(-10, 10),
-          a: random.int(-10, 10),
+          a: random.int(-10, 10)
         },
         webgl: {
           mode: 1,
-          vendor: this.WebGLVendors[random.int(0, this.WebGLVendors.length - 1)],
+          vendor: this.WebGLVendors[random.int(0, this.WebGLVendors.length - 1)]
           // render: this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)],
         },
         'audio-context': {
           mode: 1,
           channel: random.float(0, 0.0000001),
-          analyer: random.float(0, 0.1),
+          analyer: random.float(0, 0.1)
         },
         media: { mode: 1 },
         'client-rects': {
           mode: 1,
           width: random.float(-1, 1),
-          height: random.float(-1, 1),
+          height: random.float(-1, 1)
         },
         speech_voices: {
           mode: 1,
-          value: genRandomSpeechVoices(),
+          value: genRandomSpeechVoices()
         },
         ssl: {
           mode: 0,
-          value: [],
+          value: []
         },
         cpu: { mode: 1, value: cpuCore },
         memory: { mode: 1, value: memorySize },
@@ -1234,7 +1234,7 @@ export default {
         mac: { mode: 1, value: genRandomMacAddr() },
         dnt: { mode: 1, value: 0 },
         'port-scan': { mode: 1, value: [] },
-        gpu: { mode: 1, value: 1 },
+        gpu: { mode: 1, value: 1 }
       }
     },
     getCurrentTimeZone() {
@@ -1257,7 +1257,7 @@ export default {
           id,
           name,
           timestamp,
-          proxy: { ...proxy },
+          proxy: { ...proxy }
         }
       })
     },
@@ -1270,7 +1270,7 @@ export default {
       })
     },
     onCreateData() {
-      this.$refs['dataForm'].validate(async(valid, result) => {
+      this.$refs['dataForm'].validate(async (valid, result) => {
         if (valid) {
           this.form.timestamp = Date.now()
           this.preProcessData(this.form)
@@ -1282,7 +1282,7 @@ export default {
             title: this.$t('browser.success'),
             message: this.$t('browser.create') + this.$t('browser.success'),
             type: 'success',
-            duration: 2000,
+            duration: 2000
           })
         } else {
           const arr = Object.values(result)
@@ -1292,7 +1292,7 @@ export default {
           this.$message({
             type: 'error',
             dangerouslyUseHTMLString: true,
-            message: '<p>' + arr.join('</p><p>') + '</p>',
+            message: '<p>' + arr.join('</p><p>') + '</p>'
           })
         }
       })
@@ -1345,7 +1345,7 @@ export default {
       if (typeof data['sec-ch-ua'].value === 'string') {
         data['sec-ch-ua'].value = [
           { brand: 'Chromium', version: chromiumCoreVer },
-          { brand: 'Not=A?Brand', version: '99' },
+          { brand: 'Not=A?Brand', version: '99' }
         ]
         changed = true
       }
@@ -1354,7 +1354,7 @@ export default {
         const chromeVer = Versions.find(item => Number(item.split('.')[0]) === chrome_version_num)
         data['ua-full-version'] = {
           mode: 1,
-          value: getUaFullVersion(uaFullVersions, chromeVer),
+          value: getUaFullVersion(uaFullVersions, chromeVer)
         }
         changed = true
       }
@@ -1395,7 +1395,7 @@ export default {
       })
     },
     onUpdateData() {
-      this.$refs['dataForm'].validate(async(valid, result) => {
+      this.$refs['dataForm'].validate(async (valid, result) => {
         if (valid) {
           const tempData = Object.assign({}, this.form)
           console.log('submit', tempData)
@@ -1408,7 +1408,7 @@ export default {
             title: this.$t('browser.success'),
             message: this.$t('browser.update') + this.$t('browser.success'),
             type: 'success',
-            duration: 2000,
+            duration: 2000
           })
         } else {
           const arr = Object.values(result)
@@ -1418,21 +1418,21 @@ export default {
           this.$message({
             type: 'error',
             dangerouslyUseHTMLString: true,
-            message: '<p>' + arr.join('</p><p>') + '</p>',
+            message: '<p>' + arr.join('</p><p>') + '</p>'
           })
         }
       })
     },
     handleDelete(row, index) {
       this.$confirm(this.$t('browser.delete_confirm').replace('${name}', row.name))
-        .then(async() => {
+        .then(async () => {
           await deleteBrowser(row.id)
           this.getList()
           this.$notify({
             title: this.$t('browser.success'),
             message: this.$t('browser.delete') + this.$t('browser.success'),
             type: 'success',
-            duration: 2000,
+            duration: 2000
           })
         })
         .catch(() => {})
@@ -1478,14 +1478,14 @@ export default {
             title: this.$t('browser.success'),
             message: `导入${json.length}条数据`,
             type: 'success',
-            duration: 3000,
+            duration: 3000
           })
         } catch (ex) {
           this.$notify({
             title: '导入失败',
             message: `${ex.message}`,
             type: 'error',
-            duration: 3000,
+            duration: 3000
           })
         }
       }
@@ -1497,14 +1497,14 @@ export default {
           title: '错误提示',
           message: '至少需要勾选一个环境',
           type: 'warning',
-          duration: 2000,
+          duration: 2000
         })
         return
       }
       var currentDate = new Date().toISOString().replace(/[-:]/g, '')
       var fileName = 'Virtual-Browser_' + currentDate + '.json'
       var blob = new Blob([JSON.stringify(this.selectedRows, null, 2)], {
-        type: 'application/json;charset=utf-8',
+        type: 'application/json;charset=utf-8'
       })
       saveAs(blob, fileName)
     },
@@ -1520,12 +1520,12 @@ export default {
       this.$alert(
         `<p>代理：${this.form.proxy.url}</p>
         <p style="color:${ret ? '#67C23A' : '#F56C6C'}">检测${
-  ret ? '成功' : timeout ? '超时' : '失败'
-}</p>`,
+          ret ? '成功' : timeout ? '超时' : '失败'
+        }</p>`,
         '代理检测',
         {
           type: ret ? 'success' : 'error',
-          dangerouslyUseHTMLString: true,
+          dangerouslyUseHTMLString: true
         }
       )
       this.checkProxyState.checking = false
@@ -1540,7 +1540,7 @@ export default {
           title: '错误提示',
           message: '响应错误，请检查API接口有效性',
           type: 'warning',
-          duration: 2000,
+          duration: 2000
         })
         throw new Error(`网络响应不是 ok，状态码为：${response.status}`)
       }
@@ -1565,7 +1565,7 @@ export default {
               message:
                 '响应格式既不是有效的JSON格式也不是有效的[ip:端口]或[用户名:密码:IP:端口]格式',
               type: 'warning',
-              duration: 2000,
+              duration: 2000
             })
             throw new Error(
               '响应格式既不是有效的 JSON 也不是有效的 ip:port 或 用户名:密码:IP:端口 格式'
@@ -1578,7 +1578,7 @@ export default {
           title: '错误提示',
           message: '响应不包含ip或端口',
           type: 'warning',
-          duration: 2000,
+          duration: 2000
         })
         throw new Error('API 响应不包含 ip 或 port')
       }
@@ -1631,7 +1631,7 @@ export default {
         title: this.$t('browser.success'),
         message: this.$t('browser.update') + this.$t('browser.success'),
         type: 'success',
-        duration: 2000,
+        duration: 2000
       })
     },
     onAddBrand() {
@@ -1672,7 +1672,7 @@ export default {
             title: this.$t('browser.success'),
             message: this.$t('browser.create') + this.$t('browser.success'),
             type: 'success',
-            duration: 2000,
+            duration: 2000
           })
         } catch (error) {
           this.$message.error('创建环境失败: ' + error.message)
@@ -1697,7 +1697,7 @@ export default {
       const UaFullVersion = getUaFullVersion(uaFullVersions, this.chromeVer)
       return {
         ua: UaValue,
-        uaFullVersion: UaFullVersion,
+        uaFullVersion: UaFullVersion
       }
     },
     async handleBatchDelete() {
@@ -1706,7 +1706,7 @@ export default {
           title: '错误提示',
           message: '至少需要勾选一个环境',
           type: 'warning',
-          duration: 2000,
+          duration: 2000
         })
         return
       }
@@ -1717,7 +1717,7 @@ export default {
           this.selectedRows.map(row => row.name).join(', ')
         )
       )
-        .then(async() => {
+        .then(async () => {
           try {
             for (const row of this.selectedRows) {
               await deleteBrowser(row.id)
@@ -1731,7 +1731,7 @@ export default {
                 this.$t('browser.delete') +
                 this.$t('browser.success'),
               type: 'success',
-              duration: 2000,
+              duration: 2000
             })
           } catch (error) {
             console.error('Error during batch delete:', error)
@@ -1751,7 +1751,7 @@ export default {
           title: '错误',
           message: '请输入正确的渠道API链接',
           type: 'error',
-          duration: 2000,
+          duration: 2000
         })
         return
       } else if (this.Channel === 'ipgeolocation' && !this.apiLink.includes('ipgeolocation')) {
@@ -1759,7 +1759,7 @@ export default {
           title: '错误',
           message: '请输入正确的渠道API链接',
           type: 'error',
-          duration: 2000,
+          duration: 2000
         })
         return
       }
@@ -1770,7 +1770,7 @@ export default {
           title: '保存成功',
           message: '保存成功',
           type: 'success',
-          duration: 2000,
+          duration: 2000
         })
         console.log('API链接已保存:', this.apiLink)
       }
@@ -1787,8 +1787,8 @@ export default {
       if (!apiLink) {
         this.showSetDialog = true
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

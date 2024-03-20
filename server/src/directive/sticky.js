@@ -88,4 +88,3 @@ vueSticky.install = Vue => {
 }
 
 export default vueSticky
-

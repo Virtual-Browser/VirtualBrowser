@@ -15,7 +15,7 @@ export default {
     theme: '换肤',
     i18n: '国际化',
     externalLink: '外链',
-    profile: '个人中心',
+    profile: '个人中心'
   },
   navbar: {
     dashboard: '首页',
@@ -23,7 +23,7 @@ export default {
     logOut: '退出登录',
     profile: '个人中心',
     theme: '换肤',
-    size: '布局大小',
+    size: '布局大小'
   },
   login: {
     title: '系统登录',
@@ -32,7 +32,7 @@ export default {
     password: '密码',
     any: '随便填',
     thirdparty: '第三方登录',
-    thirdpartyTips: '本地不能模拟，请结合自己业务进行模拟！！！',
+    thirdpartyTips: '本地不能模拟，请结合自己业务进行模拟！！！'
   },
   browser: {
     add: '创建浏览器',
@@ -44,10 +44,10 @@ export default {
     search: '搜索',
     import: {
       import: '导入',
-      export: '导出',
+      export: '导出'
     },
     id: '序号',
-    ip_port:'IP端口',
+    ip_port: 'IP端口',
     date: '创建时间',
     launch: '启动',
     launching: '启动中',
@@ -68,7 +68,7 @@ export default {
       port: '端口',
       user: '代理账号',
       pass: '代理密码',
-      API: 'API链接',
+      API: 'API链接'
     },
     proxy_tips: '支持HTTP和SOCKS5协议<br>例如：127.0.0.1:80<br>ㅤㅤㅤ127.0.0.1:1080@socks#ssh 代理',
     cookie: {
@@ -79,7 +79,7 @@ export default {
       format_title: 'Cookie导入格式',
       copy: '复制',
       close: '关闭',
-      copied: '已复制',
+      copied: '已复制'
     },
     ua: 'User Agent',
     sec_ua: 'Sec-CH-UA',
@@ -137,7 +137,7 @@ export default {
     success: '成功',
     create: '创建',
     update: '更新',
-    delete_confirm: '确定删除 ${name} 吗？',
+    delete_confirm: '确定删除 ${name} 吗？'
   },
   permission: {
     addRole: '新增角色',
@@ -147,35 +147,35 @@ export default {
     tips: '在某些情况下，不适合使用 v-permission。例如：Element-UI 的 el-tab 或 el-table-column 以及其它动态渲染 dom 的场景。你只能通过手动设置 v-if 来实现。',
     delete: '删除',
     confirm: '确定',
-    cancel: '取消',
+    cancel: '取消'
   },
   guide: {
     description:
       '引导页对于一些第一次进入项目的人很有用，你可以简单介绍下项目的功能。本 Demo 是基于',
-    button: '打开引导',
+    button: '打开引导'
   },
   errorLog: {
     tips: '请点击右上角bug小图标',
     description:
       '现在的管理后台基本都是spa的形式了，它增强了用户体验，但同时也会增加页面出问题的可能性，可能一个小小的疏忽就导致整个页面的死锁。好在 Vue 官网提供了一个方法来捕获处理异常，你可以在其中进行错误处理或者异常上报。',
-    documentation: '文档介绍',
+    documentation: '文档介绍'
   },
   theme: {
     change: '换肤',
     documentation: '换肤文档',
-    tips: 'Tips: 它区别于 navbar 上的 theme-pick, 是两种不同的换肤方法，各自有不同的应用场景，具体请参考文档。',
+    tips: 'Tips: 它区别于 navbar 上的 theme-pick, 是两种不同的换肤方法，各自有不同的应用场景，具体请参考文档。'
   },
   tagsView: {
     refresh: '刷新',
     close: '关闭',
     closeOthers: '关闭其它',
-    closeAll: '关闭所有',
+    closeAll: '关闭所有'
   },
   settings: {
     title: '系统布局配置',
     theme: '主题色',
     tagsView: '开启 Tags-View',
     fixedHeader: '固定 Header',
-    sidebarLogo: '侧边栏 Logo',
-  },
+    sidebarLogo: '侧边栏 Logo'
+  }
 }
