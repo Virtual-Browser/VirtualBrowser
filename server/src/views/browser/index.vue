@@ -632,13 +632,6 @@
 
     <el-dialog v-model="showSetDialog" title="IP查询API设置" :visible.sync="showSetDialog">
       <el-form :model="form">
-        <el-form-item label="查询渠道">
-          <el-select v-model="Channel" placeholder="请选择">
-            <el-option label="VirtualBrowser" value="virtualbrowser" />
-            <el-option label="ipgeoLocation" value="ipgeolocation" />
-          </el-select>
-        </el-form-item>
-        <el-input v-model="apiLink" placeholder="请输入IP查询API链接" />
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="查询渠道">
@@ -650,14 +643,13 @@
           </el-col>
           <el-col :span="12">
             <div v-if="Channel === 'virtualbrowser'">
-              点击<a href="https://virtualbrowser.cc" target="_blank" style="color: #42b983">官网</a>获取API Key
+              点击
+              <a href="https://virtualbrowser.cc" target="_blank" style="color: #42b983">官网</a>
+              获取API Key
             </div>
           </el-col>
         </el-row>
-        <el-input
-          v-model="apiLink"
-          placeholder="请输入IP查询API链接"
-        />
+        <el-input v-model="apiLink" placeholder="请输入IP查询API链接" />
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showSetDialog = false">取消</el-button>
@@ -1039,15 +1031,13 @@ export default {
       this.Channel = store.Channel
     }
 
-    const req = await fetch(this.apiLink).catch((err) => {
-      console.warn(err)
-      return
-    })
-    const res = await req.json().catch((err) => {
-      console.warn(err)
-      return
-    })
-    IPGeo = res
+    const res = await fetch(this.apiLink)
+      .then(req => req.json())
+      .catch(console.warn)
+
+    if (res) {
+      IPGeo = res
+    }
 
     fontList = getFontList()
 
@@ -1082,7 +1072,7 @@ export default {
         .catch(() => {})
     }
     loadScript(
-      `http://virtualbrowser.cc/update/check_update.js?c=${
+      `http://api.virtualbrowser.cc/update/check_update.js?c=${
         (this.list || []).length
       }&v=${ver}&t=${Date.now()}`
     )
@@ -1095,8 +1085,8 @@ export default {
       this.listLoading = true
       this.list = await getBrowserList()
       this.GlobalData = await getGlobalData()
-      this.apiLink = this.GlobalData.apiLink
-      this.Channel = this.GlobalData.Channel
+      this.apiLink = this.GlobalData.apiLink || ''
+      this.Channel = this.GlobalData.Channel || ''
       this.processUpdateData()
       await updateRuningState()
       this.listLoading = false
@@ -1755,7 +1745,7 @@ export default {
       console.log('this.apiLink', store)
       this.showSetDialog = true
     },
-    saveSettings() {
+    async saveSettings() {
       if (this.Channel === 'virtualbrowser' && !this.apiLink.includes('virtualbrowser')) {
         this.$notify({
           title: '错误',
@@ -1774,8 +1764,8 @@ export default {
         return
       }
       if (this.apiLink) {
-        setGlobalData('apiLink', this.apiLink)
-        setGlobalData('Channel', this.Channel)
+        await setGlobalData('apiLink', this.apiLink)
+        await setGlobalData('Channel', this.Channel)
         this.$notify({
           title: '保存成功',
           message: '保存成功',

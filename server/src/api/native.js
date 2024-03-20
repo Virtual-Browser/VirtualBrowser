@@ -12,17 +12,17 @@ window.updateLaunchState = function () {
   updateRuningState()
 }
 
-export async function chromeSendTimeout(name, timeout=2000, ...params) {
-  const pTimeOut = (timeout) => {
+export async function chromeSendTimeout(name, timeout = 2000, ...params) {
+  const pTimeOut = timeout => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         reject('timeout')
       }, timeout)
     })
   }
-  const pCall = new Promise((resolve) => {
+  const pCall = new Promise(resolve => {
     const callbackName = 'callback_' + uuid_v4()
-    cr.__callbacks[callbackName] = (data) => {
+    cr.__callbacks[callbackName] = data => {
       resolve(data)
     }
 
@@ -52,9 +52,12 @@ export async function getBrowserList() {
 }
 
 export async function getGlobalData() {
-  let GlobalData;
+  let GlobalData
   try {
     GlobalData = JSON.parse(localStorage.getItem('GlobalData'))
+    if (Object.prototype.toString.call(GlobalData) === '[object Array]') {
+      GlobalData = {}
+    }
     GlobalData = await chromeSend('getGlobalData')
     GlobalData = JSON.parse(GlobalData.data)
     if (Object.prototype.toString.call(GlobalData) === '[object Array]') {
@@ -67,7 +70,6 @@ export async function getGlobalData() {
   return GlobalData || {}
 }
 
-
 export async function setGlobalData(key, value) {
   const GlobalData = await getGlobalData()
   GlobalData[key] = value
@@ -78,7 +80,7 @@ export async function setGlobalData(key, value) {
 
 export async function addBrowser(item) {
   const list = await getBrowserList()
-  const maxId = Math.max(0, Math.max(...list.map((item) => item.id)))
+  const maxId = Math.max(0, Math.max(...list.map(item => item.id)))
   item.id = maxId + 1
   item.name = item.name || item.id
 
@@ -86,19 +88,19 @@ export async function addBrowser(item) {
 
   const data = { users: list }
   localStorage.setItem('list', JSON.stringify(data))
-  await chromeSend('setBrowserList', data).catch((err) => {
+  await chromeSend('setBrowserList', data).catch(err => {
     console.warn(err)
   })
 }
 
 export async function updateBrowser(item) {
   const list = await getBrowserList()
-  const idx = list.findIndex((it) => it.id === item.id)
+  const idx = list.findIndex(it => it.id === item.id)
   list[idx] = item
 
   const data = { users: list }
   localStorage.setItem('list', JSON.stringify(data))
-  await chromeSend('setBrowserList', data).catch((err) => {
+  await chromeSend('setBrowserList', data).catch(err => {
     console.warn(err)
   })
 }
@@ -107,13 +109,13 @@ export async function deleteBrowser(id) {
   await chromeSend('deleteBrowser', id).catch(() => {})
 
   const list = await getBrowserList()
-  const idx = list.findIndex((it) => it.id === id)
+  const idx = list.findIndex(it => it.id === id)
 
   list.splice(idx, 1)
 
   const data = { users: list }
   localStorage.setItem('list', JSON.stringify(data))
-  await chromeSend('setBrowserList', data).catch((err) => {
+  await chromeSend('setBrowserList', data).catch(err => {
     console.warn(err)
   })
 }
