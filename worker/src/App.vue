@@ -53,6 +53,10 @@
         <h1>未连接到互联网</h1>
         <p>请检查您的网络或代理设置</p>
       </div>
+      <div v-if="showLimitError" class="LimitError">
+        <h2>IP查询Key超出限制</h2>
+        <p>请检查您的API Key</p>
+      </div>
       <el-timeline v-if="false" class="timeline">
         <el-timeline-item
           v-for="(value, key, index) in fingerprint"
@@ -91,6 +95,7 @@ const fingerprint = ref()
 const visitorId = ref('')
 const networkErr = ref(false)
 let apiLink = ref('')
+const showLimitError = ref(false)
 
 const apiLinkIsValid = computed(() => apiLink.value !== '')
 
@@ -112,6 +117,15 @@ onMounted(async () => {
   }
 
   const res = await req.json()
+  const apiResponse = res
+  if (
+    apiResponse.code === -13 ||
+    (apiResponse.msg && apiResponse.msg.includes('limit')) ||
+    (apiResponse.message && apiResponse.message.includes('limit'))
+  ) {
+    showLimitError.value = true
+    return
+  }
   geo.value = res
 
   const ipGeo = {
