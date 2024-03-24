@@ -56,6 +56,9 @@ You can test fingerprint modifications using [fingerprintjs](https://fingerprint
 - SSL
 - Port scan protection
 - Hardware acceleration
+# Automation
+VirtualBrowser is base on Chromium, you can use playwright or other tools.
+demo(https://github.com/Virtual-Browser/VirtualBrowser/tree/main/automation)
 
 # Support and Joining
 VirtualBrowser is not perfect yet. If you are interested in VirtualBrowser, you are welcome to join us through the following ways:

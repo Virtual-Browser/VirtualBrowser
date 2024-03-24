@@ -59,6 +59,9 @@ VirtualBrowser 是基于 [Chromium](https://dev.chromium.org) 的指纹浏览器
 - 端口扫描保护
 - 硬件加速
 
+# 自动化
+VirtualBrowser基于Chromium开发，可以使用playwright或者其他chromium的自动化测试工具进行开发。 demo(https://github.com/Virtual-Browser/VirtualBrowser/tree/main/automation)
+
 # 支持和加入
 VirtualBrowser 还不完善。如果您对 VirtualBrowser 感兴趣，可以通过以下方式加入我们：
 
