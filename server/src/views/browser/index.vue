@@ -1746,6 +1746,7 @@ export default {
       this.showSetDialog = true
     },
     async saveSettings() {
+      const GlobalData = await getGlobalData()
       if (this.Channel === 'virtualbrowser' && !this.apiLink.includes('virtualbrowser')) {
         this.$notify({
           title: '错误',
@@ -1763,17 +1764,20 @@ export default {
         })
         return
       }
-      if (this.apiLink) {
+      if (this.apiLink && this.apiLink !== GlobalData.apiLink) {
         await setGlobalData('apiLink', this.apiLink)
-        await setGlobalData('Channel', this.Channel)
-        this.$notify({
-          title: '保存成功',
-          message: '保存成功',
-          type: 'success',
-          duration: 2000
-        })
         console.log('API链接已保存:', this.apiLink)
       }
+      if (this.Channel && this.Channel !== GlobalData.Channel) {
+        await setGlobalData('Channel', this.Channel)
+      }
+
+      this.$notify({
+        title: '保存成功',
+        message: '保存成功',
+        type: 'success',
+        duration: 2000
+      })
       this.showSetDialog = false
     },
     async checkApiLinkSet() {
