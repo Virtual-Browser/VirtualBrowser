@@ -992,10 +992,11 @@ export default {
         if (!val) return
         const vendor = val.match(/\((.+?)\)/)[1]
         this.WebGLRenders = WebGLRenders.filter(item => item.match(/\((.+?),/)[1] === vendor)
-        if (this.WebGLRenders.length > 0) {
-          this.form.webgl.render = this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)]
-        } else {
-          this.form.webgl.render = ''
+        if (!this.WebGLRenders.includes(this.form.webgl.render)) {
+          this.form.webgl.render =
+            this.WebGLRenders.length > 0
+              ? this.WebGLRenders[random.int(0, this.WebGLRenders.length - 1)]
+              : ''
         }
       },
       immediate: true,
