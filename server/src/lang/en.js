@@ -84,6 +84,8 @@ export default {
       close: 'Close',
       copied: 'Copied'
     },
+    homepage: 'HomePage',
+    homepage_tips: 'Please enter homepage URL',
     ua: 'User Agent',
     sec_ua: 'Sec-CH-UA',
     timezone: 'TimeZone',

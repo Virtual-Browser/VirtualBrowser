@@ -81,6 +81,8 @@ export default {
       close: '关闭',
       copied: '已复制'
     },
+    homepage: '启动主页',
+    homepage_tips: '请输入主页URL',
     ua: 'User Agent',
     sec_ua: 'Sec-CH-UA',
     timezone: '时区',

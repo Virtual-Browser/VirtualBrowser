@@ -259,6 +259,18 @@
                       </el-button>
                     </div>
                   </el-form-item>
+                  <el-form-item :label="$t('browser.homepage')">
+                    <el-radio-group v-model="form.homepage.mode">
+                      <el-radio-button :label="0">{{ $t('browser.default') }}</el-radio-button>
+                      <el-radio-button :label="1">{{ $t('browser.custom') }}</el-radio-button>
+                    </el-radio-group>
+                    <el-input
+                      v-if="form.homepage.mode === 1"
+                      v-model="form.homepage.value"
+                      :placeholder="$t('browser.homepage_tips')"
+                      style="width: 424px; margin-left: 10px"
+                    />
+                  </el-form-item>
                 </div>
               </el-timeline-item>
               <el-timeline-item>
@@ -841,6 +853,7 @@ export default {
         proxyAPI: '',
         proxy: {},
         cookie: {},
+        homepage: {},
         ua: {},
         'ua-full-version': {},
         'sec-ch-ua': {},
@@ -923,24 +936,24 @@ export default {
       SSL,
       Versions: coreVersions,
       cookieFormat: `[{
-	"name": "cookie1",
-	"value": "1",
-	"domain": ".xxx.com",
-	"path": "/",
-	"session": false,
-	"httpOnly": false,
-	"secure": false,
-	"sameSite": "None"
-}, {
-	"name": "cookie2",
-	"value": "2",
-	"domain": ".xxx.com",
-	"path": "/",
-	"session": false,
-	"httpOnly": false,
-	"secure": false,
-	"sameSite": "None"
-}]`,
+        "name": "cookie1",
+        "value": "1",
+        "domain": ".xxx.com",
+        "path": "/",
+        "session": false,
+        "httpOnly": false,
+        "secure": false,
+        "sameSite": "None"
+      }, {
+        "name": "cookie2",
+        "value": "2",
+        "domain": ".xxx.com",
+        "path": "/",
+        "session": false,
+        "httpOnly": false,
+        "secure": false,
+        "sameSite": "None"
+      }]`,
       copied: false,
       checkProxyState: {
         checking: false
@@ -1170,6 +1183,10 @@ export default {
           API: ''
         },
         cookie: {
+          mode: 0,
+          value: ''
+        },
+        homepage: {
           mode: 0,
           value: ''
         },
