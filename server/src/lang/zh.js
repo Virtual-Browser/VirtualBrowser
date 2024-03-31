@@ -2,6 +2,8 @@ export default {
   route: {
     dashboard: '首页',
     browser: '浏览器',
+    browser_list: '列表',
+    group: '分组管理',
     guide: '引导页',
     permission: '权限测试页',
     rolePermission: '角色权限',
@@ -41,6 +43,9 @@ export default {
     batchCreate: '批量创建',
     batchDelete: '批量删除',
     name: '名称',
+    browser: '浏览器',
+    name_placeholder: '请输入浏览器名称',
+    group: '选择分组',
     search: '搜索',
     import: {
       import: '导入',
@@ -140,6 +145,15 @@ export default {
     create: '创建',
     update: '更新',
     delete_confirm: '确定删除 ${name} 吗？'
+  },
+  group: {
+    add: '添加分组',
+    name: '分组名称',
+    group: '分组',
+    browser_count: '分组浏览器数',
+    name_placeholder: '请输入分组名称',
+    filter: '按分组筛选',
+    default: '默认分组'
   },
   permission: {
     addRole: '新增角色',

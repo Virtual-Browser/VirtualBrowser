@@ -2,6 +2,8 @@ export default {
   route: {
     dashboard: 'Dashboard',
     browser: 'Browser',
+    browser_list: 'List',
+    group: 'Group',
     guide: 'Guide',
     permission: 'Permission',
     rolePermission: 'Role Permission',
@@ -42,6 +44,8 @@ export default {
     batchCreate: 'Batch Create',
     batchDelete: 'Batch Delete',
     name: 'Name',
+    browser: 'Browser',
+    name_placeholder: 'Please enter browser name',
     search: 'Search',
     import: {
       import: 'Import',
@@ -125,7 +129,7 @@ export default {
     required: 'Required',
     select: 'Please Select',
     cancel: 'Cancel',
-    confirm: 'Confirm',
+    confirm: 'Submit',
     actions: 'Actions',
     default: 'Default',
     random: 'Random',
@@ -143,6 +147,15 @@ export default {
     create: 'Create',
     update: 'Update',
     delete_confirm: 'Are you sure to delete ${name} ?'
+  },
+  group: {
+    add: 'Create Group',
+    name: 'Group Name',
+    group: 'Group',
+    browser_count: 'Browser Count',
+    name_placeholder: 'Please enter group name',
+    filter: 'Filter by group',
+    default: 'Default Group'
   },
   permission: {
     addRole: 'New Role',

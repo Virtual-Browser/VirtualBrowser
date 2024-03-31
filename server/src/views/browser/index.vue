@@ -29,6 +29,16 @@
         </el-dropdown>
       </div>
       <div style="display: flex">
+        <el-select
+          v-model="listQuery.group"
+          filterable
+          clearable
+          :placeholder="$t('group.filter')"
+          style="width: 150px; margin-right: 10px"
+          @change="handleFilter"
+        >
+          <el-option v-for="item in GroupList" :key="item.id" :value="item.name" />
+        </el-select>
         <el-input
           v-model="listQuery.title"
           :placeholder="$t('browser.name')"
@@ -71,12 +81,17 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('browser.name')" min-width="150px">
+      <el-table-column :label="$t('browser.name')" min-width="80px">
         <template slot-scope="{ row }">
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="代理" width="200px">
+      <el-table-column :label="$t('group.group')" min-width="50px">
+        <template slot-scope="{ row }">
+          <span>{{ row.group }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="代理" width="300px">
         <template slot-scope="{ row }">
           <span>
             <template v-if="row.proxy.mode === 0">默认</template>
@@ -102,7 +117,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('browser.launch')" class-name="status-col" width="100">
+      <el-table-column :label="$t('browser.launch')" class-name="status-col" width="120">
         <template slot-scope="{ row }">
           <el-button
             type="primary"
@@ -126,7 +141,7 @@
       <el-table-column
         :label="$t('browser.actions')"
         align="center"
-        width="230"
+        width="200"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{ row, $index }">
@@ -173,7 +188,12 @@
                 <h3>{{ $t('browser.basic') }}</h3>
                 <div>
                   <el-form-item :label="$t('browser.name')" prop="name">
-                    <el-input v-model="form.name" />
+                    <el-input v-model="form.name" :placeholder="$t('browser.name_placeholder')" />
+                  </el-form-item>
+                  <el-form-item :label="$t('browser.group')">
+                    <el-select v-model="form.group" :placeholder="$t('browser.select')">
+                      <el-option v-for="item in GroupList" :key="item.id" :value="item.name" />
+                    </el-select>
                   </el-form-item>
                   <el-form-item :label="$t('browser.platform')">
                     <el-radio-group v-model="form.os">
@@ -645,31 +665,29 @@
         </el-button>
       </span>
     </el-dialog>
-    <template>
-      <el-dialog :visible.sync="dialogVisible" title="批量创建">
-        <el-form :model="form">
-          <el-form-item label="环境数量">
-            <el-input v-model.number="form.numberOfEnvironments" type="number" min="1" />
-          </el-form-item>
-          <el-form-item label="代理类型">
-            <el-select v-model="form.proxyType" placeholder="请选择">
-              <el-option label="默认" value="默认" />
-              <el-option label="不使用代理" value="不使用代理" />
-              <el-option label="HTTP" value="HTTP" />
-              <el-option label="HTTPS" value="HTTPS" />
-              <el-option label="SOCKS5" value="SOCKS5" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="代理API链接">
-            <el-input v-model="form.proxyAPI" placeholder="请输入" />
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="handleBatchCreate">确认</el-button>
-        </div>
-      </el-dialog>
-    </template>
+    <el-dialog :visible.sync="dialogVisible" title="批量创建">
+      <el-form :model="form">
+        <el-form-item label="环境数量">
+          <el-input v-model.number="form.numberOfEnvironments" type="number" min="1" />
+        </el-form-item>
+        <el-form-item label="代理类型">
+          <el-select v-model="form.proxyType" placeholder="请选择">
+            <el-option label="默认" value="默认" />
+            <el-option label="不使用代理" value="不使用代理" />
+            <el-option label="HTTP" value="HTTP" />
+            <el-option label="HTTPS" value="HTTPS" />
+            <el-option label="SOCKS5" value="SOCKS5" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="代理API链接">
+          <el-input v-model="form.proxyAPI" placeholder="请输入" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleBatchCreate">确认</el-button>
+      </div>
+    </el-dialog>
 
     <el-dialog v-model="showSetDialog" title="IP查询API设置" :visible.sync="showSetDialog">
       <el-form :model="form">
@@ -710,13 +728,14 @@ import {
   deleteBrowser,
   chromeSend,
   chromeSendTimeout,
-  updateRuningState
+  updateRuningState,
+  getGroupList
 } from '@/api/native'
 import { saveAs } from 'file-saver'
 import waves from '@/directive/waves' // waves directive
 import random from 'random'
 import {
-  parseTime,
+  // parseTime,
   genRandomMacAddr,
   genRandomComputerName,
   genRandomSpeechVoices,
@@ -726,7 +745,7 @@ import {
   getUaFullVersion,
   loadScript
 } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+// import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import TimeZones from '@/utils/timezones.json'
 import Languages from '@/utils/languages.json'
 import SSL from '@/utils/ssl.json'
@@ -735,13 +754,12 @@ import uaFullVersions from '@/utils/ua-full-versions.json'
 import WebGLRenders from '@/utils/webgl.json'
 import { getFontList } from '@/utils/fonts'
 import { compareVersions } from 'compare-versions'
-import { login } from '@/api/user'
 
 let IPGeo = {}
 let fontList = []
 let osVer = '10.0'
 let chromeVer = ''
-const sslList = ['0xc02c', '0xa02c', '0xb02c', '0xd02c', '0xe02c', '0xf02c']
+// const sslList = ['0xc02c', '0xa02c', '0xb02c', '0xd02c', '0xe02c', '0xf02c']
 let tooltipTimer
 const chromiumCoreVer =
   Number(navigator.userAgentData.brands.find(item => item.brand === 'Chromium')?.version) || 117
@@ -753,7 +771,9 @@ for (let i = Math.max(...coreVersions) + 1; i <= chromiumCoreVer; i++) {
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
+  components: {
+    // Pagination
+  },
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -775,6 +795,7 @@ export default {
 
       let json
       try {
+        // eslint-disable-next-line no-eval
         json = eval(`(${value})`)
       } catch {
         callback(new Error(this.$t('browser.cookie.format_error')))
@@ -837,7 +858,8 @@ export default {
       listQuery: {
         page: 1,
         limit: 5,
-        title: undefined
+        title: undefined,
+        group: ''
       },
       dialogFormVisible: false,
       dialogVisible: false,
@@ -957,7 +979,8 @@ export default {
       copied: false,
       checkProxyState: {
         checking: false
-      }
+      },
+      GroupList: []
     }
   },
   computed: {
@@ -1120,8 +1143,13 @@ export default {
       }&v=${ver}&t=${Date.now()}`
     )
   },
-  mounted() {
+  async mounted() {
     this.checkApiLinkSet()
+    this.GroupList = await getGroupList()
+    this.GroupList.unshift({
+      id: 0,
+      name: this.$t('group.default')
+    })
   },
   methods: {
     async getList() {
@@ -1163,13 +1191,14 @@ export default {
     },
     getDefaultForm() {
       const currentZone = this.getCurrentTimeZone()
-      const defaultLanguage = IPGeo.languages?.split(',')[0] || ''
+      // const defaultLanguage = IPGeo.languages?.split(',')[0] || ''
       const cpuCore = getRandomCpuCore()
       const memorySize = getRandomMemorySize(cpuCore)
 
       return {
         id: undefined,
         name: '',
+        group: this.$t('group.default'),
         os: 'Win 11',
         chrome_version: '默认',
         proxy: {
@@ -1321,7 +1350,7 @@ export default {
         if (valid) {
           this.form.timestamp = Date.now()
           this.preProcessData(this.form)
-          await addBrowser(this.form)
+          await addBrowser(this.form, this.$t('browser.browser'))
 
           this.getList()
           this.dialogFormVisible = false
@@ -1841,7 +1870,11 @@ export default {
     },
     async searchList() {
       try {
-        const fullList = await getBrowserList()
+        let fullList = await getBrowserList()
+        fullList = fullList.filter(item => {
+          return this.listQuery.group === '' || item.group === this.listQuery.group
+        })
+
         if (this.listQuery.title) {
           const searchQueryLower = this.listQuery.title.toLowerCase()
           this.list = fullList.filter(item => {
@@ -1921,14 +1954,6 @@ export default {
       font-size: 12px;
       word-break: keep-all;
     }
-    .el-form-item__error {
-      // padding-top: 0;
-    }
-    .el-input__inner,
-    .el-textarea__inner {
-      // padding-left: 8px;
-      // padding-right: 8px;
-    }
     .custom-sec-ua {
       margin-top: 5px;
 
@@ -1945,7 +1970,7 @@ export default {
     flex-direction: column;
 
     .form-wrap {
-      overflow-y: scroll;
+      overflow-y: auto;
       padding: 10px 20px;
     }
     .dialog-footer {

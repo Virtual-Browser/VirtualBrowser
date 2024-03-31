@@ -85,12 +85,19 @@ export const constantRoutes = [
     path: '/',
     component: Layout,
     redirect: '/index',
+    meta: { title: 'browser', icon: 'international' },
     children: [
       {
         path: 'index',
         component: require('@/views/browser/index').default,
         name: 'Browser',
-        meta: { title: 'browser', icon: 'table', affix: true }
+        meta: { title: 'browser_list', icon: 'list', affix: true }
+      },
+      {
+        path: 'group',
+        component: require('@/views/browser/group').default,
+        name: 'Group',
+        meta: { title: 'group', icon: 'tab', affix: true }
       }
     ]
   }

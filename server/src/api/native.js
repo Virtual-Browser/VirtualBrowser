@@ -38,19 +38,6 @@ export async function chromeSend(name, ...params) {
   return chromeSendTimeout(name, 2000, ...params)
 }
 
-export async function getBrowserList() {
-  let list
-  try {
-    list = JSON.parse(localStorage.getItem('list'))
-    list = await chromeSend('getBrowserList')
-    list = list.data
-  } catch {
-    //
-  }
-
-  return (list && list.users) || []
-}
-
 export async function getGlobalData() {
   let GlobalData
   try {
@@ -78,11 +65,23 @@ export async function setGlobalData(key, value) {
   await chromeSend('setGlobalData', JSON.stringify(GlobalData)).catch(console.warn)
 }
 
-export async function addBrowser(item) {
+export async function getBrowserList() {
+  let list
+  try {
+    list = JSON.parse(localStorage.getItem('list'))
+    list = await chromeSend('getBrowserList')
+    list = list.data
+  } catch {
+    //
+  }
+
+  return (list && list.users) || []
+}
+export async function addBrowser(item, defaultName) {
   const list = await getBrowserList()
   const maxId = Math.max(0, Math.max(...list.map(item => item.id)))
   item.id = maxId + 1
-  item.name = item.name || item.id
+  item.name = item.name || defaultName + ' ' + item.id
 
   list.push(item)
 
@@ -92,7 +91,6 @@ export async function addBrowser(item) {
     console.warn(err)
   })
 }
-
 export async function updateBrowser(item) {
   const list = await getBrowserList()
   const idx = list.findIndex(it => it.id === item.id)
@@ -104,7 +102,6 @@ export async function updateBrowser(item) {
     console.warn(err)
   })
 }
-
 export async function deleteBrowser(id) {
   await chromeSend('deleteBrowser', id).catch(() => {})
 
@@ -129,4 +126,40 @@ export async function getBrowserVersion() {
   const ret = await chromeSend('getBrowserVersion')
 
   return ret
+}
+
+export async function getGroupList() {
+  let list
+  try {
+    list = JSON.parse(localStorage.getItem('group'))
+  } catch {
+    //
+  }
+
+  return list || []
+}
+export async function addGroup(item, defaultName) {
+  const list = await getGroupList()
+  const maxId = Math.max(0, Math.max(...list.map(item => item.id)))
+  item.id = maxId + 1
+  item.name = item.name || defaultName + ' ' + item.id
+
+  list.push(item)
+
+  localStorage.setItem('group', JSON.stringify(list))
+}
+export async function updateGroup(item) {
+  const list = await getGroupList()
+  const idx = list.findIndex(it => it.id === item.id)
+  list[idx] = item
+
+  localStorage.setItem('group', JSON.stringify(list))
+}
+export async function deleteGroup(id) {
+  const list = await getGroupList()
+  const idx = list.findIndex(it => it.id === id)
+
+  list.splice(idx, 1)
+
+  localStorage.setItem('group', JSON.stringify(list))
 }
