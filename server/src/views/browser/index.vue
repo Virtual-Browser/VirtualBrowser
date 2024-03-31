@@ -29,7 +29,7 @@
         </el-dropdown>
       </div>
       <div style="display: flex">
-        <!-- <el-input
+        <el-input
           v-model="listQuery.title"
           :placeholder="$t('browser.name')"
           style="width: 200px"
@@ -38,7 +38,7 @@
         />
         <el-button v-waves class="filter-item" icon="el-icon-search" @click="handleFilter">
           {{ $t('browser.search') }}
-        </el-button> -->
+        </el-button>
         <el-button @click="showSettingsDialog">IP查询API设置</el-button>
         <el-upload
           action=""
@@ -1123,7 +1123,7 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
-      this.getList()
+      this.searchList()
     },
     handleSelectionChange(selection) {
       this.selectedRows = selection
@@ -1820,6 +1820,23 @@ export default {
       const apiLink = this.apiLink
       if (!apiLink) {
         this.showSetDialog = true
+      }
+    },
+    async searchList() {
+      try {
+        const fullList = await getBrowserList()
+        if (this.listQuery.title) {
+          const searchQueryLower = this.listQuery.title.toLowerCase()
+          this.list = fullList.filter(item => {
+            const itemName = String(item.name)
+            const itemId = String(item.id)
+            return itemName.includes(searchQueryLower) || itemId.includes(searchQueryLower)
+          })
+        } else {
+          this.list = fullList
+        }
+      } catch (error) {
+        console.error('Search failed:', error)
       }
     }
   }
