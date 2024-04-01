@@ -100,6 +100,24 @@ export const constantRoutes = [
         meta: { title: 'group', icon: 'tab', affix: true }
       }
     ]
+  },
+  {
+    path: '/crx',
+    component: Layout,
+    redirect: '/crx/store',
+    meta: { title: 'extensions', icon: 'component' },
+    children: [
+      {
+        path: 'store',
+        component: require('@/views/crx/store').default,
+        meta: { title: 'crx_store', icon: 'shopping', affix: true }
+      },
+      {
+        path: 'list',
+        component: require('@/views/crx/list').default,
+        meta: { title: 'crx_list', icon: 'component', affix: true }
+      }
+    ]
   }
 ]
 
