@@ -42,6 +42,7 @@ export default {
     batchStart: '批量启动',
     batchCreate: '批量创建',
     batchDelete: '批量删除',
+    batchGroup: '批量分组',
     name: '名称',
     browser: '浏览器',
     name_placeholder: '请输入浏览器名称',

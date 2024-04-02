@@ -27,7 +27,7 @@ export async function chromeSendTimeout(name, timeout = 2000, ...params) {
     }
 
     const args = [callbackName].concat(params)
-    console.log(`chrome.send("${name}", ${JSON.stringify(args)})`)
+    console.log(`chrome.send("${name}", `, args, `)`)
     chrome.send(name, args)
   })
 

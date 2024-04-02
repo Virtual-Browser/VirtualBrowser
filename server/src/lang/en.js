@@ -43,6 +43,7 @@ export default {
     batchStart: 'Batch start',
     batchCreate: 'Batch Create',
     batchDelete: 'Batch Delete',
+    batchGroup: 'Batch Group',
     name: 'Name',
     browser: 'Browser',
     name_placeholder: 'Please enter browser name',

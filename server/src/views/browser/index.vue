@@ -25,6 +25,9 @@
             <el-dropdown-item @click.native="handleBatchDelete">
               {{ $t('browser.batchDelete') }}
             </el-dropdown-item>
+            <el-dropdown-item @click.native="handleBatchSetGroup">
+              {{ $t('browser.batchGroup') }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -715,6 +718,20 @@
         <el-button type="primary" @click="saveSettings">保存</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog :title="'批量分组'" :visible.sync="dialogBatchSetGroupVisible" width="30%">
+      <el-form>
+        <el-form-item :label="$t('browser.group')">
+          <el-select v-model="selectedGroup" :placeholder="$t('browser.select')">
+            <el-option v-for="item in GroupList" :key="item.id" :value="item.name" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogBatchSetGroupVisible = false">取消</el-button>
+        <el-button type="primary" @click="applyBatchSetGroup">保存</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -847,6 +864,8 @@ export default {
     return {
       showSetDialog: false,
       showSetApiDialog: false,
+      dialogBatchSetGroupVisible: false,
+      selectedGroup: '默认分组',
       apiLink: '',
       Channel: 'virtualbrowser',
       saveApi: false,
@@ -1888,6 +1907,45 @@ export default {
       } catch (error) {
         console.error('Search failed:', error)
       }
+    },
+    handleBatchSetGroup() {
+      if (this.selectedRows.length === 0) {
+        this.$notify({
+          title: '错误提示',
+          message: '至少需要勾选一个环境',
+          type: 'warning',
+          duration: 2000
+        })
+        return
+      }
+      this.selectedGroup = this.$t('group.default')
+      this.dialogBatchSetGroupVisible = true
+    },
+    async applyBatchSetGroup() {
+      if (!this.selectedGroup || this.selectedRows.length === 0) {
+        this.$notify({
+          title: '操作失败',
+          message: '请先选择一个分组',
+          type: 'warning',
+          duration: 2000
+        })
+        return
+      }
+
+      for (let i = 0; i < this.selectedRows.length; i++) {
+        const row = this.selectedRows[i]
+        row.group = this.selectedGroup
+        await updateBrowser(row)
+      }
+
+      this.$notify({
+        title: '操作成功',
+        message: '分组更新成功',
+        type: 'success',
+        duration: 2000
+      })
+      this.dialogBatchSetGroupVisible = false
+      this.getList()
     }
   }
 }
