@@ -91,7 +91,11 @@
       </el-table-column>
       <el-table-column :label="$t('group.group')" min-width="50px">
         <template slot-scope="{ row }">
-          <span>{{ row.group }}</span>
+          <el-tooltip class="item" effect="dark" content="点击编辑分组" placement="top">
+            <el-button type="text" @click="handleEditGroup(row)">
+              {{ row.group }}
+            </el-button>
+          </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column label="代理" width="300px">
@@ -719,7 +723,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog :title="'批量分组'" :visible.sync="dialogBatchSetGroupVisible" width="30%">
+    <el-dialog :title="'编辑分组'" :visible.sync="dialogBatchSetGroupVisible" width="30%">
       <el-form>
         <el-form-item :label="$t('browser.group')">
           <el-select v-model="selectedGroup" :placeholder="$t('browser.select')">
@@ -862,6 +866,7 @@ export default {
       callback()
     }
     return {
+      currentEditingRow: null,
       showSetDialog: false,
       showSetApiDialog: false,
       dialogBatchSetGroupVisible: false,
@@ -1919,10 +1924,11 @@ export default {
         return
       }
       this.selectedGroup = this.$t('group.default')
+      this.currentEditingRow = null
       this.dialogBatchSetGroupVisible = true
     },
     async applyBatchSetGroup() {
-      if (!this.selectedGroup || this.selectedRows.length === 0) {
+      if (!this.selectedGroup) {
         this.$notify({
           title: '操作失败',
           message: '请先选择一个分组',
@@ -1932,10 +1938,15 @@ export default {
         return
       }
 
-      for (let i = 0; i < this.selectedRows.length; i++) {
-        const row = this.selectedRows[i]
-        row.group = this.selectedGroup
-        await updateBrowser(row)
+      if (this.currentEditingRow) {
+        this.currentEditingRow.group = this.selectedGroup
+        await updateBrowser(this.currentEditingRow)
+      } else {
+        for (let i = 0; i < this.selectedRows.length; i++) {
+          const row = this.selectedRows[i]
+          row.group = this.selectedGroup
+          await updateBrowser(row)
+        }
       }
 
       this.$notify({
@@ -1946,6 +1957,11 @@ export default {
       })
       this.dialogBatchSetGroupVisible = false
       this.getList()
+    },
+    async handleEditGroup(row) {
+      this.selectedGroup = this.$t('group.default')
+      this.currentEditingRow = row
+      this.dialogBatchSetGroupVisible = true
     }
   }
 }
