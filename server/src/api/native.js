@@ -78,10 +78,11 @@ export async function getBrowserList() {
   return (list && list.users) || []
 }
 export async function addBrowser(item, defaultName) {
+  const prefix = defaultName ? defaultName + ' ' : ''
   const list = await getBrowserList()
   const maxId = Math.max(0, Math.max(...list.map(item => item.id)))
   item.id = maxId + 1
-  item.name = item.name || defaultName + ' ' + item.id
+  item.name = item.name || prefix + item.id
 
   list.push(item)
 
