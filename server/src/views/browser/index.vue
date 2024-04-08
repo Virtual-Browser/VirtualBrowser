@@ -413,6 +413,7 @@
                           const selItem = TimeZones.find(item => item.text == select)
                           form['time-zone'].value = selItem.offset
                           form['time-zone'].zone = getZone(selItem.offset)
+                          form['time-zone'].utc = selItem.utc[0]
                         }
                       "
                     >
@@ -1266,6 +1267,7 @@ export default {
         'time-zone': {
           mode: 2,
           zone: this.getZone(currentZone?.offset || 0),
+          utc: currentZone?.utc[0] || '',
           locale: IPGeo.languages?.split(',')[0] || '',
           name: currentZone?.text || '',
           value: currentZone?.offset || 0
@@ -1551,8 +1553,12 @@ export default {
       this.form.mac.value = genRandomMacAddr()
     },
     getZone(offset) {
-      const plus = offset < 0 ? '+' : ''
-      return 'Etc/GMT' + plus + -offset
+      const sign = offset > 0 ? '+' : '-'
+      const hours = Math.floor(Math.abs(offset))
+      const decimal = Math.abs(offset) - hours
+      const minutes = Math.round(decimal * 60)
+      const paddedMinutes = minutes < 10 ? '0' + minutes : minutes.toString()
+      return `UTC${sign}${hours}:${paddedMinutes}`
     },
     onCopy() {
       this.copied = true

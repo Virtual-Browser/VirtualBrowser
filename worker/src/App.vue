@@ -131,8 +131,8 @@ onMounted(async () => {
   const ipGeo = {
     'time-zone': {
       zone: getZone(res.time_zone.offset_with_dst || 0),
-      locale: res.languages?.split(',')[0] || ''
-      // name: res.time_zone.name,
+      locale: res.languages?.split(',')[0] || '',
+      utc: res.time_zone.name
       // value: res.time_zone.offset,
     },
     location: {
@@ -157,8 +157,12 @@ onMounted(async () => {
 })
 
 const getZone = (offset: number) => {
-  const plus = offset < 0 ? '+' : ''
-  return 'Etc/GMT' + plus + -offset
+  const sign = offset > 0 ? '+' : '-'
+  const hours = Math.floor(Math.abs(offset))
+  const decimal = Math.abs(offset) - hours
+  const minutes = Math.round(decimal * 60)
+  const paddedMinutes = minutes < 10 ? '0' + minutes : minutes.toString()
+  return `UTC${sign}${hours}:${paddedMinutes}`
 }
 
 const formatResult = (json: JSON) => {
