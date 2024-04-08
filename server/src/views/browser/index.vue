@@ -1959,7 +1959,7 @@ export default {
       this.getList()
     },
     async handleEditGroup(row) {
-      this.selectedGroup = this.$t('group.default')
+      this.selectedGroup = row.group || this.$t('group.default')
       this.currentEditingRow = row
       this.dialogBatchSetGroupVisible = true
     }
