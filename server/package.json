@@ -1,13 +1,15 @@
 {
-  "name": "virtual-browser-control",
-  "version": "0.1.0",
-  "description": "A magical vue admin. An out-of-box UI solution for enterprise applications. Newest development stack of vue. Lots of awesome features",
-  "author": "Pan <panfree23@gmail.com>",
+  "name": "virtual-browser",
+  "version": "1.0.0",
+  "description": "free anti fingerprint browser",
+  "main": "./app/app.js",
   "scripts": {
-    "dev": "vue-cli-service serve",
+    "dev": "node .electron-vue/dev-runner.js",
+    "serve": "vue-cli-service serve",
     "lint": "eslint --ext .js,.vue src",
-    "build": "vue-cli-service build",
+    "build:renderer": "vue-cli-service build",
     "build:stage": "vue-cli-service build --mode staging",
+    "build": "npm run build:renderer && electron-builder",
     "preview": "node build/index.js --preview",
     "new": "plop",
     "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml"
@@ -41,9 +43,11 @@
     "autoprefixer": "9.5.1",
     "babel-eslint": "10.1.0",
     "babel-plugin-dynamic-import-node": "2.3.3",
-    "chalk": "2.4.2",
+    "chalk": "^2.4.2",
     "chokidar": "2.1.5",
     "connect": "3.6.6",
+    "electron": "^29.2.0",
+    "electron-builder": "^24.13.3",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^4.2.1",
@@ -91,8 +95,49 @@
       "pre-commit": "lint-staged"
     }
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/PanJiaChen/vue-element-admin.git"
+  "author": "VirtualBrowser <virtual.browser.2020@gmail.com>",
+  "build": {
+    "productName": "VirtualBrowser",
+    "appId": "appid",
+    "directories": {
+      "output": "build/dist"
+    },
+    "files": [
+      "dist/**/*",
+      "app/**/*"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 410,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "type": "file"
+        }
+      ]
+    },
+    "mac": {
+      "icon": "build/icons/icon.icns",
+      "asarUnpack": [
+        "**/*"
+      ]
+    },
+    "win": {
+      "icon": ".electron-vue/icons/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    },
+    "linux": {
+      "icon": "build/icons"
+    }
   }
 }
