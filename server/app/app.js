@@ -5,6 +5,7 @@ const ipcMain = require('electron').ipcMain
 const { FileAccess } = require('./base/common/network')
 const pkg = require('../package.json')
 const path = require('path')
+const RendererAPI = require('./api/renderer-api')
 const isDev = process.env.NODE_ENV === 'development'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -139,3 +140,5 @@ ipcMain.on('ipc:win-close', () => {
   // app.quit()
   app.exit()
 })
+
+new RendererAPI().init()

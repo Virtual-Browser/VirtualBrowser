@@ -106,6 +106,9 @@
       "dist/**/*",
       "app/**/*"
     ],
+    "extraFiles": [
+      "VirtualBrowser"
+    ],
     "dmg": {
       "contents": [
         {
