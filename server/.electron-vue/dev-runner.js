@@ -7,7 +7,7 @@ const Service = require('@vue/cli-service/lib/Service')
 const service = new Service(process.cwd())
 
 let electronProcess = null
-let electronRestart = false
+let manualRestart = false
 
 /**
  * 监听electron文件变化，重启app
@@ -19,17 +19,19 @@ function watchFile() {
       recursive: true
     },
     function (eventType, filename) {
-      electronRestart = true
-      if (electronProcess && electronProcess.pid) {
+      if (electronProcess && electronProcess.kill) {
+        manualRestart = true
         process.kill(electronProcess.pid)
+        electronProcess = null
+
+        console.log(chalk.green(eventType + ':' + filename))
+        startElectron()
+        console.log(chalk.green('app restart'))
+
+        setTimeout(() => {
+          manualRestart = false
+        }, 5000)
       }
-      electronProcess = null
-      console.log(chalk.green(eventType + ':' + filename))
-      startElectron()
-      console.log(chalk.green('app restart'))
-      setTimeout(() => {
-        electronRestart = false
-      }, 5000)
     }
   )
 }
@@ -59,7 +61,7 @@ function startElectron() {
     console.log(chalk.red(data.toString()))
   })
   electronProcess.on('close', () => {
-    if (!electronRestart) process.exit()
+    if (!manualRestart) process.exit()
   })
 }
 
@@ -70,4 +72,5 @@ function init() {
     console.log(chalk.green(' app start'))
   })
 }
+
 init()

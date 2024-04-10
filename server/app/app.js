@@ -33,7 +33,7 @@ function createWindow() {
     // backgroundColor: '#1e1e1e',
     minWidth: 400,
     minHeight: 270,
-    title: 'Virtual Browser | ' + pkg.version,
+    title: pkg.title + ' | ' + pkg.version,
     // icon: 'c:\\work\\github\\vscode\\resources\\win32\\code_150x150.png',
     // titleBarStyle: 'hidden',
     // frame: false,
@@ -69,6 +69,12 @@ function createWindow() {
 
   mainWindow.on('page-title-updated', e => {
     e.preventDefault()
+  })
+
+  mainWindow.webContents.on('before-input-event', (ev, e) => {
+    if (e.control && e.shift && e.key.toLocaleLowerCase() === 'i') {
+      mainWindow.webContents.toggleDevTools()
+    }
   })
 
   if (isDev) {
