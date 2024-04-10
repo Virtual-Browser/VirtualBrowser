@@ -232,9 +232,9 @@
       /**
        * @returns {Promise<typeof process.env>}
        */
-      shellEnv() {
-        return resolveShellEnv
-      },
+      // shellEnv() {
+      //   return resolveShellEnv
+      // },
 
       /**
        * @returns {Promise<import('electron').ProcessMemoryInfo>}
@@ -274,18 +274,17 @@
        *
        * @returns {ISandboxConfiguration | undefined}
        */
-      configuration() {
-        return configuration
-      },
-
+      // configuration() {
+      //   return configuration
+      // },
       /**
        * Allows to await the resolution of the configuration object.
        *
        * @returns {Promise<ISandboxConfiguration>}
        */
-      async resolveConfiguration() {
-        return resolveConfiguration
-      }
+      // async resolveConfiguration() {
+      //   return resolveConfiguration
+      // }
     }
   }
 

@@ -3,6 +3,7 @@ const electron = require('electron')
 const chalk = require('chalk')
 const path = require('path')
 const fs = require('fs')
+const debounce = require('debounce')
 const Service = require('@vue/cli-service/lib/Service')
 const service = new Service(process.cwd())
 
@@ -18,7 +19,7 @@ function watchFile() {
     {
       recursive: true
     },
-    function (eventType, filename) {
+    debounce(function (eventType, filename) {
       if (electronProcess && electronProcess.kill) {
         manualRestart = true
         process.kill(electronProcess.pid)
@@ -32,7 +33,7 @@ function watchFile() {
           manualRestart = false
         }, 5000)
       }
-    }
+    }, 2000)
   )
 }
 

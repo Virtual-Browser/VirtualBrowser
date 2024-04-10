@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "node .electron-vue/dev-runner.js",
     "serve": "vue-cli-service serve",
-    "lint": "eslint --ext .js,.vue src",
+    "lint": "eslint --ext .js,.vue src app",
     "build:renderer": "vue-cli-service build",
     "build:stage": "vue-cli-service build --mode staging",
     "build": "npm run build:renderer && electron-builder",
@@ -47,6 +47,7 @@
     "chalk": "^2.4.2",
     "chokidar": "2.1.5",
     "connect": "3.6.6",
+    "debounce": "^2.0.0",
     "electron": "^29.2.0",
     "electron-builder": "^24.13.3",
     "eslint": "^7.32.0",

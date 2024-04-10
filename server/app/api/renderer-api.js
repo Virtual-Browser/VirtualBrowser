@@ -3,14 +3,12 @@ const path = require('path')
 const fs = require('fs')
 const { spawn, exec } = require('child_process')
 const pkg = require('../../package.json')
-const { chrome } = require('process')
 const isDev = process.env.NODE_ENV === 'development'
 
 class RendererAPI {
   constructor() {
     this.runningBrowserMap = {}
     this.userDataPath = path.resolve(process.env.LOCALAPPDATA, 'VirtualBrowser/User Data/')
-    fs.mkdirSync(this.userDataPath, { recursive: true })
     this.virtualDataFile = path.resolve(this.userDataPath, 'virtual.dat')
     this.globalDataFile = path.resolve(this.userDataPath, 'global.dat')
   }
@@ -31,6 +29,7 @@ class RendererAPI {
       e.sender.send('chromeSendResponse', [args[0], { data }])
     })
     ipcMain.on('setBrowserList', (e, args) => {
+      fs.mkdirSync(this.userDataPath, { recursive: true })
       fs.writeFileSync(this.virtualDataFile, JSON.stringify(args[1]))
       e.sender.send('chromeSendResponse', [args[0], {}])
     })
@@ -55,12 +54,12 @@ class RendererAPI {
       e.sender.send('chromeSendResponse', [args[0], { data }])
     })
     ipcMain.on('setGlobalData', (e, args) => {
+      fs.mkdirSync(this.userDataPath, { recursive: true })
       fs.writeFileSync(this.globalDataFile, JSON.stringify(args[1]))
       e.sender.send('chromeSendResponse', [args[0], {}])
     })
 
     ipcMain.on('getRuningBrowser', (e, args) => {
-      console.log('getRuningBrowser', args)
       e.sender.send('chromeSendResponse', [args[0], Object.keys(this.runningBrowserMap)])
     })
 
@@ -81,6 +80,7 @@ class RendererAPI {
         `VirtualBrowser/Workers/${workerId}`
       )
 
+      // copy virtual.dat/global.dat
       fs.mkdirSync(userDataDir, { recursive: true })
       fs.copyFileSync(this.virtualDataFile, path.resolve(userDataDir, 'virtual.dat'))
       if (fs.existsSync(this.globalDataFile)) {
@@ -88,13 +88,17 @@ class RendererAPI {
       }
 
       const cmdLine = [`--worker-id=${workerId}`, `--user-data-dir=${userDataDir}`]
+
+      e.sender.executeJavaScript(`console.log('${chromePath}', '${cmdLine.join(' ')}')`)
       console.log(chromePath, cmdLine)
-      const cmd = exec(chromePath + ' ' + cmdLine.join(' '))
+
+      // 启动 worker
+      const cmd = exec(`"${chromePath}"` + ' ' + cmdLine.join(' '))
       cmd.on('spawn', (code, signal) => {
         this.runningBrowserMap[workerId] = true
         setTimeout(() => {
           e.sender.executeJavaScript('window.updateLaunchState()')
-        }, 500)
+        }, 300)
       })
       cmd.on('close', (code, signal) => {
         delete this.runningBrowserMap[workerId]
