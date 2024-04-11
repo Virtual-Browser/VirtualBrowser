@@ -72,7 +72,7 @@ class RendererAPI {
       if (isDev) {
         rootDir = path.resolve(__dirname, '../../')
       }
-      const chromePath = path.resolve(rootDir, 'VirtualBrowser/1.120.11.3/VirtualBrowser.exe')
+      const chromePath = path.resolve(rootDir, 'VirtualBrowser/120.0.6099.62/VirtualBrowser.exe')
 
       const workerId = args[1]
       const userDataDir = path.resolve(

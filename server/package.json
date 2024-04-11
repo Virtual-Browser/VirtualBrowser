@@ -1,7 +1,7 @@
 {
   "name": "virtual-browser",
   "title": "Virtual Browser",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "free anti fingerprint browser",
   "main": "./app/app.js",
   "scripts": {
