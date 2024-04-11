@@ -1097,9 +1097,7 @@ export default {
     window._updateState = runingIds => {
       this.list = (this.list || []).map(item => {
         item.isRunning = runingIds.includes(item.id.toString())
-        if (item.isRunning) {
-          item.runLoading = false
-        }
+        item.runLoading = false
 
         return item
       })
@@ -1543,8 +1541,9 @@ export default {
       if (row.proxy && row.proxy.API) {
         this.GetAPIProxy(row)
       }
-      chromeSend('launchBrowser', row.id.toString())
       row.runLoading = true
+      this.tableKey++
+      chromeSend('launchBrowser', row.id.toString())
     },
     onReRandomComputerName() {
       this.form['device-name'].value = genRandomComputerName()

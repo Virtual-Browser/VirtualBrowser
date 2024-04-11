@@ -1,8 +1,9 @@
-const { app, ipcMain } = require('electron')
+const { app, ipcMain, dialog } = require('electron')
 const path = require('path')
 const fs = require('fs')
 const { spawn, exec } = require('child_process')
 const pkg = require('../../package.json')
+const { checkProxy } = require('./check-proxy')
 const isDev = process.env.NODE_ENV === 'development'
 
 class RendererAPI {
@@ -93,8 +94,9 @@ class RendererAPI {
       console.log(chromePath, cmdLine)
 
       // 启动 worker
-      const cmd = exec(`"${chromePath}"` + ' ' + cmdLine.join(' '))
+      const cmd = spawn(chromePath, cmdLine, { detached: true })
       cmd.on('spawn', (code, signal) => {
+        console.log('on spawn')
         this.runningBrowserMap[workerId] = true
         setTimeout(() => {
           e.sender.executeJavaScript('window.updateLaunchState()')
@@ -104,8 +106,20 @@ class RendererAPI {
         delete this.runningBrowserMap[workerId]
         e.sender.executeJavaScript('window.updateLaunchState()')
       })
+      cmd.on('error', err => {
+        console.log('on error', err)
+        dialog.showErrorBox('启动失败', chromePath)
+      })
 
       e.sender.send('chromeSendResponse', [args[0], args[1]])
+    })
+
+    ipcMain.on('checkProxy', async (e, args) => {
+      console.log('checkProxy: ', args)
+
+      const ret = await checkProxy(args[1])
+      console.log('checkProxy result:', ret)
+      e.sender.send('chromeSendResponse', [args[0], ret.valid])
     })
   }
 }
