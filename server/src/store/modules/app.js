@@ -3,7 +3,9 @@ import { getLanguage } from '@/lang/index'
 
 const state = {
   sidebar: {
-    opened: localStorage.getItem('sidebarStatus') ? !!+localStorage.getItem('sidebarStatus') : true,
+    opened: localStorage.getItem('sidebarStatus')
+      ? !!+localStorage.getItem('sidebarStatus')
+      : false,
     withoutAnimation: false
   },
   device: 'desktop',
