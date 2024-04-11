@@ -26,10 +26,11 @@ function createWindow() {
   }
   const options = {
     show: true,
-    width: 1200,
-    height: 768,
-    x: 208,
-    y: 59,
+    center: true,
+    width: 1300,
+    height: 800,
+    // x: 208,
+    // y: 59,
     // backgroundColor: '#1e1e1e',
     minWidth: 400,
     minHeight: 270,
