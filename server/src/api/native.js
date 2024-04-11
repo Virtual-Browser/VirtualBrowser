@@ -132,7 +132,8 @@ export async function getBrowserVersion() {
 export async function getGroupList() {
   let list
   try {
-    list = JSON.parse(localStorage.getItem('group'))
+    const globalData = await getGlobalData()
+    list = globalData.group || []
   } catch {
     //
   }
@@ -146,21 +147,24 @@ export async function addGroup(item, defaultName) {
   item.name = item.name || defaultName + ' ' + item.id
 
   list.push(item)
-
-  localStorage.setItem('group', JSON.stringify(list))
+  const data = { group: list }
+  await setGlobalData('group', list)
 }
 export async function updateGroup(item) {
-  const list = await getGroupList()
-  const idx = list.findIndex(it => it.id === item.id)
-  list[idx] = item
-
-  localStorage.setItem('group', JSON.stringify(list))
+  const globalData = await getGlobalData()
+  const list = globalData.group || []
+  const idx = list.findIndex(it => it.id === item.id);
+  if (idx !== -1) {
+    list[idx] = item;
+    await setGlobalData('group', list)
+  }
 }
 export async function deleteGroup(id) {
-  const list = await getGroupList()
+  const globalData = await getGlobalData()
+  const list = globalData.group || []
   const idx = list.findIndex(it => it.id === id)
-
-  list.splice(idx, 1)
-
-  localStorage.setItem('group', JSON.stringify(list))
+  if (idx !== -1) {
+    list.splice(idx, 1)
+    await setGlobalData('group', list)
+  }
 }
