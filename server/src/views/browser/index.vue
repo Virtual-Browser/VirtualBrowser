@@ -1617,22 +1617,23 @@ export default {
       this.checkProxyState.checking = true
       this.preProcessData(this.form)
       let timeout = false
+      let message = `<p>代理：${this.form.proxy.url}</p>`
       const ret = await chromeSendTimeout('checkProxy', 10 * 1000, this.form.proxy.url).catch(
         err => {
           timeout = err === 'timeout'
         }
       )
-      this.$alert(
-        `<p>代理：${this.form.proxy.url}</p>
-        <p style="color:${ret ? '#67C23A' : '#F56C6C'}">检测${
-          ret ? '成功' : timeout ? '超时' : '失败'
-        }</p>`,
-        '代理检测',
-        {
-          type: ret ? 'success' : 'error',
-          dangerouslyUseHTMLString: true
-        }
-      )
+      if (ret && ret.valid) {
+        message += `<p style="color:#67C23A">检测成功</p>`
+        message += `<p style="color:#67C23A">IP：${ret.data.ip} 国家/地区：${ret.data.country} 时区：${ret.data.timezone}</p>`
+      } else {
+        const reason = timeout ? '超时' : '失败'
+        message += `<p style="color:#F56C6C">检测${reason}</p>`
+      }
+      this.$alert(message, '代理检测', {
+        type: ret && ret.valid ? 'success' : 'error',
+        dangerouslyUseHTMLString: true
+      })
       this.checkProxyState.checking = false
     },
     setAPI(data) {

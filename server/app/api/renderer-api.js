@@ -119,7 +119,7 @@ class RendererAPI {
 
       const ret = await checkProxy(args[1])
       console.log('checkProxy result:', ret)
-      e.sender.send('chromeSendResponse', [args[0], ret.valid])
+      e.sender.send('chromeSendResponse', [args[0], ret])
     })
   }
 }
