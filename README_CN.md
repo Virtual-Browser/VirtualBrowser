@@ -78,6 +78,8 @@ VirtualBrowser 还不完善。如果您对 VirtualBrowser 感兴趣，可以通�
 - QQ群: `564142956`
 
 ![Join QQ Group](assets/VirtualBrowser-qq-group.png)
+微信群：
+![Join Wechat Group](assets/WeChat.png)
 
 # 致谢
 1. [fingerprintjs](https://fingerprintjs.github.io/fingerprintjs/)

@@ -73,6 +73,8 @@ VirtualBrowser is not perfect yet. If you are interested in VirtualBrowser, you 
 - QQ Group: `564142956`
 
 ![Join QQ Group](assets/VirtualBrowser-qq-group.png)
+Wechat Group:
+![Join Wechat Group](assets/WeChat.png)
 
 # Acknowledgments
 1. [fingerprintjs](https://fingerprintjs.github.io/fingerprintjs/)
