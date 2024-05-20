@@ -67,6 +67,11 @@ VirtualBrowser is not perfect yet. If you are interested in VirtualBrowser, you 
 2. Install VirtualBrowser, visit your frequently used websites, and provide feedback on unusable situations to help solve compatibility issues.
 3. Provide experience, functional suggestions to help improve VirtualBrowser.
 
+# Disclaimer
+The purpose of this disclaimer is to explicitly clarify that the VirtualBrowser project is for technology exchange, learning, and research purposes and that the technology of this project should not be used for any illicit purposes or destructive behaviors. The author is not responsible for any damage caused to others or systems by the use of this project.
+When using this project, you must be clear and promise not to utilize this technology to carry out illegal activities, infringe upon the rights of others, or attack systems. Any accidents, losses, or damages resulting from the use of the technologies in this project, including but not limited to data loss, property loss, legal liabilities, etc., are not related to the author of this project.
+The technical information provided in this text is for learning and reference purposes only and does not constitute any form of warranty or guarantee. The author of this project makes no representations or warranties as to the accuracy, validity, or applicability of the technology.
+
 # Contact Us
 - Email: [virtual.browser.2020@gmail.com](mailto:virtual.browser.2020@gmail.com)
 - Official website: [http://virtualbrowser.cc](http://virtualbrowser.cc)
