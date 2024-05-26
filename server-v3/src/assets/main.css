@@ -1,0 +1,6 @@
+@import './base.css';
+@import './ant.css';
+
+:root {
+  --app-header-height: 64px;
+}

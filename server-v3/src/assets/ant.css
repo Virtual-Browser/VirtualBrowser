@@ -1,0 +1,6 @@
+.ant-table-empty .ant-table-body {
+  overflow: hidden !important;
+}
+.ant-table-empty .ant-table-body .ant-table-placeholder td {
+  border: none !important;
+}

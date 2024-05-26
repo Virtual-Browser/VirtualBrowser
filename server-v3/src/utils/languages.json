@@ -1,0 +1,682 @@
+[
+  {
+    "code": "ca-ES",
+    "en": "Catalan",
+    "lang": "加泰罗尼亚语"
+  },
+  {
+    "code": "prs-AF",
+    "en": "Dari",
+    "lang": "达里语"
+  },
+  {
+    "code": "ps-AF",
+    "en": "Pashto",
+    "lang": "普什图语"
+  },
+  {
+    "code": "sq-AL",
+    "en": "Albanian",
+    "lang": "阿尔巴尼亚语"
+  },
+  {
+    "code": "hy-AM",
+    "en": "Armenian",
+    "lang": "亚美尼亚语"
+  },
+  {
+    "code": "pt-PT",
+    "en": "Portuguese",
+    "lang": "葡萄牙语"
+  },
+  {
+    "code": "en-US",
+    "en": "English",
+    "lang": "英语"
+  },
+  {
+    "code": "es-AR",
+    "en": "Spanish",
+    "lang": "西班牙语"
+  },
+  {
+    "code": "de-AT",
+    "en": "German",
+    "lang": "德语"
+  },
+  {
+    "code": "ar-AE",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "sv-SE",
+    "en": "Swedish",
+    "lang": "瑞典语"
+  },
+  {
+    "code": "fi-FI",
+    "en": "Finnish",
+    "lang": "芬兰语"
+  },
+  {
+    "code": "az-Latn-AZ",
+    "en": "Azerbaijani",
+    "lang": "阿塞拜疆语"
+  },
+  {
+    "code": "az-Cyrl-AZ",
+    "en": "Azerbaijani",
+    "lang": "阿塞拜疆语"
+  },
+  {
+    "code": "bs-BA",
+    "en": "Bosnian",
+    "lang": "波斯尼亚语"
+  },
+  {
+    "code": "hr-BA",
+    "en": "Croatian",
+    "lang": "克罗地亚语"
+  },
+  {
+    "code": "sr-BA",
+    "en": "Serbian",
+    "lang": "塞尔维亚语"
+  },
+  {
+    "code": "nl-NL",
+    "en": "Dutch",
+    "lang": "荷兰语"
+  },
+  {
+    "code": "bn-BD",
+    "en": "Bengali",
+    "lang": "孟加拉语"
+  },
+  {
+    "code": "en-AU",
+    "en": "English",
+    "lang": "英语"
+  },
+  {
+    "code": "fr-FR",
+    "en": "French",
+    "lang": "法语"
+  },
+  {
+    "code": "bg-BG",
+    "en": "Bulgarian",
+    "lang": "保加利亚语"
+  },
+  {
+    "code": "ar-BH",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "quz-BO",
+    "en": "Quechua",
+    "lang": "克丘亚语"
+  },
+  {
+    "code": "fr-BE",
+    "en": "French",
+    "lang": "法语"
+  },
+  {
+    "code": "pt-BR",
+    "en": "Portuguese",
+    "lang": "葡萄牙语"
+  },
+  {
+    "code": "tn-ZA",
+    "en": "Tswana",
+    "lang": "茨瓦纳语"
+  },
+  {
+    "code": "be-BY",
+    "en": "Belarus",
+    "lang": "白俄罗斯语"
+  },
+  {
+    "code": "en-BZ",
+    "en": "English",
+    "lang": "英语"
+  },
+  {
+    "code": "fr-CA",
+    "en": "French",
+    "lang": "法语"
+  },
+  {
+    "code": "ms-BN",
+    "en": "Malay",
+    "lang": "马来语"
+  },
+  {
+    "code": "arn-CL",
+    "en": "Mapdangan",
+    "lang": "马普丹冈语"
+  },
+  {
+    "code": "es-CO",
+    "en": "Spanish",
+    "lang": "西班牙语"
+  },
+  {
+    "code": "es-CR",
+    "en": "Spanish",
+    "lang": "西班牙语"
+  },
+  {
+    "code": "es-ES",
+    "en": "Spanish",
+    "lang": "西班牙语"
+  },
+  {
+    "code": "el-GR",
+    "en": "Greek",
+    "lang": "希腊语"
+  },
+  {
+    "code": "tr-TR",
+    "en": "Turkish",
+    "lang": "土耳其语"
+  },
+  {
+    "code": "cs-CZ",
+    "en": "Czech",
+    "lang": "捷克语"
+  },
+  {
+    "code": "de-DE",
+    "en": "German",
+    "lang": "德语"
+  },
+  {
+    "code": "ar-SA",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "da-DK",
+    "en": "Danish",
+    "lang": "丹麦语"
+  },
+  {
+    "code": "es-DO",
+    "en": "Spanish",
+    "lang": "西班牙语"
+  },
+  {
+    "code": "ar-DZ",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "quz-EC",
+    "en": "Quechua",
+    "lang": "克丘亚语"
+  },
+  {
+    "code": "et-EE",
+    "en": "Estonian",
+    "lang": "爱沙尼亚语"
+  },
+  {
+    "code": "ar-EG",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "se-FI",
+    "en": "Northern",
+    "lang": "北萨米语"
+  },
+  {
+    "code": "de-CH",
+    "en": "German",
+    "lang": "德语"
+  },
+  {
+    "code": "fo-FO",
+    "en": "Faroese",
+    "lang": "法罗语"
+  },
+  {
+    "code": "ka-GE",
+    "en": "Georgian",
+    "lang": "格鲁吉亚语"
+  },
+  {
+    "code": "kl-GL",
+    "en": "Greenland",
+    "lang": "格陵兰语"
+  },
+  {
+    "code": "qut-GT",
+    "en": "Keeche",
+    "lang": "基切语"
+  },
+  {
+    "code": "zh-HK",
+    "en": "Chinese",
+    "lang": "中文"
+  },
+  {
+    "code": "es-HN",
+    "en": "Spanish",
+    "lang": "西班牙语"
+  },
+  {
+    "code": "hr-HR",
+    "en": "Croatian",
+    "lang": "克罗地亚语"
+  },
+  {
+    "code": "hu-HU",
+    "en": "Hungarian",
+    "lang": "匈牙利语"
+  },
+  {
+    "code": "he-IL",
+    "en": "Hebrew",
+    "lang": "希伯来语"
+  },
+  {
+    "code": "ga-IE",
+    "en": "Irish",
+    "lang": "爱尔兰语"
+  },
+  {
+    "code": "id-ID",
+    "en": "Indonesian",
+    "lang": "印度尼西亚语"
+  },
+  {
+    "code": "en-GB",
+    "en": "English",
+    "lang": "英语"
+  },
+  {
+    "code": "hi-IN",
+    "en": "Hindi",
+    "lang": "印地语"
+  },
+  {
+    "code": "is-IS",
+    "en": "Island",
+    "lang": "冰岛语"
+  },
+  {
+    "code": "fa-IR",
+    "en": "Persian",
+    "lang": "波斯语"
+  },
+  {
+    "code": "ar-IQ",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "it-IT",
+    "en": "Italian",
+    "lang": "意大利语"
+  },
+  {
+    "code": "en-JM",
+    "en": "English",
+    "lang": "英语"
+  },
+  {
+    "code": "ar-JO",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "ja-JP",
+    "en": "Japanese",
+    "lang": "日语"
+  },
+  {
+    "code": "km-KH",
+    "en": "Khmer",
+    "lang": "高棉语"
+  },
+  {
+    "code": "ar-KW",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "de-LI",
+    "en": "German",
+    "lang": "德语"
+  },
+  {
+    "code": "si-LK",
+    "en": "Sinhala",
+    "lang": "僧伽罗语"
+  },
+  {
+    "code": "ar-LB",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "lt-LT",
+    "en": "Lithuanian",
+    "lang": "立陶宛语"
+  },
+  {
+    "code": "de-LU",
+    "en": "German",
+    "lang": "德语"
+  },
+  {
+    "code": "lv-LV",
+    "en": "Latvian",
+    "lang": "拉脱维亚语"
+  },
+  {
+    "code": "ar-LY",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "ar-MA",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "fr-MC",
+    "en": "French",
+    "lang": "法语"
+  },
+  {
+    "code": "ro-RO",
+    "en": "Romanian",
+    "lang": "罗马尼亚语"
+  },
+  {
+    "code": "sr-Latn-ME",
+    "en": "Serbian",
+    "lang": "塞尔维亚语"
+  },
+  {
+    "code": "mk-MK",
+    "en": "Macedonian",
+    "lang": "马其顿语"
+  },
+  {
+    "code": "mt-MT",
+    "en": "Maltese",
+    "lang": "马耳他语"
+  },
+  {
+    "code": "dv-MV",
+    "en": "Dhivehi",
+    "lang": "迪维希语"
+  },
+  {
+    "code": "es-MX",
+    "en": "Spanish",
+    "lang": "西班牙语"
+  },
+  {
+    "code": "ms-MY",
+    "en": "Malay",
+    "lang": "马来语"
+  },
+  {
+    "code": "ha-Latn-NG",
+    "en": "Hausa",
+    "lang": "豪撒语"
+  },
+  {
+    "code": "es-NI",
+    "en": "Spain",
+    "lang": "西班牙语"
+  },
+  {
+    "code": "fy-NL",
+    "en": "Frisian",
+    "lang": "弗里西亚语"
+  },
+  {
+    "code": "se-NO",
+    "en": "Northern",
+    "lang": "北萨米语"
+  },
+  {
+    "code": "ne-NP",
+    "en": "Nepal",
+    "lang": "尼泊尔语"
+  },
+  {
+    "code": "ar-OM",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "es-PA",
+    "en": "Spanish",
+    "lang": "西班牙语"
+  },
+  {
+    "code": "quz-PE",
+    "en": "Quechua",
+    "lang": "克丘亚语"
+  },
+  {
+    "code": "zh-MO",
+    "en": "Chinese",
+    "lang": "中文"
+  },
+  {
+    "code": "fil-PH",
+    "en": "Philippine",
+    "lang": "菲律宾语"
+  },
+  {
+    "code": "pl-PL",
+    "en": "Polish",
+    "lang": "波兰语"
+  },
+  {
+    "code": "ur-PK",
+    "en": "Urdu",
+    "lang": "乌尔都语"
+  },
+  {
+    "code": "es-PR",
+    "en": "Spain",
+    "lang": "西班牙语"
+  },
+  {
+    "code": "ar-QA",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "sr-Latn-RS",
+    "en": "Serbian",
+    "lang": "塞尔维亚语"
+  },
+  {
+    "code": "es-PY",
+    "en": "Spanish",
+    "lang": "西班牙语"
+  },
+  {
+    "code": "ru-RU",
+    "en": "Russian",
+    "lang": "俄语"
+  },
+  {
+    "code": "se-SE",
+    "en": "Northern",
+    "lang": "北萨米语"
+  },
+  {
+    "code": "en-SG",
+    "en": "English",
+    "lang": "英语"
+  },
+  {
+    "code": "sl-SI",
+    "en": "Slovenian",
+    "lang": "斯洛文尼亚语"
+  },
+  {
+    "code": "nn-no",
+    "en": "Norwegian",
+    "lang": "挪威语"
+  },
+  {
+    "code": "sk-SK",
+    "en": "Slovak",
+    "lang": "斯洛伐克语"
+  },
+  {
+    "code": "wo-SN",
+    "en": "Wolof",
+    "lang": "沃洛夫语"
+  },
+  {
+    "code": "es-SV",
+    "en": "Spanish",
+    "lang": "西班牙语"
+  },
+  {
+    "code": "ar-SY",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "th-TH",
+    "en": "Thai",
+    "lang": "泰语"
+  },
+  {
+    "code": "ar-TN",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "sw-KE",
+    "en": "Swah",
+    "lang": "斯瓦希里语"
+  },
+  {
+    "code": "uk-UA",
+    "en": "Ukrainian",
+    "lang": "乌克兰语"
+  },
+  {
+    "code": "es-UY",
+    "en": "Spanish",
+    "lang": "西班牙语"
+  },
+  {
+    "code": "es-VE",
+    "en": "Spanish",
+    "lang": "西班牙语"
+  },
+  {
+    "code": "vi-VN",
+    "en": "Vietnamese",
+    "lang": "越南语"
+  },
+  {
+    "code": "ar-YE",
+    "en": "Arabic",
+    "lang": "阿拉伯语"
+  },
+  {
+    "code": "en-ZW",
+    "en": "English",
+    "lang": "英语"
+  },
+  {
+    "code": "nso-ZA",
+    "en": "Basotho",
+    "lang": "巴索托语"
+  },
+  {
+    "code": "zh-CN",
+    "en": "Chinese",
+    "lang": "中文"
+  },
+  {
+    "code": "am-ET",
+    "en": "Amharic",
+    "lang": "阿姆哈拉语"
+  },
+  {
+    "code": "en-TT",
+    "en": "English",
+    "lang": "英语"
+  },
+  {
+    "code": "zh-TW",
+    "en": "Chinese",
+    "lang": "中文(繁体)"
+  },
+  {
+    "code": "en-NZ",
+    "en": "English",
+    "lang": "英语"
+  },
+  {
+    "code": "mi-NZ",
+    "en": "Maori",
+    "lang": "毛利语"
+  },
+  {
+    "code": "ko-KR",
+    "en": "North",
+    "lang": "朝鲜语"
+  },
+  {
+    "code": "lo-LA",
+    "en": "Lao",
+    "lang": "老挝语"
+  },
+  {
+    "code": "ky-KG",
+    "en": "Kyrgyz",
+    "lang": "吉尔吉斯语"
+  },
+  {
+    "code": "kk-KZ",
+    "en": "Kazakh",
+    "lang": "哈萨克语"
+  },
+  {
+    "code": "tg-Cyrl-TJ",
+    "en": "Tajik",
+    "lang": "塔吉克语"
+  },
+  {
+    "code": "tk-TM",
+    "en": "Turkmen",
+    "lang": "土库曼语"
+  },
+  {
+    "code": "uz-Latn-UZ",
+    "en": "Uzbek",
+    "lang": "乌兹别克语"
+  },
+  {
+    "code": "mn-Mong",
+    "en": "Mongolian",
+    "lang": "蒙古语"
+  },
+  {
+    "code": "rw-RW",
+    "en": "Rwanda",
+    "lang": "卢旺达语"
+  }
+]
