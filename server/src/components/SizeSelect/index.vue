@@ -1,7 +1,7 @@
 <template>
-  <el-dropdown trigger="click" @command="handleSetSize">
+  <el-dropdown size="medium" trigger="click" @command="handleSetSize">
     <div>
-      <svg-icon class-name="size-icon" icon-class="size" />
+      <svg-icon class-name="size-icon" icon-class="font-size" />
     </div>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item
@@ -36,6 +36,7 @@ export default {
   methods: {
     handleSetSize(size) {
       this.$ELEMENT.size = size
+      this.changeBodyClass(size)
       this.$store.dispatch('app/setSize', size)
       this.refreshView()
       this.$message({
@@ -54,6 +55,15 @@ export default {
           path: '/redirect' + fullPath
         })
       })
+    },
+    changeBodyClass(currentSize) {
+      const sizes = ['default', 'medium', 'small', 'mini']
+      sizes.forEach(function (size, index) {
+        if (document.body.classList.contains('emphasize-' + size)) {
+          document.body.classList.remove('emphasize-' + size)
+        }
+      })
+      document.body.classList.add('emphasize-' + currentSize)
     }
   }
 }

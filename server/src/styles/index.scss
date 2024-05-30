@@ -1,17 +1,18 @@
+@import './element-ui.scss';
 @import './variables.scss';
 @import './mixin.scss';
 @import './transition.scss';
-@import './element-ui.scss';
 @import './sidebar.scss';
 @import './btn.scss';
 
 body {
+  margin: 0;
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial,
-    sans-serif;
+  font-family: system-ui, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei,
+    Arial, sans-serif;
 }
 
 label {
@@ -123,6 +124,10 @@ aside {
 
 //main-container全局样式
 .app-container {
+  height: calc(100vh - 50px);
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
   padding: 20px;
 }
 
@@ -211,5 +216,5 @@ aside {
 
 .el-message-box__message p {
   word-wrap: break-word;
-  margin-bottom: .2em;
+  margin-bottom: 0.2em;
 }

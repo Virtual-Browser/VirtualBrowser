@@ -1,77 +1,90 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <div>
-        <el-button
-          class="filter-item"
-          type="primary"
-          icon="el-icon-circle-plus"
-          @click="handleCreate"
-        >
-          {{ $t('browser.add') }}
-        </el-button>
-        <el-dropdown class="filter-item">
-          <el-button type="primary">
-            {{ $t('browser.batchActions') }}
-            <i class="el-icon-arrow-down el-icon--right" />
+      <el-form :inline="true">
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-circle-plus" @click="handleCreate">
+            {{ $t('browser.add') }}
           </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="handleBatchStart">
-              {{ $t('browser.batchStart') }}
-            </el-dropdown-item>
-            <el-dropdown-item @click.native="() => (dialogVisible = true)">
-              {{ $t('browser.batchCreate') }}
-            </el-dropdown-item>
-            <el-dropdown-item @click.native="handleBatchDelete">
-              {{ $t('browser.batchDelete') }}
-            </el-dropdown-item>
-            <el-dropdown-item @click.native="handleBatchSetGroup">
-              {{ $t('browser.batchGroup') }}
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </div>
-      <div style="display: flex">
-        <el-select
-          v-model="listQuery.group"
-          filterable
-          clearable
-          :placeholder="$t('group.filter')"
-          style="width: 150px; margin-right: 10px"
-          @change="handleFilter"
-        >
-          <el-option v-for="item in GroupList" :key="item.id" :value="item.name" />
-        </el-select>
-        <el-input
-          v-model="listQuery.title"
-          :placeholder="$t('browser.name')"
-          style="width: 200px"
-          class="filter-item"
-          @keyup.enter.native="handleFilter"
-        />
-        <el-button v-waves class="filter-item" icon="el-icon-search" @click="handleFilter">
-          {{ $t('browser.search') }}
-        </el-button>
-        <el-button @click="showSettingsDialog">IP查询API设置</el-button>
-        <el-upload
-          action=""
-          accept=".json"
-          :auto-upload="false"
-          :show-file-list="false"
-          :on-change="onImport"
-        >
-          <el-button style="margin-left: 10px">{{ $t('browser.import.import') }}</el-button>
-        </el-upload>
-        <el-button style="margin-left: 10px" @click="onExport">
-          {{ $t('browser.import.export') }}
-        </el-button>
-      </div>
+        </el-form-item>
+        <el-form-item>
+          <el-dropdown>
+            <el-button type="primary">
+              {{ $t('browser.batchActions') }}
+              <i class="el-icon-arrow-down el-icon--right" />
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="handleBatchStart">
+                {{ $t('browser.batchStart') }}
+              </el-dropdown-item>
+              <el-dropdown-item @click.native="() => (dialogVisible = true)">
+                {{ $t('browser.batchCreate') }}
+              </el-dropdown-item>
+              <el-dropdown-item @click.native="handleBatchDelete">
+                {{ $t('browser.batchDelete') }}
+              </el-dropdown-item>
+              <el-dropdown-item @click.native="handleBatchSetGroup">
+                {{ $t('browser.batchGroup') }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-form-item>
+        <el-form-item>
+          <el-select
+            v-model="listQuery.group"
+            filterable
+            clearable
+            :placeholder="$t('group.filter')"
+            style="width: 150px"
+            @change="handleFilter"
+          >
+            <el-option v-for="item in GroupList" :key="item.id" :value="item.name" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <el-form :inline="true">
+        <el-form-item>
+          <el-input
+            v-model="listQuery.title"
+            :placeholder="$t('browser.name')"
+            style="width: 200px"
+            @keyup.enter.native="handleFilter"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button v-waves icon="el-icon-search" @click="handleFilter">
+            {{ $t('browser.search') }}
+          </el-button>
+        </el-form-item>
+      </el-form>
+      <el-form :inline="true">
+        <el-form-item>
+          <el-button @click="showSettingsDialog">IP查询API设置</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-upload
+            action=""
+            accept=".json"
+            :auto-upload="false"
+            :show-file-list="false"
+            :on-change="onImport"
+          >
+            <el-button>{{ $t('browser.import.import') }}</el-button>
+          </el-upload>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="onExport">
+            {{ $t('browser.import.export') }}
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
 
     <el-table
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
+      height="100%"
       border
       fit
       highlight-current-row
@@ -89,7 +102,7 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('group.group')" min-width="50px">
+      <el-table-column :label="$t('group.group')" min-width="80px">
         <template slot-scope="{ row }">
           <el-tooltip class="item" effect="dark" content="点击编辑分组" placement="top">
             <el-button type="text" @click="handleEditGroup(row)">
@@ -98,7 +111,7 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column label="代理" width="300px">
+      <el-table-column label="代理">
         <template slot-scope="{ row }">
           <span>
             <template v-if="row.proxy.mode === 0">默认</template>
@@ -114,9 +127,9 @@
       </el-table-column>
       <el-table-column
         :label="$t('browser.date')"
+        min-width="150px"
         sortable
         prop="timestamp"
-        width="150px"
         align="center"
       >
         <template slot-scope="{ row }">
@@ -124,7 +137,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('browser.launch')" class-name="status-col" width="120">
+      <el-table-column
+        fixed="right"
+        :label="$t('browser.launch')"
+        class-name="status-col"
+        width="120"
+      >
         <template slot-scope="{ row }">
           <el-button
             type="primary"
@@ -146,6 +164,7 @@
         </template>
       </el-table-column>
       <el-table-column
+        fixed="right"
         :label="$t('browser.actions')"
         align="center"
         width="200"
@@ -165,14 +184,6 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <div class="qq-group">
-      <img src="@/assets/VirtualBrowser-qq-group.png" />
-      <p>
-        QQ Group:
-        <code>564142956</code>
-      </p>
-    </div>
 
     <el-drawer
       :title="$t(dialogStatus == 'create' ? 'browser.add' : 'browser.edit')"
@@ -637,12 +648,11 @@
           </el-form>
         </div>
         <div class="dialog-footer">
-          <el-button size="medium" @click="dialogFormVisible = false">
+          <el-button @click="dialogFormVisible = false">
             {{ $t('browser.cancel') }}
           </el-button>
           <el-button
             type="primary"
-            size="medium"
             @click="dialogStatus === 'create' ? onCreateData() : onUpdateData()"
           >
             {{ $t('browser.confirm') }}
@@ -1978,8 +1988,8 @@ export default {
 
 .filter-container {
   display: flex;
-  justify-content: space-between;
-
+  flex-wrap: wrap;
+  justify-content: left;
   .filter-item:not(:last-child) {
     margin-right: 10px;
   }
@@ -2071,24 +2081,6 @@ export default {
     .el-dialog__body {
       padding: 10px 20px;
     }
-  }
-}
-
-.qq-group {
-  margin-left: -15px;
-  p {
-    margin-top: -5px;
-    margin-left: 18px;
-    font-size: 13px;
-  }
-  code {
-    padding: 0.2em 0.4em;
-    margin: 0;
-    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-    font-size: 120%;
-    white-space: break-spaces;
-    background-color: rgba(175, 184, 193, 0.2);
-    border-radius: 6px;
   }
 }
 </style>
