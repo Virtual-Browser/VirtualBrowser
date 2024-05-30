@@ -1,4 +1,105 @@
+@import './element-variables.scss';
+@import '~element-ui/packages/theme-chalk/src/index';
+
 // cover some element-ui styles
+// 统一主题圆角尺寸
+.el-popover {
+  border-radius: $--border-radius-base;
+}
+.el-menu--popup {
+  border-radius: $--border-radius-base;
+  padding: 0 0 5px 0;
+}
+.el-menu-item {
+  height: 38px;
+  line-height: 38px;
+  margin: 5px 5px 0 5px;
+  border-radius: $--border-radius-small;
+}
+// 带边框的表格第一列居中
+.el-table--border th:first-child .cell,
+.el-table--border td:first-child .cell {
+  padding-right: 10px;
+}
+// 统一small字体大小为13px
+.el-table--small {
+  font-size: 13px;
+}
+// 修改primary按钮背景
+.el-button--primary {
+  background: linear-gradient(180deg, $--color-primary 0%, $--color-primary-light-1 100%);
+  &:hover,
+  &:focus {
+    // background: $--color-primary-light-2;
+    background: linear-gradient(180deg, $--color-primary-light-1 0%, $--color-primary-light-2 100%);
+  }
+}
+// 调整el-select样式
+.el-select-dropdown__item {
+  margin: 0 6px;
+  border-radius: 5px;
+}
+.emphasize-medium {
+  .el-select-dropdown__item {
+    height: 30px;
+    line-height: 30px;
+    padding: 0 17px;
+    font-size: 14px;
+  }
+}
+.emphasize-small {
+  .el-select-dropdown__item {
+    height: 27px;
+    line-height: 27px;
+    padding: 0 15px;
+    font-size: 13px;
+  }
+}
+.emphasize-mini {
+  .el-select-dropdown__list {
+    padding: 3px 0;
+  }
+  .el-select-dropdown__item {
+    height: 24px;
+    line-height: 24px;
+    padding: 0 10px;
+    font-size: 12px;
+    margin: 0 3px;
+  }
+}
+// checkbox边框加粗
+// 圆角调整
+.el-checkbox__inner {
+  border-width: 2px;
+  border-radius: 5px;
+}
+// 调整el-dropdown样式
+.el-dropdown-menu__item {
+  margin: 0 8px;
+  border-radius: 5px;
+}
+
+.el-dropdown-menu--medium {
+  .el-dropdown-menu__item {
+    margin: 0 6px;
+  }
+}
+
+.el-dropdown-menu--small {
+  .el-dropdown-menu__item {
+    margin: 0 6px;
+  }
+}
+
+.el-dropdown-menu--mini {
+  .el-dropdown-menu__item {
+    margin: 0 3px;
+  }
+}
+
+.el-message-box {
+  border-radius: 9px;
+}
 
 .el-breadcrumb__inner,
 .el-breadcrumb__inner a {
@@ -6,7 +107,7 @@
 }
 
 .el-upload {
-  input[type="file"] {
+  input[type='file'] {
     display: none !important;
   }
 }
@@ -48,6 +149,7 @@
 
 // to fixed https://github.com/ElemeFE/element/issues/2461
 .el-dialog {
+  border-radius: 9px;
   transform: none;
   left: 0;
   position: relative;
@@ -69,7 +171,7 @@
 // dropdown
 .el-dropdown-menu {
   a {
-    display: block
+    display: block;
   }
 }
 
