@@ -26,11 +26,17 @@ const { chromium } = require('playwright')
   // 连接playwright自动化工具
   const browser = await chromium.connectOverCDP(`http://localhost:${response.data.debuggingPort}`)
 
-  const context = await browser.newContext()
+  // 新开窗口
+  // const context = await browser.newContext()
+  // 使用当前窗口
+  const context = await browser.contexts()[0]
   const page = await context.newPage()
 
   // 访问您的应用程序
-  await page.goto('https://www.baidu.com')
+  await page.goto('https://www.baidu.com/')
+
+  const page2 = await context.newPage()
+  await page2.goto('https://www.163.com/')
 
   // 其他测试代码...
 
