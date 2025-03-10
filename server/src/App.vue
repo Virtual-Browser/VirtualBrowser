@@ -6,6 +6,10 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  mounted() {
+    const size = localStorage.getItem('size') || 'mini'
+    document.body.classList.add('emphasize-' + size)
+  }
 }
 </script>

@@ -1,34 +1,35 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <div>
-        <el-button
-          class="filter-item"
-          type="primary"
-          icon="el-icon-circle-plus"
-          @click="handleCreate"
-        >
-          {{ $t('group.add') }}
-        </el-button>
-      </div>
-      <div style="display: flex">
-        <el-input
-          v-model="listQuery.title"
-          :placeholder="$t('browser.name')"
-          style="width: 200px"
-          class="filter-item"
-          @keyup.enter.native="handleFilter"
-        />
-        <el-button v-waves class="filter-item" icon="el-icon-search" @click="handleFilter">
-          {{ $t('browser.search') }}
-        </el-button>
-      </div>
+      <el-form :inline="true">
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-circle-plus" @click="handleCreate">
+            {{ $t('group.add') }}
+          </el-button>
+        </el-form-item>
+      </el-form>
+      <el-form :inline="true">
+        <el-form-item>
+          <el-input
+            v-model="listQuery.title"
+            :placeholder="$t('browser.name')"
+            style="width: 200px"
+            @keyup.enter.native="handleFilter"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button v-waves icon="el-icon-search" @click="handleFilter">
+            {{ $t('browser.search') }}
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
 
     <el-table
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
+      height="100%"
       border
       fit
       highlight-current-row
@@ -39,12 +40,12 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('group.name')" min-width="150px">
+      <el-table-column :label="$t('group.name')" min-width="100px">
         <template slot-scope="{ row }">
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('group.browser_count')" width="200px">
+      <el-table-column :label="$t('group.browser_count')" min-width="100px">
         <template slot-scope="{ row }">
           <span>
             {{ row.count }}
@@ -55,7 +56,7 @@
         :label="$t('browser.date')"
         sortable
         prop="timestamp"
-        width="150px"
+        min-width="150px"
         align="center"
       >
         <template slot-scope="{ row }">
@@ -63,6 +64,7 @@
         </template>
       </el-table-column>
       <el-table-column
+        fixed="right"
         :label="$t('browser.actions')"
         align="center"
         width="230"
@@ -99,12 +101,11 @@
           </el-form>
         </div>
         <div class="dialog-footer">
-          <el-button size="medium" @click="dialogFormVisible = false">
+          <el-button @click="dialogFormVisible = false">
             {{ $t('browser.cancel') }}
           </el-button>
           <el-button
             type="primary"
-            size="medium"
             @click="dialogStatus === 'create' ? onCreateData() : onUpdateData()"
           >
             {{ $t('browser.confirm') }}
@@ -302,6 +303,7 @@ export default {
 <style lang="scss" scoped>
 .filter-container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
 
   .filter-item:not(:last-child) {

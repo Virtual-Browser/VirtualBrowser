@@ -4,16 +4,24 @@
 **/
 
 /* theme color */
-$--color-primary: #2ea000; //#1890ff;
-$--color-success: #13ce66;
+// $--color-primary: #2ea000; //#1890ff;
+// $--color-success: #13ce66;
+// $--color-warning: #ffba00;
+// $--color-danger: #ff4949;
+$--color-primary: #1677ff; //#1890ff;
+$--color-success: #3ec487;
 $--color-warning: #ffba00;
-$--color-danger: #ff4949;
+$--color-danger: #f03a5f;
+$--color-info: #597b98;
 // $--color-info: #1E1E1E;
+// 修改hover背景颜色
+$--background-color-base: #e4eeff;
 
 $--button-font-weight: 400;
 
 // $--color-text-regular: #1f2d3d;
 
+$--border-color-base: #d9d9d9;
 $--border-color-light: #dfe4ed;
 $--border-color-lighter: #e6ebf5;
 
@@ -22,7 +30,32 @@ $--table-border: 1px solid #dfe6ec;
 /* icon font path, required */
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
-@import '~element-ui/packages/theme-chalk/src/index';
+// 统一small字体大小为13px
+$--button-small-font-size: 13px;
+
+// 默认字体颜色
+$--color-text-regular: rgba(0, 0, 0, 0.88);
+$--color-text-secondary: #1a1a1a;
+$--color-text-placeholder: #c0c4cc;
+
+/// borderRadius|1|Radius|0
+$--border-radius-base: 8px !default;
+/// borderRadius|1|Radius|0
+$--border-radius-small: 6px !default;
+/// borderRadius|1|Radius|0
+$--border-radius-circle: 100% !default;
+/// borderRadius|1|Radius|0
+$--border-radius-zero: 0 !default;
+
+// Box-shadow
+/// boxShadow|1|Shadow|1
+$--box-shadow-base: 0 0px 10px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04) !default;
+// boxShadow|1|Shadow|1
+$--box-shadow-dark: 0 0px 10px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.12) !default;
+/// boxShadow|1|Shadow|1
+$--box-shadow-light: 0 0px 12px 0 rgba(0, 0, 0, 0.1) !default;
+
+// @import '~element-ui/packages/theme-chalk/src/index';
 
 // the :export directive is the magic sauce for webpack
 // https://www.bluematador.com/blog/how-to-share-variables-between-js-and-sass
