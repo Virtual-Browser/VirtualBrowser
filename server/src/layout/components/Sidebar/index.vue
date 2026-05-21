@@ -20,6 +20,16 @@
         />
       </el-menu>
     </el-scrollbar>
+    <el-popover placement="right" trigger="click">
+      <div class="qq-group">
+        <img src="@/assets/VirtualBrowser-qq-group.png" />
+        <p>
+          QQ Group:
+          <code>564142956</code>
+        </p>
+      </div>
+      <div slot="reference" class="about-us">关于我们</div>
+    </el-popover>
   </div>
 </template>
 
@@ -54,3 +64,31 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.about-us {
+  padding: 12px;
+  text-align: center;
+  border-radius: 26px;
+  font-size: 14px;
+  color: #664100;
+  background: linear-gradient(90deg, #ffeccc, #ffd080);
+  margin: 5px 5px 0 5px;
+  cursor: pointer;
+}
+.qq-group {
+  p {
+    margin-top: -5px;
+    margin-left: 18px;
+    font-size: 13px;
+  }
+  code {
+    padding: 0.2em 0.4em;
+    margin: 0;
+    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+    font-size: 120%;
+    white-space: break-spaces;
+    background-color: rgba(175, 184, 193, 0.2);
+    border-radius: 6px;
+  }
+}
+</style>
