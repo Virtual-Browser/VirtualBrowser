@@ -6,7 +6,7 @@
 
 # VirtualBrowser
 
-VirtualBrowser 是一款基于 [Chromium](https://www.chromium.org/) 的指纹浏览器，支持在单台 Windows 7 及以上设备上创建并管理多个相互隔离的浏览器环境。Mac、Android、Linux 等平台正在规划中。
+VirtualBrowser 是一款基于 [Chromium](https://www.chromium.org/) 的指纹浏览器，支持 Windows、macOS 和 Linux，可在单台设备上创建并管理多个相互隔离的浏览器环境。
 
 **浏览器指纹**指通过采集浏览器、操作系统与硬件等特征（如 User-Agent、语言、分辨率、字体、Canvas/WebGL 噪声等）生成可用于识别或关联用户的数字签名。VirtualBrowser 帮助你在合规前提下隔离各环境的指纹，降低账号关联与追踪风险。
 
@@ -89,10 +89,6 @@ VirtualBrowser 仅供技术交流、学习与研究使用。请勿将本项目�
 - QQ 群：`564142956`
 
 ![QQ 群](assets/VirtualBrowser-qq-group.png)
-
-微信群：
-
-![微信群](assets/WeChat.png)
 
 ## 致谢
 

@@ -6,7 +6,7 @@
 
 # VirtualBrowser
 
-VirtualBrowser is a fingerprint browser built on [Chromium](https://www.chromium.org/). It lets you create and manage multiple isolated browser profiles on a single Windows 7+ machine. Support for Mac, Android, Linux, and other platforms is planned.
+VirtualBrowser is a fingerprint browser built on [Chromium](https://www.chromium.org/). It supports Windows, macOS, and Linux and lets you create and manage multiple isolated browser profiles on a single machine.
 
 **Browser fingerprinting** collects signals from the browser, OS, and hardware (User-Agent, language, resolution, fonts, Canvas/WebGL noise, and more) to build a digital signature that can identify or link users. VirtualBrowser helps you isolate fingerprints per profile and reduce cross-account correlation and tracking—when used lawfully and responsibly.
 
@@ -89,10 +89,6 @@ The information here is for learning and reference only and is not a warranty of
 - QQ group: `564142956`
 
 ![QQ group](assets/VirtualBrowser-qq-group.png)
-
-WeChat group:
-
-![WeChat group](assets/WeChat.png)
 
 ## Acknowledgments
 
